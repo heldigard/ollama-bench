@@ -1,4 +1,0 @@
-[SEV] src/orders/service.py: SQL injection vulnerability in fetch_user_orders via f-string interpolation of user_id.
-[SEV] src/orders/service.py: Missing error handling for load_translations file open failure or json.load exceptions.
-[SEV] src/orders/service.py: find_nth_occurrence logic is inefficient and potentially incorrect if needle appears multiple times; should use regex or list comprehension.
-[SEV] src/orders/service.py: cancel_order lacks exception handling for get_order, stripe.refund, or network failures.

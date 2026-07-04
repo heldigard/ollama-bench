@@ -1,5 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders; use parameterized query instead
-[HIGH] src/orders/service.py: find_nth_occurrence can return -1 on any miss, and the loop continues from idx+1 which is 0 — infinite loop if needle never appears after first match
-[MED] src/orders/service.py: mutable default cache={} in load_translations persists across calls; also file handle f is never closed (use with open)
-[MED] src/orders/service.py: parse_config's bare except returns the raw value on any error, silently ignoring malformed config instead of failing fast
-[LOW] src/orders/service.py: cancel_order assumes order and payment keys exist without checking; get_order(order_id) may return None or missing fields

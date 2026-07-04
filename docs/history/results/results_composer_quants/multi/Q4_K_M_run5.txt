@@ -1,6 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders; use parameterized query instead
-[HIGH] src/orders/service.py: find_nth_occurrence can return -1 on any miss, which is then used as start index for next find() — invalidates subsequent searches and returns wrong index
-[MED] src/orders/service.py: mutable default cache={} in load_translations persists across calls; different paths share the same dict object
-[MED] src/orders/service.py: parse_config's bare except hides TypeError/ValueError during coercion and silently returns unparsed strings as ints
-[LOW] src/orders/service.py: cancel_order assumes get_order never raises and order["payment"]["charge_id"] always exists; no guard for missing key or failed fetch
-[LOW] src/orders/service.py: open(path) in load_translations has no encoding specified (platform-dependent), can corrupt non-ASCII characters

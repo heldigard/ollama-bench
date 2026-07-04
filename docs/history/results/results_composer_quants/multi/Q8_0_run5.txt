@@ -1,5 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders query; use parameterized queries instead
-[HIGH] src/orders/service.py: Unbounded mutable default cache={}; every call shares the same dict across all callers, leaking state between requests
-[MED] src/orders/service.py: find_nth_occurrence can return -1 on any iteration and continue looping; should break or raise when needle is not found
-[MED] src/orders/service.py: open(path) has no close() call — file descriptor leak every time load_translations runs
-[LOW] src/orders/service.py: bare except in coerce swallows KeyboardInterrupt, SystemExit and other non-conversion errors; catch ValueError/TypeError instead

@@ -1,7 +1,0 @@
-Arithmetic:
-- Remaining work: 200 pts
-- Sprints left: 3
-- Current average velocity: (35 + 42 + 38) / 3 = 115 / 3 ≈ 38.33 pts/sprint
-- At current avg: 3 × 38.33 ≈ 115 pts → short by ~85 pts; cannot finish in 3 sprints at current velocity.
-- Minimum needed per sprint to finish exactly: ceil(200 / 3) = 67 pts/sprint (round up because you can’t do fractional points reliably).
-- Extra over average: 67 − 38.33 ≈ 28.67 pts/sprint extra. One-line final answer: No; they need at least 67 pts per sprint, which is about 29 pts above their current average of ~38.3.

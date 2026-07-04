@@ -1,6 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection vulnerability in fetch_user_orders due to f-string query construction.
-[HIGH] src/orders/service.py: Resource leak in load_translations as the file handle is never closed.
-[MED] src/orders/service.py: Mutable default argument `cache={}` in load_translations will persist across all calls.
-[MED] src/orders/service.py: Potential KeyError or TypeError in cancel_order if order, payment, or charge_id is missing.
-[LOW] src/orders/service.py: find_nth_occurrence returns -1 for the first occurrence and potentially incorrect indices for subsequent ones due to `idx + 1` logic on a starting index of -1.
-[LOW] src/orders/service.py: Bare except in parse_config's coerce function catches all exceptions including KeyboardInterrupt.

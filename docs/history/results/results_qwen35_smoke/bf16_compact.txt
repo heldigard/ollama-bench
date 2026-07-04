@@ -1,5 +1,0 @@
-Decisions/Root cause/Next steps/Blockers
-- Decided: Switch logging framework from standard library/loguru (implied context) to loguru explicitly for better async debugging; commit changes in branch fix/payment-flake.
-- Root Cause: Race condition in async DB connection pool suspected due to recent size change (5 -> 10); test flaky with ~8/10 pass rate and timeout failures on /home/eldi/proj/tests/test_payment_flow.py.
-- Next Steps: Add tracing for slow pool acquisition; ensure conftest.py exists at root level; add [tool.ruff] configuration to pyproject.toml; build backend using hatchling.
-- Blockers: None.

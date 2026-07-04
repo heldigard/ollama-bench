@@ -1,4 +1,0 @@
-[SEV HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` due to string interpolation with unvalidated `user_id`.
-[SEV HIGH] src/orders/service.py: Missing error handling for file I/O and JSON parsing in `load_translations`, risking silent failures or crashes.
-[SEV MED] src/orders/service.py: Unsafe type coercion in `parse_config` catches all exceptions, potentially returning invalid types instead of raising meaningful errors.
-[SEV MED] src/orders/service.py: Resource leak risk in `load_translations` if an exception occurs after opening the file but before closing it.

@@ -1,9 +1,0 @@
-**Arithmetic:**
-
-1. **Current total capacity** = 3 sprints × 38.3 avg points/sprint = **114.9 points**.
-2. **Shortfall** = 200 – 114.9 = **85.1 points**.
-3. **Required total** = 200 points.
-4. **Minimum velocity needed per sprint** = 200 ÷ 3 = **66.666… ≈ 66.67 points/sprint**.
-5. **Extra per sprint over current average** = 66.666… – 38.333… = **28.333… ≈ 28.33 points/sprint**.
-
-**Final answer:** No; they need ~66.67 points/sprint, which is ~28.33 points/sprint above their current average.

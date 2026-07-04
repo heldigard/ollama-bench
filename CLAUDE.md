@@ -87,5 +87,6 @@ ollama-bench report build            # markdown ranking from TSV
   report formats need separate code paths.
 - `embedding/` only has eval scaffolding — the real eval still lives in
   `~/.claude/scripts/ollama-summarize.py` (separate consumer).
-- `docs/history/` contains 30+ deprecated bench scripts. They are NOT in the
-  CLI; kept for git history of model evaluations.
+- `RANKING.md` = current installed top-5 per task (the answer to "what's the ranking?").
+- `RANKING_HISTORY.md` = full test registry (every model ever loaded + eliminated reason). Check before re-pulling.
+- The deprecated bench scripts that graduated into this package were removed in 2026-07-04 cleanup; git history preserves them if needed.

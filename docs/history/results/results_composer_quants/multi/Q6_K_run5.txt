@@ -1,5 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders query
-[HIGH] src/orders/service.py: find_nth_occurrence can return -1 on any iteration and continue, returning a misleading index
-[MED] src/orders/service.py: mutable default argument cache={}; repeated calls share the same dict across all callers
-[MED] src/orders/service.py: parse_config's bare except swallows everything including KeyboardInterrupt; returns uncoerced value silently on error
-[LOW] src/orders/service.py: open(path) has no close() or context manager — file descriptor leak on repeated calls

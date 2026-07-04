@@ -1,7 +1,0 @@
-Total backlog: 200 pts. Remaining sprints: 3.  
-Required average velocity = $200 / 3 \approx 67$ pts/sprint (rounded up to ensure completion).  
-
-Current actual velocities: 35, 42, 38 → Average $\approx 38.3$.  
-Shortfall per sprint = $67 - 38.3 = 28.7$, which rounds to **29** extra points needed per sprint over the current average.  
-
-Final Answer: No; minimum required velocity is ~67 pts/sprint, requiring an increase of approximately 29 pts/sprint above the historical average.

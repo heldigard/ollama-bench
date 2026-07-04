@@ -1,5 +1,0 @@
-Decisions/Root cause/Next steps/Blockers
-- Decided: Switch logging framework from standard library/loguru (implied context) to loguru for better async debugging; commit changes in branch fix/payment-flake.
-- Root Cause: Race condition in async DB connection pool triggered by yesterday's configuration change increasing pool size from 5 to 10, causing intermittent timeouts in test_payment_flow.py with a success rate of ~8/10 runs.
-- Next Steps: Add tracing for slow pool acquisition; ensure conftest.py is located at the project root; add [tool.ruff] section to pyproject.toml; build backend using hatchling.
-- Blockers: None.

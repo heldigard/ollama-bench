@@ -1,6 +1,0 @@
-**Arithmetic:**  
-- Required total: 200 points ÷ 3 sprints = **66.7 points/sprint**.  
-- Current average velocity: (35 + 42 + 38) / 3 = **38.3 points/sprint**.  
-- Extra needed per sprint: 66.7 − 38.3 ≈ **+28.4 points/sprint** above current performance.
-
-**One-line final answer:** No; they need a minimum of ~66.7 points/sprint, which is about +28.4 extra points per sprint over their current average velocity.

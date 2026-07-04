@@ -1,4 +1,0 @@
-[SEV] src/orders/service.py: fetch_user_orders uses f-string to build SQL query with user_id directly interpolated, leading to SQL injection vulnerability.
-[SEV] src/orders/service.py: load_translations opens file without context manager (with statement), risking resource leak on failure or early exit.
-[SEV] src/orders/service.py: parse_config catches bare exception instead of specific type for coercion logic, masking underlying errors and allowing invalid data to pass through.
-[SEV] src/orders/service.py: find_nth_occurrence uses a loop with range(n) but only increments idx by 1 after each find, which is inefficient for large n and may miss occurrences if needle appears multiple times in one segment.

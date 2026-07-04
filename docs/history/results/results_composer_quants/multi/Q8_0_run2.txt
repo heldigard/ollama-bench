@@ -1,6 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders; use parameterized query instead
-[HIGH] src/orders/service.py: find_nth_occurrence can return -1 on any iteration and continue, returning a misleading index for n > 1 when needle is absent
-[MED] src/orders/service.py: mutable default cache={} in load_translations persists across calls; use None and initialize inside
-[MED] src/orders/service.py: open(path) never closed (file handle leak); use with open()
-[LOW] src/orders/service.py: bare except in coerce swallows KeyboardInterrupt and SystemExit along with ValueError
-[LOW] src/orders/service.py: cancel_order assumes order["payment"]["charge_id"] exists without checking; will KeyError on orders missing payment info

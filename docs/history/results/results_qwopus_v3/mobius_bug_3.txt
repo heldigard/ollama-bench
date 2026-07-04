@@ -1,6 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection vulnerability in fetch_user_orders due to f-string query construction.
-[HIGH] src/orders/service.py: Resource leak in load_translations as the file handle is never closed.
-[MED] src/orders/service.py: Mutable default argument 'cache' in load_translations will persist across calls.
-[MED] src/orders/service.py: find_nth_occurrence returns -1 if needle is not found, but loop continues to increment idx, potentially leading to incorrect results or repeated -1.
-[MED] src/orders/service.py: parse_config uses a bare except block which can catch KeyboardInterrupt and other system exits.
-[LOW] src/orders/service.py: cancel_order lacks error handling for stripe.refund or missing order keys, potentially crashing the process.

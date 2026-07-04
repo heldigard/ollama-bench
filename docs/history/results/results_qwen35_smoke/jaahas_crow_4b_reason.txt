@@ -1,9 +1,0 @@
-Current total capacity = 3 sprints × 38.3 pts/sprint = 114.9 pts.  
-Backlog = 200 pts.  
-Shortfall = 200 − 114.9 = 85.1 pts.
-
-To finish in 3 sprints, required average velocity = 200 / 3 ≈ 66.67 pts/sprint.  
-Minimum velocity per sprint = 66.67 pts (must be ≥ 66.67 to cover backlog exactly; rounding up to whole number gives 67 pts/sprint).  
-Extra per sprint over current average = 66.67 − 38.3 = 28.37 pts/sprint.
-
-Final answer: No, cannot finish at current velocity. Minimum required velocity is ~66.7 pts/sprint (≈67), requiring an extra ~28.4 pts per sprint over the historical average of 38.3.

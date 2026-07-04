@@ -1,4 +1,0 @@
-[CRIT] file: fetch_user_orders.py: SQL injection vulnerability due to string formatting in query construction.
-[HIGH] file: load_translations.py: File handle leak as 'f' is never closed; missing encoding specification for json.load().
-[MEDIUM] file: parse_config.py: Broad exception handling ('except') masks specific errors like ValueError or TypeError during type coercion.
-[LOW] file: find_nth_occurrence.py: Logic error where the loop runs n times but searches starting from idx+1, potentially skipping occurrences if needle is empty or logic intended was different (should be range(n) with start index incrementing).

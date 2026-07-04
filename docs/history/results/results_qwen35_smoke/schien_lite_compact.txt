@@ -1,9 +1,0 @@
-Decisions/Root cause/Next steps/Blockers
-
-**Decisions:** Switched logging framework from standard library to loguru; committed changes in branch `fix/payment-flake`. Added `[tool.ruff]` configuration to `pyproject.toml`; configured build backend as hatchling.
-
-**Root Cause:** Race condition within the async database connection pool, suspected due to a recent increase in pool size (5 → 10). Test passes intermittently (8/10) rather than consistently failing.
-
-**Next Steps:** Implement tracing for slow pool acquisition events; ensure `conftest.py` is located at project root.
-
-**Blockers:** None identified.

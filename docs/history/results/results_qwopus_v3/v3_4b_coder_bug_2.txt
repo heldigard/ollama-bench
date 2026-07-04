@@ -1,4 +1,0 @@
-[SEV HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` due to string formatting with user-provided `user_id`.
-[MED] src/orders/service.py: `load_translations` opens files without context manager, risking resource leaks.
-[MED] src/orders/service.py: `parse_config` uses bare `except:` which swallows all exceptions and returns the original value instead of raising an error.
-[LOW] src/orders/service.py: `find_nth_occurrence` is inefficient for large strings as it repeatedly scans from near the previous match; use `re.finditer`.

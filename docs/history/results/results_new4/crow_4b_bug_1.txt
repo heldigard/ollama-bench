@@ -1,5 +1,0 @@
-[SEV] fetch_user_orders: SQL injection vulnerability - user_id interpolated directly into query string without sanitization or parameterization
-[SEV] cancel_order: race condition - fetching order then refunding without locking; concurrent requests may cause duplicate refunds or inconsistent state
-[MED] parse_config: try/except catches all exceptions including KeyboardInterrupt/SystemExit; should only catch ValueError for int conversion
-[MED] load_translations: no error handling for FileNotFoundError, PermissionError, or JSON decode errors; no encoding specification
-[LOW] find_nth_occurrence: if n > len(haystack), returns None which may be confusing; consider raising ValueError for negative n

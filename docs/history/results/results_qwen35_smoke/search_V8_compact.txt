@@ -1,3 +1,0 @@
-Decisions/Root cause/Next steps/Blockers
-
-- Decided: switch to loguru for better async tracing. Commit in branch fix/payment-flake. Need conftest.py at root. Add [tool.ruff] to pyproject.toml. Build backend hatchling. No blockers.

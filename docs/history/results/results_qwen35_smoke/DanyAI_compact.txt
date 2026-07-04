@@ -1,4 +1,0 @@
-Decisions: Switched to loguru; commit on fix/payment-flake; added conftest.py, [tool.ruff], and hatchling build config.
-Root cause: Race condition in async DB connection pool after size increase (5→10).
-Next steps: Add tracing for slow pool acquisition.
-Blockers: None.

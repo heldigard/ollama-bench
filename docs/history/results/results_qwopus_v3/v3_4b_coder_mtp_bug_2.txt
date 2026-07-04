@@ -1,4 +1,0 @@
-[SEV HIGH] src/orders/service.py: SQL injection vulnerability in fetch_user_orders via f-string interpolation of user_id without parameterization.
-[MED] src/orders/service.py: load_translations opens file without context manager, risking resource leak on error.
-[MED] src/orders/service.py: parse_config uses bare except clause masking specific errors and returning potentially invalid coerced values.
-[LOW] src/orders/service.py: find_nth_occurrence logic is inefficient (O(n*m) string searches instead of using regex or bisect).

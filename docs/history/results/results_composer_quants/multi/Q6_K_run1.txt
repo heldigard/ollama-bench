@@ -1,5 +1,0 @@
-[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders query
-[HIGH] src/orders/service.py: Bare except in coerce returns uncoerced value silently on bad input; can pollute config with mixed types
-[MED] src/orders/service.py: Mutable default cache={} persists across all calls and leaks memory over time
-[MED] src/orders/service.py: find_nth_occurrence may return -1 if needle is not found after some iterations, never checks
-[LOW] src/orders/service.py: file opened in load_translations never closed; use with open instead

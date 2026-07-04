@@ -1,4 +1,0 @@
-[SEV HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` due to string formatting (`f"SELECT ... '{user_id}' ..."`) instead of parameterized queries.
-[SEV HIGH] src/orders/service.py: Missing error handling for file operations and JSON parsing in `load_translations`, which will crash the application on invalid input or missing files without logging.
-[SEV MED] src/orders/service.py: Unsafe type coercion logic in `parse_config` catches all exceptions (`except:`) instead of specific ones, potentially masking bugs like non-numeric strings being silently returned as original values.
-[SEV MED] src/orders/service.py: Resource leak risk in `load_translations` where the file handle is not explicitly closed after reading (though Python 3's context manager best practice should be used).

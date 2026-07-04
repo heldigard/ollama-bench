@@ -1,4 +1,0 @@
-[CRITICAL] file: fetch_user_orders: SQL injection vulnerability due to string formatting with user input.
-[HIGH] file: load_translations: File handle leak; `f` is never closed after reading JSON data.
-[MEDIUM] file: parse_config: Broad exception handling (`except:`) masks specific errors and hides bugs during config parsing.
-[LOW] file: find_nth_occurrence: Logic error in loop range causes incorrect occurrence counting for n > 1 (should be `range(n)` but logic is flawed).

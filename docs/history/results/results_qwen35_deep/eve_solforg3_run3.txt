@@ -1,5 +1,0 @@
-[SEV] src/orders/service.py: fetch_user_orders uses f-string SQL injection vulnerability; must parameterize query.
-[SEV] src/orders/service.py: parse_config bare except swallows all exceptions including KeyError/ValueError; should be specific.
-[SEV] src/orders/service.py: load_translations opens file without context manager, missing close and error handling.
-[SEV] src/orders/service.py: find_nth_occurrence returns None when needle not found or n exceeds occurrences; caller may crash.
-[SEV] src/orders/service.py: cancel_order assumes order["payment"]["charge_id"] exists; no validation for missing fields.
