@@ -3,6 +3,7 @@
 Sub-commands map to cmd_<sub> in features/<slice>/command.py.
 Adding a slice = import its add_parser and append to _SLICES.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -18,6 +19,7 @@ from ollama_bench.features.multi_domain.command import add_parser as add_multi_d
 from ollama_bench.features.report.command import add_parser as add_report
 from ollama_bench.features.smoke.command import add_parser as add_smoke
 from ollama_bench.features.tie_break.command import add_parser as add_tie_break
+from ollama_bench.features.tool_call.command import add_parser as add_tool_call
 
 # Each slice registers: (slug, add_parser_fn, brief_help).
 # Order matters for --help output (alphabetical-ish but smoke first as default).
@@ -26,6 +28,7 @@ _SLICES = [
     ("deep", add_deep, "5-task x N model bench"),
     ("tie-break", add_tie_break, "Re-bench tied candidates with harder prompts"),
     ("bug-finding", add_bug_finding, "Diff-review bench (count bugs found)"),
+    ("tool-call", add_tool_call, "Structured JSON tool-call bench (ground-truth)"),
     ("lfm-variant", add_lfm, "codeq summary tie-break for LFM family"),
     ("multi-domain", add_multi_domain, "Legacy 4-domain bench"),
     ("judge", add_judge, "LLM-as-judge helpers"),

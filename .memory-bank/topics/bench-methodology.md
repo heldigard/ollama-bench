@@ -67,18 +67,41 @@ Lower = better. Top 5 per task are the winners.
 ## Critical invariants
 
 1. **`think: false` is TOP-LEVEL** in the Ollama API body. Putting it inside `options` is silently ignored.
-2. **Leak gate is HARD-DISQUALIFICATION** for the task it leaked on. A model that leaks thinking on `codeq_sum` is removed from the codeq summary ranking entirely.
-3. **Scoring is deterministic**: same input → same output. Tests mock the HTTP layer.
+2. **Leak gate** — see "Leak handling" below. Default = hard-disqualify; `--strip` = salvage thinking-trace leaks.
+3. **Scoring is deterministic + reproducible**: `seed=42` pinned in `CallOpts` (added 2026-07-04). Same input → same output. Tests mock the HTTP layer.
 4. **Outputs are regenerable**: cache to `~/.cache/ollama-bench/`, not git-tracked.
 
-## What this methodology does NOT cover
+## Leak handling (revised 2026-07-04 — the think-strip unlock)
+
+`shared/scorer.detect_leaks()` now covers 14 patterns across 3 classes:
+- **Thinking-trace tags**: `<think>`, `</think>`, `<reasoning>`, `<reflection>`, `<output>`
+- **Turn-token leaks**: `<|channel|>` (Gemma-4 abliterated merges, e.g. Huihui — the gap `~/prompt-improve` documented)
+- **Visible thinking prefixes**: `thinking process:`, `let me think:`
+- **Refusals**: `as an ai`, `as a language model`, `i cannot`, `i'm just an ai`, `i'm unable to`, `i am unable to`
+
+`leaks_are_strippable(leaks)` returns True when EVERY leak is a thinking-trace tag
+(no refusals). Such models are salvageable:
+
+- **Smoke** tags them `strippable=1` (column in the TSV).
+- **`deep --strip`** includes them in the candidate set AND applies `strip_reasoning()`
+  to each response BEFORE scoring — so a thinking-leak model is judged on its
+  CLEANED answer, not penalized for the trace.
+
+This UNLOCKS a class of strong reasoning models previously hard-disqualified:
+DeepSeek-R1 distills, Qwen3-thinking, GPT-OSS, LFM, Gemma-4 abliterated merges.
+Refusals stay hard-disqualified (a refusal isn't fixed by stripping).
+
+## What this methodology does NOT cover (yet)
 
 - **Multi-turn conversation quality**. Single-prompt smoke doesn't simulate a full chat session.
-- **Tool calling**. Use `ollama-bench` browser subagent for that (separate package).
+- **Tool calling / structured JSON output**. P0 on the roadmap — see `topics/new-benchmarks-roadmap-2026-07-04.md`.
+- **Classification accuracy** (prompt-router / error-classify role). P0 on the roadmap.
 - **Reasoning depth**. Use the `reason` prompts in multi-domain for that (legacy).
-- **Embedding quality**. Use `ollama-bench embedding eval` for that (separate slice).
+- **Embedding quality** (proper MRR eval). P0 on the roadmap — promote the embedding slice.
+- **Rerank quality** (web-research `--smart`). P0 on the roadmap.
 
 For these, see:
+- `topics/new-benchmarks-roadmap-2026-07-04.md` (the prioritized roadmap)
 - `~/.claude/hooks/agent_browser_subagent.py` (browser tool calling)
 - `~/.claude/scripts/diff-review.py` (code review)
 - `~/.claude/scripts/cheap_bench.py` (cloud cascade)

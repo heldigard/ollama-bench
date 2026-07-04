@@ -27,7 +27,7 @@ Librellama/gemma4:e2b-Uncensored                 (improve #2, codeq_sum #4, web_
 SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU  (smart_trim #1, codeq_sum #2, bug_finding #2, web_synth #5)
 aratan/gemma-4-E4B-it-heretic:Q6_K               (code_gen #2, smart_trim #3, bug_finding mid)
 batiai/gemma4-12b:iq3                            (web_synth #2, smart_trim #7)
-batiai/gemma4-e2b:q6                             (code_gen tied, smart_trim #4)
+batiai/gemma4-e2b:q4                             (code_gen tied, smart_trim alt — Q4 only; Q6 deleted, see quant-comparison)
 batiai/gemma4-e4b:q4                             (codeq_sum #1, web_synth #1, bug_finding mid)
 cryptidbleh/gemma4-claude-opus-4.6               (codeq_sum #5, smart_trim #8, web_synth #6, code_gen #7, bug_finding mid)
 cryptidbleh/gemma4-claude-sonnet-4.6             (bug_finding #1, codeq_sum #3, smart_trim #9, web_synth #7, code_gen #8)

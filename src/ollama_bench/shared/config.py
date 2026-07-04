@@ -4,6 +4,7 @@ Single source of truth for the canonical 5 tasks the bench measures.
 Adding a new task means: add to TASKS dict + write the prompts in the
 appropriate feature's PROMPTS.
 """
+
 from __future__ import annotations
 
 import os
@@ -19,31 +20,41 @@ LOGS_DIR = Path.home() / ".cache" / "ollama-bench" / "logs"
 
 # Canonical 5 tasks (mirror harness wiring in ~/.claude/{hooks,scripts}/).
 # Each feature extends these with its own per-prompt items.
+#
+# primary/fallback mirror the per-task winners in RANKING.md (re-bench
+# 2026-07-04, Ollama 0.31.1). They are documentary (not consumed by the bench
+# runner) but MUST stay aligned with RANKING.md — the harness wires these tags
+# into ~/.claude/{hooks,scripts}/. Drift here = drift in the live harness.
 TASKS: dict[str, dict] = {
     "improve": {
         "description": "prompt-improver hook — vague input → structured spec",
         "budget_words": 120,
-        "primary_model_default": "fredrezones55/Qwopus3.5:9b",
+        "primary_model_default": "hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest",
+        "fallback_model": "Librellama/gemma4:e2b-Uncensored",
     },
     "codeq_sum": {
         "description": "codeq summary — 1-line orientation of a function body",
         "budget_words": 30,
-        "primary_model_default": "Librellama/gemma4:e2b-Uncensored",
+        "primary_model_default": "batiai/gemma4-e4b:q4",
+        "fallback_model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8BB-GPU:latest",
     },
     "smart_trim": {
         "description": "PreCompact hook — transcript → handoff",
         "budget_words": 150,
-        "primary_model_default": "qwen3.5:4b",
+        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8BB-GPU:latest",
+        "fallback_model": "fredrezones55/Qwopus3.5:9b",
     },
     "web_synth": {
         "description": "web research — multi-source → 3-paragraph summary",
-        "budget_words": 200,
-        "primary_model_default": "batiai/gemma4-e2b:q6",
+        "budget_words": 180,
+        "primary_model_default": "batiai/gemma4-e4b:q4",
+        "fallback_model": "batiai/gemma4-12b:iq3",
     },
     "code_gen": {
         "description": "code generation — small function with type hints",
         "budget_words": 100,
-        "primary_model_default": "qwen3.5:4b",
+        "primary_model_default": "fredrezones55/Qwopus3.5:9b",
+        "fallback_model": "aratan/gemma-4-E4B-it-heretic:Q6_K",
     },
 }
 

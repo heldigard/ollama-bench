@@ -9,6 +9,7 @@ Single path for ALL features. Critical invariants:
 
 - Default `num_ctx=4096` to keep responses cheap; large contexts OOM.
 """
+
 from __future__ import annotations
 
 import json
@@ -24,10 +25,12 @@ from ollama_bench.shared.config import OLLAMA_URL, TIMEOUT_DEFAULT
 @dataclass(frozen=True)
 class CallOpts:
     """HTTP-call options for Ollama. Frozen so it's hashable / safe to share."""
+
     timeout: int = TIMEOUT_DEFAULT
     num_predict: int = 200
     num_ctx: int = 4096
     temperature: float = 0.2
+    seed: int = 42  # pinned for reproducible bench runs (deterministic ranking)
     think: bool = False  # TOP-LEVEL; moving into options is silently ignored
 
 
@@ -58,17 +61,20 @@ def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any
     The `think` flag is TOP-LEVEL. Don't move it into options.
     """
     o = opts or CallOpts()
-    body = json.dumps({
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-        "think": o.think,
-        "options": {
-            "temperature": o.temperature,
-            "num_predict": o.num_predict,
-            "num_ctx": o.num_ctx,
-        },
-    }).encode()
+    body = json.dumps(
+        {
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+            "think": o.think,
+            "options": {
+                "temperature": o.temperature,
+                "num_predict": o.num_predict,
+                "num_ctx": o.num_ctx,
+                "seed": o.seed,
+            },
+        }
+    ).encode()
     req = urllib.request.Request(
         f"{OLLAMA_URL}/api/generate",
         data=body,

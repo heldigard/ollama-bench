@@ -5,6 +5,7 @@ Fast first-pass filter. ~3s/model. Use to disqualify broken/leaky/empty models
 BEFORE running the slower deep bench. Output: TSV of (name, status, dt, tps,
 len, done, head).
 """
+
 from __future__ import annotations
 
 import csv
@@ -13,27 +14,34 @@ from pathlib import Path
 
 from ollama_bench.shared.ollama import CallOpts, call, get_model_names
 from ollama_bench.shared.paths import result_path
-from ollama_bench.shared.scorer import detect_leaks
+from ollama_bench.shared.scorer import detect_leaks, leaks_are_strippable
 
 SMOKE_PROMPT = "Reply in ONE sentence: what is the difference between a Python list and a tuple?"
 NUM_PREDICT = 80
 
 
 def _status_from(res, out):
+    """Return (status, strippable). strippable='1' if leaks are thinking-trace
+    only (salvageable via strip_reasoning); '0' otherwise (clean, refusal, or error)."""
     if "err" in res:
-        return res["err"].split(":")[0]
+        return res["err"].split(":")[0], "0"
     leaks = detect_leaks(out)
     if not out.strip() and res.get("etoks", 0) > 0:
         leaks.append("empty_response")
-    return "ok" if not leaks else "leak:" + ",".join(leaks)
+    if not leaks:
+        return "ok", "0"
+    strippable = "1" if leaks_are_strippable(leaks) else "0"
+    return "leak:" + ",".join(leaks), strippable
 
 
 def smoke_one(name):
     res = call(name, SMOKE_PROMPT, opts=CallOpts(num_predict=NUM_PREDICT, num_ctx=2048))
     out = res.get("out", "")
+    status, strippable = _status_from(res, out)
     return {
         "name": name,
-        "status": _status_from(res, out),
+        "status": status,
+        "strippable": strippable,
         "dt_s": res.get("dt", 0),
         "tps": res.get("tps", 0),
         "etoks": res.get("etoks", 0),
@@ -44,7 +52,7 @@ def smoke_one(name):
 
 
 def _write_tsv(rows, out_path):
-    keys = ["name", "status", "dt_s", "tps", "etoks", "len", "done", "head"]
+    keys = ["name", "status", "strippable", "dt_s", "tps", "etoks", "len", "done", "head"]
     with out_path.open("w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=keys, delimiter="\t")
         w.writeheader()
@@ -80,7 +88,9 @@ def cmd_smoke(args):
 
 
 def add_parser(sub, parent):
-    p = sub.add_parser("smoke", parents=[parent], help="1-prompt leak gate per model (fast filter).")
+    p = sub.add_parser(
+        "smoke", parents=[parent], help="1-prompt leak gate per model (fast filter)."
+    )
     p.add_argument("-m", "--models", nargs="*", help="Models to smoke (default: all installed).")
     p.add_argument("-o", "--output", help="Output TSV path (default: cache dir).")
     p.set_defaults(cmd=cmd_smoke)
