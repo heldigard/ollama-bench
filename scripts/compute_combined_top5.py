@@ -95,12 +95,12 @@ def main() -> int:
 
     tb_models = {m for ranks in tb.values() for m in ranks}
     not_top = tb_models - top_models
-    print(f"\n\n# Summary")
+    print("\n\n# Summary")
     print(f"  Top-{args.top} unique models (KEEP): {len(top_models)}")
     print(f"  Not in any top-{args.top} (DELETE candidates): {len(not_top)}")
 
     if args.delete and not_top:
-        print(f"\n# ollama rm commands for DELETE candidates:")
+        print("\n# ollama rm commands for DELETE candidates:")
         for m in sorted(not_top):
             print(f"ollama rm '{m}'")
 
