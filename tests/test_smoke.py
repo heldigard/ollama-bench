@@ -48,3 +48,32 @@ def test_cmd_smoke_writes_tsv(tmp_path):
     content = (tmp_path / "out.tsv").read_text()
     assert "m1" in content
     assert "ok" in content
+
+
+def test_is_embedding_model():
+    from ollama_bench.features.smoke.command import _is_embedding_model
+    assert _is_embedding_model("nomic-embed-text:latest")
+    assert _is_embedding_model("embeddinggemma:latest")
+    assert _is_embedding_model("qwen3-embedding:4b")
+    assert not _is_embedding_model("qwen3.5:4b")
+    assert not _is_embedding_model("MobiusDevelopment/gemma-4-12B")
+
+
+def test_cmd_smoke_skips_embeddings(tmp_path):
+    """Embedding models must NOT appear in smoke output (they can't /api/generate)."""
+    fake = MagicMock()
+    fake.__enter__.return_value.read.return_value = json.dumps(
+        {"model": "x", "response": "clean", "done": True,
+         "done_reason": "stop", "eval_count": 5, "eval_duration": 100_000_000}
+    ).encode()
+    args = type("A", (), {
+        "models": ["qwen3.5:4b", "nomic-embed-text:latest", "embeddinggemma:latest"],
+        "output": str(tmp_path / "out.tsv"),
+    })()
+    with patch("urllib.request.urlopen", return_value=fake):
+        rc = cmd_smoke(args)
+    assert rc == 0
+    content = (tmp_path / "out.tsv").read_text()
+    assert "qwen3.5:4b" in content
+    assert "nomic-embed-text" not in content
+    assert "embeddinggemma" not in content

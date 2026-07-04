@@ -52,8 +52,16 @@ def _write_tsv(rows, out_path):
             w.writerow({k: r.get(k, "") for k in keys})
 
 
+def _is_embedding_model(name: str) -> bool:
+    """Heuristic: embedding models can't /api/generate (they return HTTP 400).
+    Skip them in smoke (they have no generative output to leak-check)."""
+    return "embed" in name.lower()
+
+
 def cmd_smoke(args):
     names = args.models if args.models else get_model_names()
+    # Skip embedding models — they error on /api/generate and have no output to gate.
+    names = [n for n in names if not _is_embedding_model(n)]
     print(f"# Smoke pass over {len(names)} models", file=sys.stderr)
     rows = []
     for i, name in enumerate(names, 1):

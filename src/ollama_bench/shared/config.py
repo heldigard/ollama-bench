@@ -47,16 +47,10 @@ TASKS: dict[str, dict] = {
     },
 }
 
-# Models known to be incompatible with Ollama 0.23.2.
-# Used by `ollama-bench list` to flag these explicitly.
-OLLAMA_0_23_INCOMPAT_MODELS: set[str] = {
-    # gemma4 Q4_0 — unknown architecture
-    "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest",
-    "hf.co/google/gemma-4-12B-it-qat-q4_0-gguf:latest",
-    "hf.co/lmstudio-community/gemma-4-12B-it-QAT-GGUF:Q4_0",
-    # qwen3next MTP — layer init fail
-    "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
-}
+# Models that were incompatible with Ollama 0.23.2 but WORK on 0.31.1+.
+# Kept empty as the canonical record; the incompat was the old Ollama version,
+# not the models. See topics/ollama-0.23.2-gemma4-q4_0-incompat.md for history.
+OLLAMA_0_23_INCOMPAT_MODELS: set[str] = set()
 
 # Models known to leak thinking on Ollama 0.23.2 despite think=False (LFM family).
 LEAKY_THINK_MODELS_SUBSTR: tuple[str, ...] = (
