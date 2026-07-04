@@ -1,14 +1,18 @@
 # Current Task
-> Phase 5 of 7: memory bank setup (in progress)
+> Project stable — no active multi-session work
 
-## Remaining phases
+The 7-phase build + re-bench cycle is complete. The package is live at
+https://github.com/heldigard/ollama-bench with 72 passing tests.
 
-- Phase 6: move old bench scripts from `~/bench/ollama/` to `~/ollama-bench/docs/history/`
-- Phase 7: `git init`, `gh repo create heldigard/ollama-bench --public`, push main, add `.github/workflows/test.yml`
+## When a new task surfaces
 
-## Acceptance for current phase
+- **New fine-tune to evaluate** → `ollama-bench smoke && ollama-bench deep && ollama-bench tie-break -w <winners> && ollama-bench bug-finding -m <winners>`
+- **New task type** → add `features/<slice>/` + register in `cli.py::_SLICES` + test
+- **Ollama upgrade** → re-smoke the lineup to confirm no regression
+- **DO NOT** pull Q5/Q6/Q8 variants of existing Q4 winners — see `topics/quant-comparison-2026-07-04.md`
 
-- `~/.cache/ollama-bench/{results,logs}/` populated on real run (smoke + deep + tie-break + report)
-- All tests pass: `python3 -m pytest tests/ -q` → 46 passed
-- `ollama-bench --help` lists 9 sub-commands
-- Layout gate enforces: each features/<slice>/ has command.py with cmd_<slice>, shared/ doesn't import features/, no cross-feature imports
+## Verification (always green)
+
+- `python3 -m pytest tests/ -q` → 72 passed
+- `ruff check src/ tests/ scripts/` → clean
+- `ollama-bench --help` → lists 10 sub-commands

@@ -20,6 +20,10 @@ results_*.log
 .memory-bank/.index/
 .claude/
 
+# agent-coordination registry (auto-managed by home, not project knowledge)
+.memory-bank/agent-sessions.md
+.memory-bank/topics/agent-sessions.md
+
 # local results directories (regenerable)
 docs/history/REPORT.md
 REPORT.md

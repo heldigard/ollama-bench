@@ -7,9 +7,10 @@
 src/ollama_bench/
 ├── shared/        config, paths, ollama, scorer  (infra; no feature deps)
 ├── features/
-│   ├── smoke/        1-prompt leak gate
+│   ├── smoke/        1-prompt leak gate (skips embeddings)
 │   ├── deep/         5-task × N model bench
 │   ├── tie_break/    re-bench tied candidates with harder prompts
+│   ├── bug_finding/  diff-review task (count bugs found) — NEW 2026-07-04
 │   ├── lfm_variant/  codeq summary tie-break for LFM family (think-strip)
 │   ├── multi_domain/ legacy 4-domain bench (improve/compact/code/reason)
 │   ├── judge/        LLM-as-judge helpers
