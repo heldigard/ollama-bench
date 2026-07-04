@@ -58,11 +58,11 @@
 
 | # | score | model |
 |---|---|---|
-| 1 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
-| 2 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| 3 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
-| 4 | 14.40 | `Librellama/gemma4:e2b-Uncensored` |
-| 5 | 14.26 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| 1 | **17.98** | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` ← NEW #1 (2026-07-04) |
+| 2 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
+| 3 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 3 | 15.00 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (leaks `<think>`, strippable) |
+| 5 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
 
 ## Per-task PRIMARY + FALLBACK (wired into harness)
 
@@ -73,25 +73,27 @@
 | smart_trim | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `fredrezones55/Qwopus3.5:9b` |
 | web_synth | `batiai/gemma4-e4b:q4` | `batiai/gemma4-12b:iq3` |
 | code_gen | `fredrezones55/Qwopus3.5:9b` | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
-| bug_finding | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
 
-## Installed models (18 = 16 LLM + 2 embeddings)
+## Installed models (20 = 17 LLM + 3 embeddings)
 
-- `Librellama/gemma4:e2b-Uncensored` 
-- `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` 
-- `aratan/gemma-4-E4B-it-heretic:Q6_K` 
-- `batiai/gemma4-12b:iq3` 
-- `batiai/gemma4-e2b:q4` 
-- `batiai/gemma4-e4b:q4` 
-- `cryptidbleh/gemma4-claude-opus-4.6:latest` 
-- `cryptidbleh/gemma4-claude-sonnet-4.6:latest` 
+- `Librellama/gemma4:e2b-Uncensored`
+- `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest`
+- `aratan/gemma-4-E4B-it-heretic:Q6_K`
+- `batiai/gemma4-12b:iq3`
+- `batiai/gemma4-e4b:q4`
+- `bge-m3:latest` (embedding — multilingual #1, added 2026-07-04)
+- `cryptidbleh/gemma4-claude-opus-4.6:latest`
+- `cryptidbleh/gemma4-claude-sonnet-4.6:latest`
 - `embeddinggemma:latest` (embedding)
-- `fredrezones55/Qwopus3.5:9b` 
-- `free01/gemma4:e4b` 
-- `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` 
-- `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` 
-- `jaahas/crow:9b` 
+- `fredrezones55/Qwopus3.5:9b`
+- `free01/gemma4:e4b`
+- `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`
+- `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest`
+- `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` (bug_finding #1, added 2026-07-04)
+- `jaahas/crow:9b`
+- `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (reasoning; leaks `<think>` strippable; added 2026-07-04)
 - `nomic-embed-text:latest` (embedding)
-- `qwen3.5:4b` 
-- `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` 
-- `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` 
+- `qwen3.5:4b`
+- `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0`
+- `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest`

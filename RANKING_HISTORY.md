@@ -3,7 +3,7 @@
 > Every model ever loaded into this bench cycle. **[KEPT]** = installed; **[DEL]** = tested then removed.
 > Check here BEFORE pulling a model — if it's [DEL], the verdict stands unless a NEW fine-tune (not a requant) drops.
 
-> Total tested: 64 · Kept: 17 · Eliminated: 47
+> Total tested: 68 · Kept: 19 · Eliminated: 49
 
 
 ## improve — top-10 (with status)
@@ -85,18 +85,32 @@
 
 | # | score | model | status |
 |---|---|---|---|
-| 1 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` | **[KEPT]** |
-| 2 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | **[KEPT]** |
-| 3 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` | **[KEPT]** |
-| 4 | 14.40 | `Librellama/gemma4:e2b-Uncensored` | **[KEPT]** |
-| 5 | 14.26 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` | **[KEPT]** |
-| 6 | 14.11 | `jaahas/crow:9b` | **[KEPT]** |
-| 7 | 13.20 | `qwen3.5:4b` | **[KEPT]** |
-| 8 | 12.78 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` | **[KEPT]** |
-| 9 | 12.56 | `aratan/gemma-4-E4B-it-heretic:Q6_K` | **[KEPT]** |
-| 10 | 12.28 | `free01/gemma4:e4b` | **[KEPT]** |
+| 1 | **17.98** | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | **[KEPT]** NEW 2026-07-04 (beats prev #1) |
+| 2 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` | **[KEPT]** (now bug_finding fallback) |
+| 3 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | **[KEPT]** |
+| 3 | 15.00 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` | **[KEPT]** NEW 2026-07-04 (reasoning; leaks `<think>`, strippable) |
+| 5 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` | **[KEPT]** |
+| 6 | 14.40 | `Librellama/gemma4:e2b-Uncensored` | **[KEPT]** |
+| 7 | 14.26 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` | **[KEPT]** |
+| 8 | 14.11 | `jaahas/crow:9b` | **[KEPT]** |
+| 9 | 13.20 | `qwen3.5:4b` | **[KEPT]** |
+| 10 | 12.78 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` | **[KEPT]** |
 
-## Eliminated registry (47 models — DO NOT re-pull unless a new fine-tune appears)
+## 2026-07-04 incremental batch — new HF candidates (first-pass deep + ground-truth)
+
+> Benched with `seed=42`. Deep scores are first-pass (saturate 7.0); these
+> models did NOT go through the full tie-break, so they're not in the
+> combined-rank tables above — kept here as a complete metric record so they're
+> never re-pulled blindly.
+
+| model | improve | codeq_sum | smart_trim | web_synth | code_gen | bug_finding | tool_call | verdict |
+|---|---|---|---|---|---|---|---|---|
+| `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | 0.52 | 5.98 | 7.0 (sat) | 7.0 (sat) | 5.83 | **17.98** | 9.82 | **[KEPT]** — new bug_finding #1 |
+| `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` | 0.75 | -4.0 | 5.0 | 0.0 | -1.0 | 15.00 | 8.74 | **[KEPT]** — reasoning; leaks (strippable=1); bug_finding parity |
+| `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` | 0.10 | 2.19 | 2.59 | 1.08 | 1.90 | 13.48 | 8.30 | **[DEL]** below incumbents on all 5 deep + bug_finding |
+| `hf.co/DuoNeural/OpenYourMind-Gemma4-12B-IT-Abliterated-GGUF:Q4_K_M` | -0.29 | 1.73 | 2.96 | 3.17 | 0.71 | 11.66 | 8.30 | **[DEL]** below incumbents everywhere; incremental over existing heretic Gemma4-12B |
+
+## Eliminated registry (49 models — DO NOT re-pull unless a new fine-tune appears)
 
 - `HanifAR24/gemma4-e2b-distilled:latest` — reasoning-distilled trap
 - `MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest` — low rank after Ollama 0.31.1 unification (improve #23, codeq_sum #37)
@@ -145,3 +159,6 @@
 - `ssfdre38/gemma4-turbo:e2b` — non-winner ssfdre38 variant
 - `ssfdre38/gemma4-turbo:latest` — non-winner (below top-5 combined-rank)
 - `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:latest` — Q4_K_M lost to Q8_0 of same family (Q8 kept for bug-finding)
+- `hf.co/DuoNeural/OpenYourMind-Gemma4-12B-IT-Abliterated-GGUF:Q4_K_M` — [DEL 2026-07-04] below incumbents on all 5 deep tasks + bug_finding (11.66); incremental over existing heretic/abliterated Gemma4-12B (SC117, pegasus912)
+- `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` — [DEL 2026-07-04] Opus 4.8 style didn't beat Opus 4.6 incumbents; weak on all 5 deep tasks + bug_finding (13.48 < 15.21). Ollama normalizes dots→hyphens in tags (invoke as Claude-4.6-4.8, not Claude-4.6.4.8)
+- `batiai/gemma4-e2b:q4` — [DEL 2026-07-04] top-5 cull: not in combined-rank top-5 on any task. Tie-break metrics (from quant-comparison-2026-07-04): improve 6.00, codeq_sum 11.0, smart_trim 10.5, web_synth 7.0, code_gen 16.0. Strong code_gen tie-break but deep-rank pulled combined outside top-5; e4b:q4 (codeq_sum/web_synth #1) + qwen3.5:4b (anchor) cover the small-Q4 slots. Not wired anywhere in ~/.claude.
