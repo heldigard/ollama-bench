@@ -60,10 +60,24 @@
 |---|---|---|
 | 1 | **17.98** | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` ← NEW #1 (2026-07-04) |
 | 2 | **15.86** | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` (beats xentriom Q8_0 14.26) |
-| 3 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
-| 4 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| 4 | 15.00 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (leaks `<think>`, strippable) |
-| 6 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| 3 | **15.50** | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (Opus 4.6 + function-calling) |
+| 4 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
+| 5 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 5 | 15.00 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (leaks `<think>`, strippable) |
+| 7 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+
+## tool_call (structured JSON output — new slice, ground-truth)
+
+| # | score | model |
+|---|---|---|
+| 1 | **9.85** | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (function-calling fine-tune) |
+| 2 | 9.83 | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` |
+| 3 | 9.82 | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+| 4 | 8.74 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` |
+
+> No harness consumer wired to tool_call YET (the slice is new). functiongemma
+> is the champion when a tool-dispatch role (agent-browser, MCP, n8n) needs a
+> local model.
 
 ## Per-task PRIMARY + FALLBACK (wired into harness)
 
@@ -76,7 +90,7 @@
 | code_gen | `fredrezones55/Qwopus3.5:9b` | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
 | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
 
-## Installed models (21 = 18 LLM + 3 embeddings)
+## Installed models (23 = 20 LLM + 3 embeddings)
 
 - `Librellama/gemma4:e2b-Uncensored`
 - `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest`
@@ -91,6 +105,8 @@
 - `free01/gemma4:e4b`
 - `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`
 - `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest`
+- `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (tool_call #1 + code_gen #1-tier, added 2026-07-04)
+- `hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q3_K_M` (30B MoE, 3B active — slow but clean; bench pending, added 2026-07-04)
 - `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` (bug_finding #2 + code_gen tied #1, added 2026-07-04)
 - `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` (bug_finding #1, added 2026-07-04)
 - `jaahas/crow:9b`
