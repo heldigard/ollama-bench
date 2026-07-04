@@ -1,0 +1,25 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.coverage
+.coverage.*
+htmlcov/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+results_*.tsv
+results_*.log
+*.bak
+.DS_Store
+
+# editor / harness noise
+.idea/
+.vscode/
+*.swp
+.memory-bank/.index/
+.claude/
+
+# local results directories (regenerable)
+docs/history/REPORT.md
+REPORT.md
