@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 
 from ollama_bench import __version__
+from ollama_bench.features.browser_tool.command import add_parser as add_browser_tool
 from ollama_bench.features.bug_finding.command import add_parser as add_bug_finding
 from ollama_bench.features.deep.command import add_parser as add_deep
 from ollama_bench.features.embedding.command import add_parser as add_embedding
@@ -17,6 +18,7 @@ from ollama_bench.features.judge.command import add_parser as add_judge
 from ollama_bench.features.lfm_variant.command import add_parser as add_lfm
 from ollama_bench.features.list.command import add_parser as add_list
 from ollama_bench.features.multi_domain.command import add_parser as add_multi_domain
+from ollama_bench.features.pdf_extract.command import add_parser as add_pdf_extract
 from ollama_bench.features.report.command import add_parser as add_report
 from ollama_bench.features.smoke.command import add_parser as add_smoke
 from ollama_bench.features.tie_break.command import add_parser as add_tie_break
@@ -30,6 +32,8 @@ _SLICES = [
     ("tie-break", add_tie_break, "Re-bench tied candidates with harder prompts"),
     ("bug-finding", add_bug_finding, "Diff-review bench (count bugs found)"),
     ("tool-call", add_tool_call, "Structured JSON tool-call bench (ground-truth)"),
+    ("browser-tool", add_browser_tool, "Ref-grounded a11y action bench (snap+ref)"),
+    ("pdf-extract", add_pdf_extract, "Schema field-extraction bench (abstention)"),
     ("lfm-variant", add_lfm, "codeq summary tie-break for LFM family"),
     ("multi-domain", add_multi_domain, "Legacy 4-domain bench"),
     ("judge", add_judge, "LLM-as-judge helpers"),

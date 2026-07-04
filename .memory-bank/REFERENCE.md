@@ -1,7 +1,7 @@
 # Reference
 > Stable facts about ollama-bench — CLI, scoring, models.
 
-## CLI Surface (10 sub-commands)
+## CLI Surface (14 sub-commands)
 
 ```bash
 ollama-bench --version            # 0.1.0
@@ -12,6 +12,10 @@ ollama-bench smoke [-m M...] [-o FILE]        # 1-prompt leak gate (skips embedd
 ollama-bench deep [-c C...] [-t T...] [-o FILE]   # 5-task x N model
 ollama-bench tie-break -w W... [-o FILE]     # re-bench tied candidates (hard prompts)
 ollama-bench bug-finding -m M... [-o FILE]   # diff-review task (count bugs found)
+ollama-bench tool-call -m M... [-o FILE]     # structured JSON tool-call (ground-truth)
+ollama-bench browser-tool -m M... [-o FILE]  # ref-grounded a11y action (snap+ref)
+ollama-bench pdf-extract -m M... [-o FILE]   # schema field extraction + abstention
+ollama-bench embedding-retrieval [-m M]      # embedding MRR + recall@5 (ground-truth)
 ollama-bench lfm-variant [-v V...] [-o FILE]  # codeq summary for LFM family (think-strip)
 ollama-bench multi-domain [-m M] [-o FILE]    # legacy 4-domain
 ollama-bench judge score -i IN [-o OUT]      # LLM-as-judge

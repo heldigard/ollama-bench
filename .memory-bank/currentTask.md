@@ -15,4 +15,4 @@ https://github.com/heldigard/ollama-bench with 72 passing tests.
 
 - `python3 -m pytest tests/ -q` → 72 passed
 - `ruff check src/ tests/ scripts/` → clean
-- `ollama-bench --help` → lists 10 sub-commands
+- `ollama-bench --help` → lists 14 sub-commands

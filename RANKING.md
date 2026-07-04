@@ -79,6 +79,35 @@
 > is the champion when a tool-dispatch role (agent-browser, MCP, n8n) needs a
 > local model.
 
+## browser_tool (ref-grounded a11y action — new slice, ground-truth)
+
+| # | score | model |
+|---|---|---|
+| 1 | **10.19** | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (browser #1 + tool_call #1) |
+| 2 | 10.18 | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+| 3 | 10.15 | `jaahas/crow:9b` |
+| 4 | 10.01 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 5 | 9.70 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (was the agent-browser PROXY PRIMARY — retired: only #5) |
+| 6 | 8.06 | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` |
+
+> agent_browser_subagent.py rewired 2026-07-04: PRIMARY = functiongemma (#1), FALLBACK =
+> pegasus912 (#5, gemma4 family diversity). Both now BENCHED, no more proxies.
+
+## pdf_extract (schema field extraction + abstention — new slice, ground-truth)
+
+| # | score | model |
+|---|---|---|
+| 1 | **11.15** | `jaahas/crow:9b` |
+| 2 | 11.14 | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
+| 2 | 11.14 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (pdf-extract-structured.py default — proxy RETIRED: confirmed tied #1) |
+| 2 | 11.14 | `batiai/gemma4-12b:iq3` |
+| 5 | 11.13 | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` |
+| 6 | 11.12 | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+
+> Field saturated within 0.03 (6 models) — pdf extraction at this difficulty is easy for the
+> whole lineup; pegasus912 is a sound default (crow:9b edges it on noise only). Harder docs
+> (messy OCR, ambiguous tables) needed to discriminate further.
+
 ## Per-task PRIMARY + FALLBACK (wired into harness)
 
 | task | PRIMARY (#1) | FALLBACK (#2) |
@@ -89,6 +118,8 @@
 | web_synth | `batiai/gemma4-e4b:q4` | `batiai/gemma4-12b:iq3` |
 | code_gen | `fredrezones55/Qwopus3.5:9b` | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
 | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
+| browser_tool | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (gemma4 family diversity) |
+| pdf_extract | `jaahas/crow:9b` (11.15, edge) | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (tied 11.14; current pdf-extract default) |
 
 ## Installed models (22 = 19 LLM + 3 embeddings)
 

@@ -2,7 +2,7 @@
 > Project: ollama-bench — vertical-slice CLI for local Ollama model evaluation
 
 ## Read First
-- CONTEXT.md: current state (11 subcommands, 22-model lineup, harness wiring)
+- CONTEXT.md: current state (14 subcommands, 22-model lineup, harness wiring)
 - REFERENCE.md: stable facts (CLI surface, scoring rubrics, leak patterns)
 - systemPatterns.md: architectural decisions (vertical-slice, two-pass scoring)
 - topics/local-ollama-lineup.md: 16 LLM winners + per-role map (re-bench 2026-07-04)
@@ -26,7 +26,7 @@
 .memory-bank/
 ├── MEMORY.md            (this file)
 ├── CONTEXT.md           current state (re-bench 2026-07-04)
-├── REFERENCE.md         stable CLI / scoring facts (10 subcommands)
+├── REFERENCE.md         stable CLI / scoring facts (14 subcommands)
 ├── systemPatterns.md    architectural decisions
 ├── activeContext.md     recent handoff
 ├── currentTask.md       active focus

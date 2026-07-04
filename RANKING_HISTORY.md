@@ -114,6 +114,39 @@
 | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | 3.05 | 6.04 | 7.0 (sat) | 5.00 | **7.00** | 15.50 | **9.85** | **[KEPT]** — tool_call #1 (9.85 > huihui 9.82), code_gen deep #1-tier (7.0 > incumbent 6.0), bug_finding #3; Opus 4.6 + function-calling fine-tune |
 | `hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q3_K_M` | 1.75 | 3.98 | 4.67 | 2.51 | 4.82 | 12.59 | 9.81 | **[DEL]** — 30B MoE (3B active) hypothesis (large knowledge + small active compute) did NOT pan out: slower (20s/smoke) AND weaker than dense 9-12B on every task except tool_call (9.81). Q3 quant on 30B degrades; VRAM spill on 16GB. Dense Qwen3.5-9B+Opus merges (functiongemma/huihui) outperform. Culled (14 GB freed). |
 
+## 2026-07-04 ground-truth slices — browser_tool + pdf_extract (proxy retirement)
+
+> Two new bench slices landed (`features/browser_tool/`, `features/pdf_extract/`) to retire
+> the last PROXY model choices in the cross-CLI harness (agent_browser + pdf-extract both
+> used pegasus912 as an un-benched "improve #1" proxy). Existing models re-benched — no new
+> pulls, no change to tested/kept/elim counts (72/22/50).
+
+**browser_tool** (ref-grounded a11y action; +3 JSON, +3 known action, +3 grounded ref):
+
+| model | browser_tool | verdict |
+|---|---|---|
+| `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | **10.19 (#1)** | agent_browser PRIMARY — was FALLBACK, promoted (also tool_call #1) |
+| `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | 10.18 | #2 |
+| `jaahas/crow:9b` | 10.15 | #3 |
+| `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | 10.01 | #4 |
+| `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` | 9.70 | agent_browser FALLBACK — was PROXY PRIMARY, retired (only #5); kept as gemma4-family diversity fallback |
+| `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` | 8.06 | #6 |
+
+**pdf_extract** (schema field extraction + abstention; +3 JSON, +1.5/field, +2 abstain / -2 hallucinate):
+
+| model | pdf_extract | verdict |
+|---|---|---|
+| `jaahas/crow:9b` | **11.15 (#1)** | edges on noise only |
+| `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | 11.14 | tied |
+| `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` | 11.14 | pdf-extract DEFAULT — proxy caveat RETIRED (confirmed tied #1) |
+| `batiai/gemma4-12b:iq3` | 11.14 | tied |
+| `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` | 11.13 | tied |
+| `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | 11.12 | tied |
+
+> pdf_extract saturated within 0.03 across the whole field — extraction at this difficulty is
+> easy for the lineup; pegasus912 stays the pdf-extract default (sound, 12B, improve #1).
+> Harder docs (messy OCR, ambiguous tables) needed to discriminate further — deferred.
+
 ## Eliminated registry (49 models — DO NOT re-pull unless a new fine-tune appears)
 
 - `HanifAR24/gemma4-e2b-distilled:latest` — reasoning-distilled trap

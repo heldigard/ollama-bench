@@ -14,8 +14,8 @@
 | codeq | summary / context / relations | `batiai/gemma4-e4b:q4` (`CODEQ_SUMMARY_MODEL`) | ~/codeq | ✅ source aligned (codeq_sum #1) |
 | diff-review | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` (`OLLAMA_CODE_MODEL`) | ~/.claude/scripts/diff-review.py | ✅ aligned (bug_finding #1, 17.98) |
 | project-memory | maintain (semantic-dedup + compact) | `batiai/gemma4-e4b:q4` | ~/.claude/scripts/project-memory.py | ✅ aligned (codeq_sum/web_synth #1) |
-| agent-browser subagent | browser PRIMARY | `pegasus912` (improve #1 proxy; no browser bench slice yet); FALLBACK `functiongemma` (tool_call #1 9.85) | ~/.claude/scripts/agent_browser_subagent.py | ⚠️ PRIMARY proxy — add browser slice to remove guess; FALLBACK is benched |
-| pdf-extract-structured | PDF extraction | `pegasus912` (improve #1 proxy) + OPT-IN cloud escape `deepseek-v4-flash` (`PDF_EXTRACT_CLOUD_FALLBACK=1`) | ~/.claude/scripts/pdf-extract-structured.py | ⚠️ proxy; cloud escape added 2026-07-04 |
+| agent-browser subagent | browser PRIMARY | PRIMARY `functiongemma` (browser-tool #1 10.19 + tool_call #1 9.85); FALLBACK `pegasus912` (browser #5 9.70, gemma4 family diversity) | ~/.claude/scripts/agent_browser_subagent.py | ✅ benched (browser-tool slice 2026-07-04; pegasus912 proxy retired — was only #5) |
+| pdf-extract-structured | PDF extraction | `pegasus912` (pdf_extract tied #1 11.14; field saturated within 0.03) + OPT-IN cloud escape `deepseek-v4-flash` (`PDF_EXTRACT_CLOUD_FALLBACK=1`) | ~/.claude/scripts/pdf-extract-structured.py | ✅ benched (slice 2026-07-04; proxy confirmed sound, caveat retired) |
 | ollama_client | DEFAULT_GEN_MODEL (universal anchor) | `qwen3.5:4b` | ~/.claude/scripts/ollama_client.py | ✅ anchor (always installed) |
 | ollama_client | DEFAULT_EMBED_MODEL | `embeddinggemma` (768-d) | same | ✅ MRR 0.724; bge-m3 ties, kept as alt |
 | memory-semantic | rerank (LLM-as-reranker) | `qwen3.5:4b` | ~/.claude/scripts/memory-semantic.py | ✅ anchor |
