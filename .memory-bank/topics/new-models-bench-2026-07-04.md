@@ -98,3 +98,18 @@ yet. Re-benching incumbents on tool_call is a documented next step.)
 ### yuxinlu1 composer v2-3.5x-tau2 (Gemma4-12B agentic fable5+composer2.5)
 - Newest composer/fable blend (distinct from the installed xentriom Q8_0 v2).
 - Smoke clean (ok, 4.49s, tps 6.7). Benched: see results below.
+
+### Embed decision (resolved 2026-07-04 via embedding-retrieval slice)
+| model | MRR | recall@5 |
+|---|---|---|
+| bge-m3 | 1.000 | 1.000 |
+| embeddinggemma | 1.000 | 1.000 |
+| nomic-embed-text | 0.875 | 1.000 |
+
+bge-m3 TIES embeddinggemma (both perfect on the 8-case bilingual set). Since
+embeddinggemma is already installed + 768-d (matches the memory-semantic index)
+and bge-m3 is 1024-d (would need a full reindex), there is NO reason to switch.
+**Decision: embeddinggemma stays primary; bge-m3 kept as a multilingual
+alternative only. No reindex.** (The bench is low-discrimination — gold is
+clearly distinct in all 8 cases; a harder set with near-duplicate distractors
+would be needed to pick a true winner. Documented as future work.)
