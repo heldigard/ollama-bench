@@ -3,8 +3,8 @@ from __future__ import annotations
 
 from ollama_bench.features.multi_domain.command import (
     ALL_TESTS,
-    COMPACT_PROMPTS,
     CODE_PROMPTS,
+    COMPACT_PROMPTS,
     IMPROVE_PROMPTS,
     REASON_PROMPTS,
     BenchResult,
