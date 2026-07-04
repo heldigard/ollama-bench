@@ -21,7 +21,8 @@ def _fake_response(response_text: str) -> MagicMock:
         }
     ).encode()
     mock = MagicMock()
-    mock.__enter__.return_value.read.return_value = body
+    mock.read.return_value = body  # non-`with` path (_post_json does r.read())
+    mock.__enter__.return_value.read.return_value = body  # legacy `with` path
     return mock
 
 
@@ -64,6 +65,7 @@ def test_cmd_smoke_writes_tsv(tmp_path):
             "eval_duration": 100_000_000,
         }
     ).encode()
+    fake.read.return_value = fake.__enter__.return_value.read.return_value
 
     args = type("A", (), {"models": ["m1"], "output": str(tmp_path / "out.tsv")})()
     with patch("urllib.request.urlopen", return_value=fake):
@@ -98,6 +100,7 @@ def test_cmd_smoke_skips_embeddings(tmp_path):
             "eval_duration": 100_000_000,
         }
     ).encode()
+    fake.read.return_value = fake.__enter__.return_value.read.return_value
     args = type(
         "A",
         (),

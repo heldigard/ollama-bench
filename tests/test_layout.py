@@ -5,9 +5,11 @@ Enforces the structural rules from CLAUDE.md:
   - shared/ never imports from features/
   - No cross-feature imports (except via shared)
 """
+
 from __future__ import annotations
 
 import ast
+import re
 from pathlib import Path
 
 import pytest
@@ -97,7 +99,10 @@ def test_no_cross_feature_imports():
                 # Look for sibling-feature imports
                 for other in slice_names:
                     if other != slice_dir.name:
-                        if f"ollama_bench.features.{other}" in imp:
+                        # Word-boundary match: `features.embedding` must NOT match
+                        # `features.embedding_retrieval` (prefix collision). The
+                        # negative lookahead rejects identifier chars after the name.
+                        if re.search(rf"features\.{re.escape(other)}(?![a-zA-Z0-9_])", imp):
                             pytest.fail(
                                 f"{f} imports from features.{other} "
                                 f"(cross-feature, use shared/ instead)"
@@ -111,6 +116,4 @@ def test_cli_lists_all_slices():
     for slice_dir in features_dir.iterdir():
         if not slice_dir.is_dir() or slice_dir.name.startswith("_"):
             continue
-        assert f"features.{slice_dir.name}" in cli, (
-            f"cli.py missing import for {slice_dir.name}"
-        )
+        assert f"features.{slice_dir.name}" in cli, f"cli.py missing import for {slice_dir.name}"

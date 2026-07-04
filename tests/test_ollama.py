@@ -24,7 +24,8 @@ def _fake_response(
         }
     ).encode()
     mock = MagicMock()
-    mock.__enter__.return_value.read.return_value = body
+    mock.read.return_value = body  # non-`with` path (_post_json does r.read())
+    mock.__enter__.return_value.read.return_value = body  # legacy `with` path
     return mock
 
 

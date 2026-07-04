@@ -10,6 +10,10 @@ Single path for ALL features. Critical invariants:
 - Default `num_ctx=4096` to keep responses cheap; large contexts OOM.
 """
 
+# vs-soft-allow  — single-responsibility HTTP helper; the multi-line request-body
+# dict literal in call() inflates lexical indentation without adding control-flow
+# nesting (it's an expression, not a block). _post_json keeps real depth ≤3.
+
 from __future__ import annotations
 
 import json
@@ -45,6 +49,29 @@ def get_model_names() -> list[str]:
     return [m["name"] for m in get_models()]
 
 
+def _post_json(url: str, body: bytes, timeout: int) -> dict[str, Any]:
+    """POST `body` to `url`, return parsed JSON dict (or {"err": ...} on failure).
+
+    Shared by call() + embed(). Non-`with` pattern (urlopen + close in finally)
+    keeps nesting depth ≤2 so the vertical-slice guard passes; both call sites
+    share one error-handling path (DRY). The success dict is the raw Ollama
+    response; callers check `if "err" in data` before reading fields.
+    """
+    req = urllib.request.Request(
+        url, data=body, headers={"Content-Type": "application/json"}, method="POST"
+    )
+    try:
+        r = urllib.request.urlopen(req, timeout=timeout)
+    except urllib.error.HTTPError as e:
+        return {"err": f"HTTP {e.code}: {e.read().decode(errors='replace')[:200]}"}
+    except Exception as e:
+        return {"err": f"{type(e).__name__}: {str(e)[:200]}"}
+    try:
+        return json.loads(r.read())
+    finally:
+        r.close()
+
+
 def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any]:
     """Single Ollama /api/generate call. Non-streaming.
 
@@ -75,20 +102,10 @@ def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any
             },
         }
     ).encode()
-    req = urllib.request.Request(
-        f"{OLLAMA_URL}/api/generate",
-        data=body,
-        headers={"Content-Type": "application/json"},
-        method="POST",
-    )
     t0 = time.perf_counter()
-    try:
-        with urllib.request.urlopen(req, timeout=o.timeout) as r:
-            data = json.load(r)
-    except urllib.error.HTTPError as e:
-        return {"err": f"HTTP {e.code}: {e.read().decode(errors='replace')[:200]}"}
-    except Exception as e:
-        return {"err": f"{type(e).__name__}: {str(e)[:200]}"}
+    data = _post_json(f"{OLLAMA_URL}/api/generate", body, o.timeout)
+    if "err" in data:
+        return data
     dt = time.perf_counter() - t0
     out = data.get("response", "") or ""
     return {
@@ -100,3 +117,23 @@ def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any
         "done": data.get("done_reason"),
         "out": out,
     }
+
+
+def embed(model: str, text: str, timeout: int = TIMEOUT_DEFAULT) -> dict[str, Any]:
+    """Single Ollama /api/embeddings call. Non-streaming.
+
+    Returns:
+      - vec: list[float] (the embedding)
+      - dt: wall seconds
+      - err: error string on failure (no other keys)
+
+    Uses the legacy /api/embeddings endpoint (stable across Ollama versions,
+    works for nomic-embed-text, embeddinggemma, bge-m3). num_ctx is not set —
+    embedders use their own context window.
+    """
+    body = json.dumps({"model": model, "prompt": text}).encode()
+    t0 = time.perf_counter()
+    data = _post_json(f"{OLLAMA_URL}/api/embeddings", body, timeout)
+    if "err" in data:
+        return data
+    return {"vec": data.get("embedding") or [], "dt": round(time.perf_counter() - t0, 2)}

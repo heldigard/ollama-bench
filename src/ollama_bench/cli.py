@@ -12,6 +12,7 @@ from ollama_bench import __version__
 from ollama_bench.features.bug_finding.command import add_parser as add_bug_finding
 from ollama_bench.features.deep.command import add_parser as add_deep
 from ollama_bench.features.embedding.command import add_parser as add_embedding
+from ollama_bench.features.embedding_retrieval.command import add_parser as add_embedding_retrieval
 from ollama_bench.features.judge.command import add_parser as add_judge
 from ollama_bench.features.lfm_variant.command import add_parser as add_lfm
 from ollama_bench.features.list.command import add_parser as add_list
@@ -33,6 +34,7 @@ _SLICES = [
     ("multi-domain", add_multi_domain, "Legacy 4-domain bench"),
     ("judge", add_judge, "LLM-as-judge helpers"),
     ("embedding", add_embedding, "Embedding model evaluation"),
+    ("embedding-retrieval", add_embedding_retrieval, "Embedding MRR + recall@5 (ground-truth)"),
     ("list", add_list, "Enumerate installed models + flag incompat"),
     ("report", add_report, "Generate markdown ranking from bench results"),
 ]
