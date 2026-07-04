@@ -81,3 +81,20 @@ yet. Re-benching incumbents on tool_call is a documented next step.)
   codeq_sum budget. Strip is mechanically correct; the model just isn't a great
   codeq_sum fit. Confirms strip WORKS, not that every leaky model wins.
 - seed=42 now pinned → these numbers are reproducible.
+
+## Round-2 additions (2026-07-04)
+
+### bge-m3 (embedding) — INSTALLED, dimension caveat
+- Pulled + functional (`/api/embeddings` returns dim=**1024**).
+- Multilingual MTEB #1 (dense+sparse+multi-vector).
+- **CAVEAT**: host's embeddinggemma + nomic-embed-text are **768-d**; the
+  memory-semantic index (`~/.claude/scripts/memory-semantic.py`, semindex) is
+  768-d. bge-m3 CANNOT drop-in swap — it needs a separate index OR a full
+  re-index. Decision deferred to the embedding_retrieval bench (P0 roadmap):
+  bench bge-m3 vs embeddinggemma on the bilingual retrieval set, then decide
+  whether the multilingual quality justifies the re-index.
+- nomic-embed-text stays the universal embed fallback for now.
+
+### yuxinlu1 composer v2-3.5x-tau2 (Gemma4-12B agentic fable5+composer2.5)
+- Newest composer/fable blend (distinct from the installed xentriom Q8_0 v2).
+- Smoke clean (ok, 4.49s, tps 6.7). Benched: see results below.
