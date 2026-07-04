@@ -3,7 +3,7 @@
 > Every model ever loaded into this bench cycle. **[KEPT]** = installed; **[DEL]** = tested then removed.
 > Check here BEFORE pulling a model — if it's [DEL], the verdict stands unless a NEW fine-tune (not a requant) drops.
 
-> Total tested: 70 · Kept: 21 · Eliminated: 49
+> Total tested: 72 · Kept: 22 · Eliminated: 50
 
 
 ## improve — top-10 (with status)
@@ -112,6 +112,7 @@
 | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` | 3.08 | 5.80 | 7.0 (sat) | 5.00 | 6.00 | **15.86** | 9.83 | **[KEPT]** — bug_finding #2, code_gen ties #1, improve #2-tier; beats xentriom Q8_0 (14.26) |
 | `bge-m3:latest` (embedding) | — | — | — | — | — | — | — | **[KEPT]** — multilingual embed #1 (dim 1024); TIES embeddinggemma on embedding-retrieval (MRR 1.000); no rewire (768-d index stays) |
 | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | 3.05 | 6.04 | 7.0 (sat) | 5.00 | **7.00** | 15.50 | **9.85** | **[KEPT]** — tool_call #1 (9.85 > huihui 9.82), code_gen deep #1-tier (7.0 > incumbent 6.0), bug_finding #3; Opus 4.6 + function-calling fine-tune |
+| `hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q3_K_M` | 1.75 | 3.98 | 4.67 | 2.51 | 4.82 | 12.59 | 9.81 | **[DEL]** — 30B MoE (3B active) hypothesis (large knowledge + small active compute) did NOT pan out: slower (20s/smoke) AND weaker than dense 9-12B on every task except tool_call (9.81). Q3 quant on 30B degrades; VRAM spill on 16GB. Dense Qwen3.5-9B+Opus merges (functiongemma/huihui) outperform. Culled (14 GB freed). |
 
 ## Eliminated registry (49 models — DO NOT re-pull unless a new fine-tune appears)
 

@@ -90,7 +90,7 @@
 | code_gen | `fredrezones55/Qwopus3.5:9b` | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
 | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
 
-## Installed models (23 = 20 LLM + 3 embeddings)
+## Installed models (22 = 19 LLM + 3 embeddings)
 
 - `Librellama/gemma4:e2b-Uncensored`
 - `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest`
@@ -106,7 +106,6 @@
 - `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`
 - `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest`
 - `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (tool_call #1 + code_gen #1-tier, added 2026-07-04)
-- `hf.co/unsloth/Qwen3-Coder-30B-A3B-Instruct-GGUF:Q3_K_M` (30B MoE, 3B active — slow but clean; bench pending, added 2026-07-04)
 - `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` (bug_finding #2 + code_gen tied #1, added 2026-07-04)
 - `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` (bug_finding #1, added 2026-07-04)
 - `jaahas/crow:9b`
