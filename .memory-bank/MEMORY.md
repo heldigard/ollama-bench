@@ -6,6 +6,7 @@
 - REFERENCE.md: stable facts (CLI surface, scoring rubrics, leak patterns)
 - systemPatterns.md: architectural decisions (vertical-slice, two-pass scoring)
 - topics/local-ollama-lineup.md: 16 LLM winners + per-role map (re-bench 2026-07-04)
+- topics/harness-wiring-2026-07-04.md: cross-CLI consumer → champion map (which tool runs which model) + live-env drift gotcha
 - topics/bench-methodology.md: smoke → deep → tie-break → bug-finding pipeline (+ `--strip` think-strip mode, 14 leak patterns)
 - topics/new-benchmarks-roadmap-2026-07-04.md: 8 new bench dimensions mapped to cross-cli consumers (tool_call landed)
 - topics/new-models-bench-2026-07-04.md: 4 HF candidates benched — huihui = NEW bug_finding #1 (17.98 > 15.21)
