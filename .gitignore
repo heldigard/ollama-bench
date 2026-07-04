@@ -27,3 +27,5 @@ results_*.log
 # local results directories (regenerable)
 docs/history/REPORT.md
 REPORT.md
+# spurious uv lockfile (project uses hatchling + pip, not uv)
+uv.lock
