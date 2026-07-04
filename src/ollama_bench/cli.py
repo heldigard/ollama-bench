@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 
 from ollama_bench import __version__
+from ollama_bench.features.bug_finding.command import add_parser as add_bug_finding
 from ollama_bench.features.deep.command import add_parser as add_deep
 from ollama_bench.features.embedding.command import add_parser as add_embedding
 from ollama_bench.features.judge.command import add_parser as add_judge
@@ -24,6 +25,7 @@ _SLICES = [
     ("smoke", add_smoke, "1-prompt leak gate per model (fast filter)"),
     ("deep", add_deep, "5-task x N model bench"),
     ("tie-break", add_tie_break, "Re-bench tied candidates with harder prompts"),
+    ("bug-finding", add_bug_finding, "Diff-review bench (count bugs found)"),
     ("lfm-variant", add_lfm, "codeq summary tie-break for LFM family"),
     ("multi-domain", add_multi_domain, "Legacy 4-domain bench"),
     ("judge", add_judge, "LLM-as-judge helpers"),

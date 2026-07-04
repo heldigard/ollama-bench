@@ -15,9 +15,18 @@
 
 ## Bench results carried over (raw TSVs)
 
-- `~/bench/ollama/results_smoke_all.tsv` — 63 models × leak status (2026-07-04)
-- `~/bench/ollama/results_deep_bench.tsv` — 40 candidates × 5 tasks (2026-07-04)
-- `~/bench/ollama/RANKING_TIEBREAK.md` — 23 winners × 5 hard tasks (2026-07-04)
-- `~/bench/ollama/LFM_RANKING.md` — 9 LFM variants × codeq summary (2026-07-04)
+Historical results from earlier rounds (pre-package) live in `docs/history/results/`.
+Current re-bench (2026-07-04, Ollama 0.31.1) outputs:
 
-The CLI `ollama-bench` is the new way to generate these.
+- `~/.cache/ollama-bench/results/smoke_all.tsv` — 64 models × leak status
+- `~/.cache/ollama-bench/results/deep_bench.{tsv,md}` — 47 candidates × 5 tasks
+- `~/.cache/ollama-bench/results/tiebreak_ranking.md` — 24 winners × 5 hard tasks
+- `~/.cache/ollama-bench/results/bug_finding.md` — 15 candidates × 2 diffs
+
+The CLI `ollama-bench` is the way to regenerate these.
+## 2026-07-04 — Re-bench on unified Ollama 0.31.1
+
+- 2026-07-04T19:00:00Z | status:completed | Re-bench after Ollama server unification (Windows+WSL → single WSL 0.31.1). Smoke 64 models → 47 OK. Deep 5 tasks × 47. Tie-break 24 saturated winners. Bug-finding NEW slice (15 candidates). Combined-rank top-5 → 16 LLM winners + 2 embeddings = 18 models kept (76 GB, was 325 GB).
+- 2026-07-04T19:05:00Z | status:completed | 46 non-winners deleted. ex-DEAD verdicts (Mobius, SetneufPT) corrected — they load fine on 0.31.1; SetneufPT is now smart_trim #1. Mobius ranks low (deleted on merit).
+- 2026-07-04T19:10:00Z | status:completed | Harness wiring updated: 8 points (warmup/browser/diff-review/pdf/project-memory/CODEQ_SUMMARY_MODEL/OLLAMA_SYNTH_MODEL/prompt_improve chain) → new top-2 winners per task.
+- 2026-07-04T19:15:00Z | status:completed | bug_finding slice added (features/bug_finding/) — diff-with-known-bugs + recall scorer. composer Q8_0 kept (#5 bug-finding).

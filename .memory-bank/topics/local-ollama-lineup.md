@@ -1,75 +1,63 @@
-# Local Ollama Model Lineup (RTX 5080, 16GB)
+# Local Ollama Model Lineup (RTX 5080, 16GB) — RE-BENCH 2026-07-04 (Ollama 0.31.1)
 
-> **Purpose:** Single source of truth for the LOCAL Ollama model lineup + per-role winners +
-> the "do not re-pull / do not re-test" ledger.
->
-> **Owner:** the benches in `~/ollama-bench/` (smoke + deep + tie-break + lfm-variant).
-> **Last updated:** 2026-07-04 (54 models installed, deep-bench 40 candidates × 5 tasks; combined-rank winners).
+> **Purpose:** Single source of truth for LOCAL Ollama winners + per-role map.
+> Re-bench ran after unifying the dual Ollama servers (Windows+WSL) into a single
+> WSL Ollama 0.31.1 (was 0.23.2 — that old version falsely marked Mobius/SetneufPT
+> as DEAD; they load fine now).
 
-## Current lineup — combined-rank TOP winners (2026-07-04)
+## Final lineup — 16 LLM winners + 2 embeddings = 18 models (76 GB)
 
-Combined rank = avg of first-pass rank + tie-break rank (5 wins the day).
+Combined-rank = avg(deep_rank, tie_break_rank). Top-5 per task with ties.
 
-| model | size | role (wired) |
+### Per-task top-2 (wired into harness)
+
+| task | #1 (PRIMARY) | #2 (fallback) |
 |---|---|---|
-| `qwen3.5:4b` | 3.4GB | **UNIVERSAL DEFAULT** (DEFAULT_GEN_MODEL, smart_trim #2, code_gen #8) |
-| `fredrezones55/Qwopus3.5:9b` | 6.5GB | **improve PRIMARY** (combined #1) + **smart_trim PRIMARY** (combined #1) |
-| `hf.co/mradermacher/Huihui-gemma-4-12B-it-qat-q4_0-unquantized-abliterated-GGUF:Q4_K_M` | 7.2GB | improve FALLBACK (12B depth) + browser PRIMARY + diff-review PRIMARY + codeq summary FALLBACK + PDF extract |
-| `hf.co/mradermacher/gemma-4-12B-Queen-it-qat-q4_0-unquantized-i1-GGUF` | 7.4GB | improve alt (combined #2) + web_synth alt (#4) |
-| `batiai/gemma4-e2b:q6` | 3.8GB | **code_gen #2** + **web_synth #1** + codeq_sum alt + smart_trim alt |
-| `Librellama/gemma4:e2b-Uncensored` | 3.4GB | **codeq summary PRIMARY** + codeq_sum #2 + web_synth #2 |
-| `batiai/gemma4-12b:q2` | 4.5GB | codeq_sum #1 |
-| `ssfdre38/gemma4-turbo:e2b` | 4.3GB | codeq_sum #4 |
-| `ssfdre38/gemma4-turbo:latest` | 6.1GB | web_synth #3 + code_gen #5 |
-| `cryptidbleh/gemma4-claude-opus-4.6` | 3.4GB | **code_gen #1** + codeq_sum alt + web_synth alt |
-| `cryptidbleh/gemma4-claude-sonnet-4.6` | 3.4GB | code_gen #4 + smart_trim alt |
-| `qwen2.5:3b` | 1.9GB | code_gen #3 |
-| `jaahas/crow:9b` | 6.5GB | improve alt + code_gen alt |
-| `aratan/gemma-4-E4B-it-heretic:Q6_K` | 6.2GB | smart_trim alt |
-| `ducquoc/gemma4-fast-sonnet` | 3.4GB | fast small alt (86 tps) — code_gen / smart_trim |
-| `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` | 12GB | deep code / bug-finding (recall 0.97) |
-| `xentriom/...composer2.5-v2:latest` (Q4_K_M) | 7.4GB | Q4 co-load + browser FALLBACK |
-| `fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b` | 3.4GB | smart_trim alt + improve ultralight alt |
-| `nomic-embed-text` + `embeddinggemma` | 274MB+621MB | embeddings |
+| improve | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl` | `Librellama/gemma4:e2b-Uncensored` |
+| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` |
+| smart_trim | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` | `fredrezones55/Qwopus3.5:9b` |
+| web_synth | `batiai/gemma4-e4b:q4` | `batiai/gemma4-12b:iq3` |
+| code_gen | `fredrezones55/Qwopus3.5:9b` | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
+| bug_finding | `cryptidbleh/gemma4-claude-sonnet-4.6` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` |
 
-**REMOVED 2026-07-04:**
-- ~~`MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf`~~ — Q4_0 gemma4 arch unsupported; replaced by fredrezones55/Qwopus3.5:9b + Huihui
-- ~~`SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU`~~ — qwen3next MTP init fail; replaced by fredrezones55/Qwopus3.5:9b
-- ~~`VladimirGav/Qwen3.6-27B-16GB-VRAM-Uncensored`~~ — leak heavy + 138s/tok; not a winner
-- ~~`hf.co/LiquidAI/LFM2.5-8B-A1B-GGUF:Q4_K_M` and 8 other LFM variants~~ — all leak thinking on Ollama 0.23.2; not codeq candidates
+### All 16 LLM winners kept installed
 
-## Per-role winners (post 2026-07-04 combined-rank)
+```
+Librellama/gemma4:e2b-Uncensored                 (improve #2, codeq_sum #4, web_synth #4, smart_trim #3, code_gen #3)
+SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU  (smart_trim #1, codeq_sum #2, bug_finding #2, web_synth #5)
+aratan/gemma-4-E4B-it-heretic:Q6_K               (code_gen #2, smart_trim #3, bug_finding mid)
+batiai/gemma4-12b:iq3                            (web_synth #2, smart_trim #7)
+batiai/gemma4-e2b:q6                             (code_gen tied, smart_trim #4)
+batiai/gemma4-e4b:q4                             (codeq_sum #1, web_synth #1, bug_finding mid)
+cryptidbleh/gemma4-claude-opus-4.6               (codeq_sum #5, smart_trim #8, web_synth #6, code_gen #7, bug_finding mid)
+cryptidbleh/gemma4-claude-sonnet-4.6             (bug_finding #1, codeq_sum #3, smart_trim #9, web_synth #7, code_gen #8)
+fredrezones55/Qwopus3.5:9b                       (code_gen #1, smart_trim #2, codeq_sum #7, web_synth #8, improve mid)
+free01/gemma4:e4b                                (codeq_sum #4, smart_trim #11, web_synth #3, code_gen #10)
+hf.co/SC117/gemma-4-12B-it-heretic-QAT-UD-Q4_K_XL (smart_trim #4, bug_finding #3, improve mid)
+hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl (improve #1, bug_finding #8)
+jaahas/crow:9b                                   (improve #4, codeq_sum #10, bug_finding #6)
+qwen3.5:4b                                       (universal default, code_gen #3, smart_trim #14)
+xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0 (bug_finding #5, deep-code historical)
+zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2 (improve #3 deep, smart_trim #2, codeq_sum #8)
+nomic-embed-text + embeddinggemma                (embeddings)
+```
 
-| role | #1 | #2 |
-|---|---|---|
-| codeq summary | batiai/gemma4-12b:q2 | Librellama/gemma4:e2b-Uncensored |
-| improve (primary) | fredrezones55/Qwopus3.5:9b | Huihui gemma4-12B abliterated |
-| diff-review / bug-finding | Huihui (12B depth) | composer Q8 |
-| deep code-gen | composer Q8 | qwen3.5:4b |
-| web_research synth | batiai/gemma4-e2b:q6 | Librellama/gemma4:e2b-Uncensored |
-| smart_trim (primary) | qwen3.5:4b | fredrezones55/Qwopus3.5:9b |
-| universal default | qwen3.5:4b | — |
-| browser (vision+tool) | Huihui | composer latest |
-| rerank / PII scrub | qwen3.5:4b | crow:9b |
+## Removed in this re-bench (46 models)
 
-## ⚠️ DO NOT RE-PULL / DO NOT RE-TEST ledger
+- **MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf** — was improve PRIMARY historically; now loads but ranks #23 improve / #37 codeq_sum. Outperformed by pegasus912.
+- **9 LFM2.5-8B-A1B variants** — ALL leak thinking despite `think=False` on every Ollama version tested. Model-inherent, not Ollama. Re-pulling won't fix.
+- **Huihui gemma4-12B abliterated** — was wired as improve fallback after Mobius "died"; now ranks outside top-5 everywhere.
+- **VladimirGav/Qwen3.6-27B** (15 GB) — slow + leaky.
+- **12 mradermacher gemma4-12B variants** — duplicates of base gemma4-12B; one winner kept (via pegasus912/SC117 which are different quants).
+- **xentriom composer latest (Q4_K_M)** — Q8_0 kept (bug-finding #5); Q4 lost.
+- Other gemma4-12B/qwen3.6 non-winners.
 
-Confirmed-loser installs — skip without a full leak-gated, multi-prompt-shape bench:
+## Bench methodology (smoke → deep → tie-break → bug-finding)
 
-| family / model | failure mode |
-|---|---|
-| **qwopus35-v3 family** (5 variants) | 3 leak reasoning under think=False; 2 "clean" coder variants leak under complex synth prompt |
-| **Reasoning-distilled Qwopus/Mythos/omnicoder** (carstenuhlig, Mythos/Claude-Fable 9B ×5, SetneufPT-9B-Coder, kwangsuklee ×3, lfm2.5:8b unclosed-think, granite3.3) | leak reasoning as plain prose OR orphan/unclosed `<think>` |
-| **Q8 quants of already-good models** (lfm2.5-8b-a1b:Q8_0, qwen3.5:4b-q8_0, composer Q6_K) | parity quality, slower + heavier |
-| **HauhauCS-Aggressive :9b** | verbose + `done=length` budget-burn |
-| **jaahas/crow:4b** | too small for synth judgment (2/6 vs 9b 6/6) |
-| **phi4, deepseek-coder-v2:16b, granite3.3:8b, qwen2.5-coder:14b** | ctx/cutoff/cleanliness dominated |
-| **mythos-nano** | CoT dump regardless of size/quant |
+1. **smoke** (1 prompt × N models) — leak gate; 64 → 47 OK + 8 LFM leaks + 9 errors
+2. **deep** (5 tasks × 47 candidates) — first-pass score (saturates 7.0)
+3. **tie-break** (5 hard prompts × 24 saturated winners) — structural scoring (no cap)
+4. **combined-rank** = avg(deep_rank, tie_break_rank) → top-5 per task
+5. **bug-finding** (2 diff-with-bugs × 15 candidates) — recall scoring; composer Q8 kept
 
-## Bench methodology
-
-1. **Leak gate FIRST** (reason + longctx, think=False, temp 0.2) — hard filter.
-2. **Bug-finding N=3** (6-bug diff, per-bug hit matrix) — discriminator.
-3. **Code-gen N=3 + MANUAL inspect** — single-shot is variance noise.
-4. **Synth** (Acme fixture) — judgment role; crow:9b 6/6 is the bar.
-5. Recall/keyword scores on a LEAKING model are ARTIFACTS — always read raw output + check `done_reason=length`.
+See `topics/bench-methodology.md` for the full pipeline rationale.

@@ -1,48 +1,61 @@
 # Context
-> Current state of ollama-bench as of 2026-07-04
+> Current state of ollama-bench as of 2026-07-04 (re-bench on Ollama 0.31.1)
 
-## Status: v0.1.0 — initial vertical-slice split (graduate from ~/bench/ollama/)
+## Status: v0.1.0 — re-bench complete on unified Ollama 0.31.1
 
-46 tests passing. CLI live with 9 sub-commands. GitHub repo not yet pushed.
+72 tests passing. 10 CLI sub-commands. GitHub: github.com/heldigard/ollama-bench.
+Final lineup: 16 LLM winners + 2 embeddings = 18 models (76 GB).
 
 ## Active subcommands
 
-| cmd | purpose | entry point |
+| cmd | purpose |
+|---|---|
+| `list` | enumerate installed models + flag leaky LFM family |
+| `smoke` | 1-prompt leak gate (now skips embeddings) |
+| `deep` | 5-task × N model bench |
+| `tie-break` | re-bench tied candidates with harder prompts |
+| `bug-finding` | diff-review task (count bugs found) — NEW |
+| `lfm-variant` | codeq summary tie-break for LFM family (think-strip) |
+| `multi-domain` | legacy 4-domain bench |
+| `judge` | LLM-as-judge helpers |
+| `embedding` | embedding model evaluation |
+| `report` | markdown ranking generation |
+
+## Re-bench 2026-07-04 results (Ollama 0.31.1, after server unification)
+
+Per-task top-2 (wired into harness):
+
+| task | #1 | #2 |
 |---|---|---|
-| `list` | enumerate installed models + flag incompat | features/list/command.py |
-| `smoke` | 1-prompt leak gate per model | features/smoke/command.py |
-| `deep` | 5-task × N model bench | features/deep/command.py |
-| `tie-break` | re-bench tied candidates with harder prompts | features/tie_break/command.py |
-| `lfm-variant` | codeq summary tie-break for LFM family (think-strip) | features/lfm_variant/command.py |
-| `multi-domain` | legacy 4-domain bench (improve/compact/code/reason) | features/multi_domain/command.py |
-| `judge` | LLM-as-judge helpers | features/judge/command.py |
-| `embedding` | embedding model evaluation | features/embedding/command.py |
-| `report` | markdown ranking generation from TSV | features/report/command.py |
+| improve | hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl | Librellama/gemma4:e2b-Uncensored |
+| codeq_sum | batiai/gemma4-e4b:q4 | SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU |
+| smart_trim | SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU | fredrezones55/Qwopus3.5:9b |
+| web_synth | batiai/gemma4-e4b:q4 | batiai/gemma4-12b:iq3 |
+| code_gen | fredrezones55/Qwopus3.5:9b | aratan/gemma-4-E4B-it-heretic:Q6_K |
+| bug_finding | cryptidbleh/gemma4-claude-sonnet-4.6 | SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU |
 
-## Bench results snapshot (2026-07-04)
+See `topics/local-ollama-lineup.md` for full top-5 + the 16 winner rationale.
 
-- 63+ models installed
-- 3 truly DEAD on Ollama 0.23.2: Mobius (gemma4 Q4_0), SetneufPT (qwen3next MTP), VladimirGav (worked after re-pull)
-- 9 LFM variants all leak thinking (known broken)
-- 16 http_error non-winner gemma4-12B variants (recoverable via re-pull)
-- Combined-rank winners per task (avg of first-pass + tie-break):
-  - **improve**: fredrezones55/Qwopus3.5:9b (6.5GB, fast)
-  - **codeq_sum**: batiai/gemma4-12b:q2 (4.5GB)
-  - **smart_trim**: qwen3.5:4b + fredrezones55/Qwopus3.5:9b (tied)
-  - **web_synth**: batiai/gemma4-e2b:q6 (3.8GB)
-  - **code_gen**: cryptidbleh/gemma4-claude-opus-4.6 (3.4GB)
+## Key correction from earlier bench (Ollama 0.23.2)
 
-See `topics/local-ollama-lineup.md` for full table.
+The earlier "DEAD" verdicts on Mobius + SetneufPT were a stale-binary artifact
+(dual Windows+WSL Ollama servers, WSL stuck at 0.23.2). On 0.31.1 both load
+fine. SetneufPT went on to WIN smart_trim #1. Mobius ranks low now (deleted).
+See `topics/ollama-0.23.2-gemma4-q4_0-incompat.md`.
+
+## Harness wiring (top-2 → scripts)
+
+- `~/.claude/hooks/ollama-warmup.sh` → pegasus912 (improve #1)
+- `~/.claude/scripts/agent_browser_subagent.py` PRIMARY → pegasus912 (improve winner as browser proxy)
+- `~/.claude/scripts/diff-review.py` CODE_MODEL → cryptidbleh sonnet (bug_finding #1)
+- `~/.claude/scripts/pdf-extract-structured.py` DEFAULT_MODEL → pegasus912
+- `~/.claude/scripts/project-memory.py` _OLLAMA_MAINT_MODEL → batiai/gemma4-e4b:q4 (codeq_sum #1)
+- `~/.zshrc` CODEQ_SUMMARY_MODEL → batiai/gemma4-e4b:q4
+- `~/.claude/scripts/web_research/config.py` OLLAMA_SYNTH_MODEL → batiai/gemma4-e4b:q4 (web_synth #1)
+- `~/prompt-improve/.../config.py` _DEFAULT_IMPROVE_CHAIN → pegasus912 → Librellama → qwen3.5:4b
 
 ## Critical caveats
 
-- **`think` is TOP-LEVEL** in Ollama API (not inside `options`). Putting it inside options is silently ignored — qwen3.x + gemma4 still emit the thinking trace.
-- **Ollama 0.23.2 incompat** with gemma4 Q4_0 + qwen3next MTP. See topics/ollama-0.23.2-gemma4-q4_0-incompat.md.
-- **LFM2.5-8B-A1B** leaks thinking despite think=False. Not a codeq summary candidate.
-
-## Open items
-
-- [ ] Push to GitHub (gh repo create heldigard/ollama-bench)
-- [ ] Add GitHub Actions pytest workflow
-- [ ] Re-run bench against the final lineup to verify scores
-- [ ] Decide what to do with 16 broken http_error models (re-pull vs delete)
+- **`think` is TOP-LEVEL** in Ollama API (not inside `options`). Putting it inside options is silently ignored.
+- **LFM2.5-8B-A1B** leaks thinking on EVERY Ollama version (model-inherent, not binary). Not a candidate.
+- **Score saturation**: deep bench caps at 7.0; re-bench with `tie-break` for discrimination.
