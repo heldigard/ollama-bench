@@ -1,0 +1,35 @@
+GOAL
+Optimize the frontend application's initial page load time and Time to Interactive (TTI) for the main Dashboard route by reducing bundle size, minimizing render-blocking resources, implementing code splitting, lazy loading heavy components, and optimizing asset delivery. Target a reduction in First Contentful Paint (FCP) from current baseline to under 1.5s on average network conditions.
+
+FILES
+- `src/main.tsx` / `index.html`: Entry point for bundling strategy updates.
+- `package.json`: Dependencies audit for tree-shaking and modern runtime support.
+- `/public/index.html`: Meta tags, preloading hints, font optimization.
+- `/src/app/dashboard/page.tsx` (or equivalent): Route-level lazy loading configuration.
+- `/src/components/HeavyChartComponent.tsx` / `LargeDataTable.tsx`: Components to be split/lazy-loaded.
+- `.next/static-manifest.json` or similar: For runtime asset analysis if using SSR/SSG.
+
+STEPS
+1. Bundle Analysis & Reduction:
+   - Run `npm run build --stats-json=true`. Analyze the resulting stats file for largest modules (e.g., >50KB).
+   - Identify unused exports in heavy components and remove them to enable tree-shaking.
+2. Code Splitting Implementation:
+   - Wrap non-critical dashboard widgets (charts, maps) with `React.lazy` from 'react' or equivalent framework hooks (`createLazyRouteElement`).
+   - Move these lazy-loaded chunks into separate files named by their route hash (e.g., `_dashboard_chart_123.tsx`) to ensure granular loading.
+3. Asset Optimization:
+   - Convert all static images in `/public` and `src/assets` to WebP/AVIF formats with appropriate fallbacks using a build script or plugin like `sharp`.
+   - Implement responsive image sizing (`<picture>` tags) for different viewport widths (480, 768, 1200).
+   - Add `<link rel="preload" as="image">` in `/public/index.html` for above-the-fold hero images.
+4. Rendering Strategy Adjustment:
+   - Switch critical dashboard sections from Server-Side Rendering (SSR) to Static Site Generation (SSG) or Client-Side Rendering (CSR) if data is not immediately required, reducing server response time and hydration cost.
+5. Network Optimization:
+   - Add `<link rel="preconnect">` for third-party CDNs used by analytics or charting libraries.
+   - Configure `next.config.js` (or equivalent bundler config) to enable Brotli compression (`compress: true`) and set optimal cache headers via a `.well-known/header-manifest.json`.
+
+EDGE CASES
+- **SSR Hydration Mismatch**: Ensure lazy-loaded components do not cause hydration errors if they render different content on server vs. client; use `useEffect` for data fetching in these split chunks.
+- **Deep Navigation Performance**: Verify that navigating to a sub-page within the dashboard does not trigger re-downloading of already loaded heavy modules (check cache headers and module hashing).
+- **Offline Support**: Ensure lazy-loaded resources are cached correctly so the dashboard remains functional if network connectivity drops after initial load, using `Stale-While-Revalidate` caching strategies.
+
+ACCEPTANCE
+1. Lighthouse

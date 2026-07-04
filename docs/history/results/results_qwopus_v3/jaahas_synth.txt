@@ -1,0 +1,19 @@
+**Acme-LLM v3 Default Context Window Analysis**
+
+| Source | Claimed Default | Notes |
+|--------|-----------------|-------|
+| [1] Official release notes | 128,000 tokens | Primary documentation; also notes max output of 8,192 tokens |
+| [2] Migration guide | 128k tokens | Confirms official spec; adds caveat about low-memory preset |
+| [3] Reddit discussion | 200k tokens (user claim) | **Contradicted** by mod who cites official docs as 128k |
+
+**Synthesis:**
+
+The default context window is **128,000 tokens** according to official documentation [1][2]. The Reddit claim of 200k tokens was explicitly corrected by a moderator citing the same official sources [3].
+
+**Stability across sources: Partially inconsistent.** While the primary documentation consistently states 128k, the migration guide [2] documents an edge case where enabling the `low-memory` preset in `config.yaml` causes the default to drop to **64k tokens**. This represents a configuration-dependent variation rather than a documentation error.
+
+**Key findings:**
+- Standard deployment: 128k tokens [1][2]
+- Low-memory preset enabled: 64k tokens [2]
+- Maximum output: 8,192 tokens [1]
+- Known crash issue at >120k tokens in streaming mode [1]

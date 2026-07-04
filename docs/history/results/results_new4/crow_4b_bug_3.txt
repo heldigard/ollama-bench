@@ -1,0 +1,4 @@
+[SEV] file: fetch_user_orders: SQL injection vulnerability - f-string directly interpolates user_id into query without sanitization
+[SEV] file: cancel_order: undefined function 'get_order' referenced but not defined in scope
+[MED] file: load_translations: file opened without 'with' statement, potential resource leak; mutable default argument for cache
+[LOW] file: find_nth_occurrence: n=0 returns first occurrence instead of -1 (not found); n=1 returns second occurrence due to off-by-one logic

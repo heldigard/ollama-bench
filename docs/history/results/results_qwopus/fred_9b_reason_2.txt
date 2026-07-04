@@ -1,0 +1,12 @@
+**Arithmetic:**  
+- Current backlog: **200 pts**. Remaining time: **3 sprints**.  
+- Minimum velocity needed to finish exactly 200 points in 3 sprints: \( \frac{200}{3} = 66.\overline{6}\) ≈ **66.7** story points per sprint (rounded up, they must average at least this).  
+- Current average velocity over last 3 sprints: \( \frac{35 + 42 + 38}{3} = \frac{115}{3} = 38.\overline{3}\) ≈ **38.3** points per sprint.  
+
+Extra needed above current average:  
+\( 66.\overline{6} - 38.\overline{3} = \frac{200/3 - 115/3}{ } = \frac{85}{3} ≈ **28.3**\) points per sprint extra (or about **+79%** increase).
+
+---
+
+**One-line final answer:**  
+No; they need a minimum average velocity of ~66.7 pts/sprint, which is 28.3 pts more than their current average of 38.3 pts/sprint.

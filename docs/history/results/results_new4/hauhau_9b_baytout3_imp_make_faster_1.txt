@@ -1,0 +1,29 @@
+GOAL
+Optimize the application's initial page load time (Time to Interactive) by reducing client-side bundle size, minimizing critical rendering path blocking resources, and implementing efficient data fetching strategies. Target a reduction in First Contentful Paint (FCP) from current baseline to <1.5s on 3G networks and reduce Total Blocking Time (TBT) to <200ms.
+
+FILES
+- `src/main.tsx` / `index.html`: Entry point for critical CSS injection and resource loading order.
+- `package.json`: Dependencies audit for tree-shakeable alternatives or lazy-load capable libraries.
+- `vite.config.ts` (or equivalent bundler config): Configuration for code splitting, asset compression, and preloading hints.
+- `src/components/Dashboard/`.tsx: Components requiring memoization (`React.memo`) to prevent unnecessary re-renders during data loading.
+- `src/services/api.ts`: Implementation of pagination or infinite scroll patterns instead of fetching the entire dataset upfront.
+- `.env.production`: Environment variables for CDN URLs and API versioning (e.g., `/v2/`).
+
+STEPS
+1. **Bundle Analysis**: Run `npm run build` followed by bundle analyzer (`rollup-plugin-visualizer`) to identify top 5 largest modules in the JavaScript payload.
+2. **Code Splitting & Lazy Loading**: Refactor non-critical dashboard widgets (charts, graphs) into separate chunks using dynamic imports: `const ChartWidget = lazy(() => import('./widgets/Chart'))`. Configure router-based preloading for known routes (`react-router.lazy`).
+3. **Critical CSS Extraction**: Extract only the styles required to render above-the-fold content in a `<link rel="preload">` or inline style block within `index.html`, deferring non-critical CSS via media queries (e.g., `(min-width: 768px)`).
+4. **Resource Hints & Compression**: Add DNS prefetch, preconnect, and preload hints for third-party CDNs in `<head>`. Ensure Gzip/Brotli compression is enabled on the server or configured in Vite (`compress: true`).
+5. **Data Fetching Optimization**: Replace synchronous full-data fetches with asynchronous pagination (fetch first 10 items) or virtualized lists if rendering >1k rows, utilizing `useMemo` to cache API responses and prevent refetching on minor state changes.
+6. **Dependency Audit**: Check for heavy libraries; replace moment.js with date-fns/moment-hackable alternatives, or large charting libs (e.g., D3) with lighter wrappers if full interactivity isn't needed immediately.
+
+EDGE CASES
+- **Third-party Script Blocking**: Ensure analytics/tracking scripts are loaded asynchronously (`nomodule` attribute for ES6 fallbacks) so they don't block the main thread during initial paint.
+- **Offline/Slow Network Simulation**: Validate behavior in Chrome DevTools "Network Throttling" (3G/Slow 4G) to ensure graceful degradation and skeleton screens appear before data loads.
+- **Browser Caching Strategy**: Implement `Cache-Control` headers or versioned asset filenames (`style.v1.css`) so browsers don't re-download optimized assets on subsequent visits, which artificially inflates perceived load time if not handled correctly during the first visit.
+
+ACCEPTANCE
+- Lighthouse Performance Score increases from current baseline to 90+.
+- First Contentful Paint (FCP) < 1.5s on simulated 3G network.
+- Total Blocking Time (TBT) reduced by at least 40%.
+- Bundle size for the initial main thread chunk reduced by >20% via code splitting and tree shaking.

@@ -1,0 +1,8 @@
+[CRIT] fetch_user_orders: SQL injection via string interpolation of user_id into query
+[CRIT] load_translations: Mutable default argument `cache={}` causes cross-call contamination
+[CRIT] cancel_order: No error handling or transaction safety around stripe.refund()
+[CRIT] parse_config: Silent failure mode — coerce() swallows all exceptions and returns raw values
+[CRIT] find_nth_occurrence: Returns incorrect result when n=0 (should be -1 or raise)
+[CRIT] find_nth_occurrence: Off-by-one bug — loop uses `idx + 1` which skips overlapping matches
+[CRIT] fetch_user_orders: No validation of user_id type before SQL construction
+[CRIT] load_translations: No file existence check or JSON decode error handling

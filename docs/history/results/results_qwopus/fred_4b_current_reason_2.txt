@@ -1,0 +1,52 @@
+## Solution Approach
+
+To solve this problem, I'll analyze whether the team can complete all remaining work within the given constraints using mathematical calculations.
+
+### Step 1: Determine Total Points Needed and Available Capacity
+
+**Total backlog points:** 200 story points  
+**Sprints remaining:** 3 sprints  
+
+The total capacity available over these 3 sprints is calculated as follows:
+- If each sprint has a maximum of 40 story points, then the total capacity = $40 \times 3$
+
+### Step 2: Calculate Required Velocity per Sprint
+
+To finish exactly 200 points in 3 sprints, we need to find the minimum velocity (average story points completed) required.
+
+**Required average velocity:** $\frac{Total\ Points}{Number\ of\ Sprints}$
+- $= \frac{200}{3} = 66.\overline{6}\approx$ **67 story points per sprint**
+
+### Step 3: Calculate Current Average Velocity
+
+The team's actual velocities over the last 3 sprints were:
+- Sprint 1: 35 points  
+- Sprint 2: 42 points  
+- Sprint 3: 38 points  
+
+Current average velocity = $\frac{Total\ Points}{Number\ of\ Sprints}$
+- $= \frac{35 + 42 + 38}{3} = \frac{115}{3} = 38.\overline{3}\approx$ **38.3 story points per sprint**
+
+### Step 4: Calculate the Difference (Extra Velocity Needed)
+
+The extra velocity required is calculated as follows:
+- Extra needed = Required average - Current average  
+- $= 67 - 38.3 = \mathbf{28.7}$ **story points per sprint**
+
+---
+
+## Verification of Results
+
+| Parameter | Calculation | Result |
+|-----------|-------------|--------|
+| Total backlog | Given | 200 story points |
+| Sprints remaining | Given | 3 sprints |
+| Current average velocity | $(35+42+38)/3$ | **38.3** pts/sprint |
+| Required minimum velocity | $200/3$ | **67** pts/sprint |
+| Extra needed per sprint | $67-38.3$ | **28.7** pts/sprint |
+
+---
+
+## Final Answer
+
+The team cannot finish the entire backlog at current velocity because they would only complete 115 points (vs. required 200). The minimum velocity needed is approximately **67 story points per sprint**, which requires an increase of about **28-29 additional story points** compared to their current average of ~38.

@@ -1,0 +1,5 @@
+[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders; use parameterized query instead
+[HIGH] src/orders/service.py: find_nth_occurrence can return -1 on first find, then next find(..., 0) returns the FIRST index of needle again (not n+1), so it may silently return wrong occurrence
+[MED] src/orders/service.py: mutable default cache={} in load_translations persists across calls; use None and initialize inside
+[MED] src/orders/service.py: parse_config's bare except hides TypeError/ValueError during coercion; coerce should raise or log on failure
+[LOW] src/orders/service.py: cancel_order assumes get_order never returns None (no check before accessing order["payment"])

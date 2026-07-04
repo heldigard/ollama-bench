@@ -1,0 +1,28 @@
+GOAL
+Optimize frontend performance to reduce Time to Interactive (TTI) and initial page render time by 40% without degrading user experience or breaking existing functionality.
+
+FILES
+- `src/components/Dashboard/index.tsx` (Main dashboard component logic)
+- `public/manifest.json` (Service worker configuration, if applicable)
+- `.eslintrc.js` / `tsconfig.json` (To ensure build optimization flags are active)
+- `package.json` (Dependencies for performance tools like Webpack Bundle Analyzer or Lighthouse CI)
+
+STEPS
+1. **Audit Current Performance**: Run a full audit using Chrome DevTools (Performance tab, Waterfall view) and generate an HTML report via Google Lighthouse to identify top 3 bottlenecks (e.g., large bundle size, excessive layout shifts, blocking main thread tasks).
+2. **Code Splitting Analysis**: Review `src/components/Dashboard/index.tsx`. If the dashboard is a monolithic file containing all sub-components and data fetching logic, refactor it into smaller chunks using React.lazy() or dynamic imports for non-critical sections (e.g., charts, detailed tables) to enable code splitting during hydration.
+3. **Asset Optimization**: 
+   - Compress images used in dashboard widgets with WebP/AVIF formats where supported by the browser.
+   - Minimize CSS and JS bundle sizes using `webpack` or `esbuild` optimization flags (e.g., tree shaking, minification).
+4. **Lazy Loading Implementation**: Implement Intersection Observer API to trigger data fetching for heavy datasets only when they scroll into view within the dashboard container. Replace eager loading with on-demand requests in `useEffect`.
+5. **Caching Strategy**: Configure service workers (`public/manifest.json`) or browser caching headers (via Nginx/Vercel config) to cache static assets and API responses for 24-7 days where appropriate, reducing server load on repeat visits.
+
+EDGE CASES
+- **Slow Network Environments**: Ensure lazy-loaded components degrade gracefully with a fallback UI skeleton if the network request times out before rendering.
+- **Large Dataset Rendering**: If dashboard data exceeds ~10k rows, implement virtualization (windowing) in `src/components/Dashboard/DataTable` to prevent memory spikes during initial render.
+- **Service Worker Conflicts**: Verify that existing service workers do not conflict with new caching strategies and ensure fallback mechanisms exist if the SW fails to install/update.
+
+ACCEPTANCE
+- Lighthouse Performance score increases from current baseline (e.g., 50) to at least 90 on a fresh cache miss load.
+- Initial Time To Interactive (TTI) reduces by >40% compared to previous measurement.
+- No regression in visual fidelity or functionality; all existing tests pass (`npm test`).
+- Bundle size for the main entry point is reduced by at least 25%.

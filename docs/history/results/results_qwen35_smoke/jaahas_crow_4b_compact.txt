@@ -1,0 +1,22 @@
+```
+Decisions
+- Switched from pytest to loguru for structured logging
+- Added tracing for slow async DB connection pool acquisition
+- Committed changes to branch fix/payment-flake
+- Verified conftest.py exists at project root
+
+Root cause
+- Race condition in async database connection pool during parallel test execution
+- Pool size increased from 5 to 10 yesterday, but tests remain flaky
+- Pattern: 2/10 pass consistently, 8/10 fail intermittently
+- Hypothesis: concurrent test workers competing for limited pool slots under load
+
+Next steps
+1. Add loguru-based tracing to capture slow pool.acquire() calls
+2. Correlate timing with test failures to confirm race condition
+3. Consider increasing pool size or adding per-test isolation
+4. Monitor test stability after tracing implementation
+
+Blockers
+- None identified
+```

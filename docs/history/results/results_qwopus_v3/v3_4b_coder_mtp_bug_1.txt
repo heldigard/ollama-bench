@@ -1,0 +1,5 @@
+[SEV HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` due to string formatting with user input.
+[SEV HIGH] src/orders/service.py: Missing error handling for file operations and JSON parsing in `load_translations`.
+[SEV MED] src/orders/service.py: Unhandled exceptions (bare `except:`) in `parse_config` will mask bugs or cause silent failures.
+[SEV MED] src/orders/service.py: Resource leak risk in `load_translations` if file reading fails after opening; missing context manager.
+[SEV LOW] src/orders/service.py: Inefficient search logic in `find_nth_occurrence` using repeated `find` calls instead of a single loop with index tracking.

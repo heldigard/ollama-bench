@@ -1,0 +1,68 @@
+<think>
+We need to produce a structured handoff note with sections: Decisions, Root cause, Next steps, Blockers.
+
+The user wants "preserves ALL key facts" and "Completeness over brevity." So we must include all details in the note; not be too brief but also structured. Provide bullet points or subheadings for each section. Include specifics:
+
+- Session: investigating a flaky test in /home/eldi/proj/tests/test_payment_flow.py.
+- The test sometimes fails with timeout error.
+- Suspected root cause: race condition in async DB connection pool.
+- Yesterday user changed pool size from 5 to 10 connections. After change, the test passed 8/10 runs today but still flaky.
+- Next step: add tracing to identify which pool acquire is slow.
+- Decision: switch to loguru for structured logging instead of stdlib logging.
+- Commit test fixes in branch fix/payment-flake.
+- Need to add conftest.py at repo root so pytest discovers fixtures.
+- Also need to add a [tool.ruff] section to pyproject.toml.
+- Build backend: hatchling (chosen over setuptools for speed).
+- No blockers currently.
+
+Thus the handoff note should capture these. Possibly also mention that we preserve all key facts, no omission.
+
+We'll produce something like:
+
+**Handoff Note – Payment Flow Test Flakiness**
+
+**Session Overview**: ... etc
+
+**Decisions**:
+- Switch to loguru for structured logging.
+- Commit test fixes in branch `fix/payment-flake`.
+- Add `conftest.py` at repository root.
+- Update `[tool.ruff]` configuration in `pyproject.toml`.
+
+**Root Cause Analysis**:
+- Suspected race condition in async DB connection pool.
+- Change of pool size from 5 to 10 connections resulted in intermittent passes (8/10 runs) but still flaky.
+
+**Next Steps / Action Items**:
+1. Add tracing instrumentation...
+2. Implement loguru integration...
+3. Ensure pytest fixtures are discovered by adding `conftest.py`.
+4. Verify branch and commit test fixes.
+5. Review any remaining blockers...
+
+**Blockers**: None (explicitly state no current blockers).
+
+Make sure to preserve all key facts: location, file path, specifics of changes.
+
+We can also include a timeline or note that the root cause suspicion is based on observed pattern; mention that we have not yet identified exact slow acquire but tracing will help. Also maybe add "Decisions" as bullet points and "Root Cause" etc.
+
+Thus final answer: structured handoff note with sections clearly labeled, preserving all facts. Use markdown headings for clarity.
+
+Let's produce.
+</think>
+**Handoff Note – Payment Flow Test Flakiness Investigation**
+
+---
+
+### Session Overview
+- **Test under review:** `test_payment_flow` in `/home/eldi/proj/tests/test_payment_flow.py`.
+- **Problem statement:** The test intermittently fails with a *timeout error*.
+- **Observed behavior:**  
+  - Yesterday the async DB connection pool size was changed from **5** to **10** connections.  
+  - After this change, the test passed in **8 out of 10** runs today, but it remains flaky.
+
+### Decisions Made
+1. **Logging framework upgrade** – Switch from the standard library `logging` module to **loguru** for structured logging.  
+2. **Branch commit** – All test‑related fixes will be committed on branch **`fix/payment-flake`**.  
+3. **Test fixture discovery** – Add a `conftest.py` at the repository root so that pytest automatically discovers project fixtures.  
+4. **Build backend selection** – Keep **hatchling** as the build backend (chosen for speed over

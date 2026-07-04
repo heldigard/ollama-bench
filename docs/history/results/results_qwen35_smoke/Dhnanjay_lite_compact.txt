@@ -1,0 +1,5 @@
+Decisions/Root cause/Next steps/Blockers
+- Decided: Switch test logging framework from pytest-log4js to loguru; commit in branch fix/payment-flake.
+- Root cause: Race condition in async DB connection pool (size increased 5→10 yesterday); flaky on ~20% of runs despite passing 8/10 today.
+- Next steps: Add tracing for slow pool acquisition; ensure conftest.py exists at root level; add [tool.ruff] to pyproject.toml; build backend using hatchling.
+- Blockers: None identified.

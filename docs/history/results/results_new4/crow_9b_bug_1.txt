@@ -1,0 +1,15 @@
+[CRIT] fetch_user_orders: SQL injection via f-string interpolation. User input directly concatenated into query without parameterization. Use `conn.execute("SELECT * FROM orders WHERE user_id = ?", (user_id,))`.
+
+[HIGH] load_translations: Mutable default argument `cache={}` persists across calls, causing data leakage between invocations. Change to `cache=None` and initialize inside function.
+
+[HIGH] cancel_order: No error handling around `get_order()` or `stripe.refund()`. Silent failures leave orders in inconsistent state. Wrap in try/except with proper error propagation.
+
+[MED] find_nth_occurrence: Returns -1 when needle not found, which is ambiguous. Should raise ValueError or return None for clearer semantics.
+
+[MED] parse_config: Silent coercion failure—invalid values like "abc" for int stay as strings. Either validate types strictly or document expected behavior.
+
+[MED] cancel_order: Race condition between `get_order()` and `stripe.refund()`. Another order could be modified/deleted between these calls. Consider locking or atomic transaction.
+
+[MED] cancel_order: No idempotency check. If called twice, second call may fail or refund already-refunded charge. Add check for refund status.
+
+[MED] cancel_order: No logging of refund attempts/successes. Operational visibility missing for debugging and auditing.

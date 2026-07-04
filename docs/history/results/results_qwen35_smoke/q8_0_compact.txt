@@ -1,0 +1,6 @@
+Decisions/Root cause/Next steps/Blockers
+
+Session: flaky test /home/eldi/proj/tests/test_payment_flow.py fails with timeout. Suspected race in async DB connection pool (pool size changed 5 to 10 yesterday). Current status passes 8/10, still flaky.
+Decisions: Switch to loguru; commit changes in branch fix/payment-flake. Add conftest.py at root level. Configure [tool.ruff] section in pyproject.toml. Build backend using hatchling.
+Next steps: Add tracing for slow pool acquire operations.
+Blockers: None.

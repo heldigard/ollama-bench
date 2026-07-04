@@ -1,0 +1,22 @@
+To determine if the team can finish the backlog, we first calculate the total capacity required versus what they have delivered historically. The remaining work is 200 points across 3 sprints, which requires an average velocity of $200 / 3 \approx 66.7$ points per sprint to complete exactly on time.
+
+Comparing this requirement to their current performance:
+*   **Current Average Velocity:** $(35 + 42 + 38) / 3 = 115 / 3 \approx 38.33$.
+*   **Required Minimum Velocity:** $66.67$ (rounded up from $66.\overline{6}$ to ensure completion, though mathematically the exact fraction is needed for comparison).
+
+Since $38.33 < 66.67$, they cannot finish at their current velocity. To find the extra points needed:
+*   **Difference:** $66.67 - 38.33 = 28.34$ (or exactly $150/9 \approx 16.67$ if calculating strictly from fractions, but let's re-verify the arithmetic logic).
+
+**Re-calculation using exact fractions for precision:**
+*   Total Points Needed: 200
+*   Number of Sprints: 3
+*   Required Average Velocity ($V_{req}$): $200 / 3 = 66.67$ points/sprint.
+*   Current Average Velocity ($V_{curr}$): $(35 + 42 + 38) / 3 = 115 / 3 \approx 38.33$ points/sprint.
+
+**Arithmetic for Minimum Required Velocity:**
+The team needs to average $66.\overline{6}$ points per sprint. Since velocity is typically an integer in practice, they must aim for **67** points per sprint (as 66 would yield only $198$ total points). However, strictly mathematically based on the prompt's request for "minimum... to finish exactly," we compare the averages directly first:
+Required Average = $200/3$. Current Average = $115/3$.
+Extra needed per sprint = $(200 - 115) / 3 = 85 / 3 \approx 28.33$ points.
+
+If we round the required velocity to a whole number (standard practice): They need **67** points/sprint. The extra over their current average of $38.33$ is $67 - 38.33 = 28.67$.
+If we treat it strictly as continuous math: Required is $66.67$, Current is $38.3

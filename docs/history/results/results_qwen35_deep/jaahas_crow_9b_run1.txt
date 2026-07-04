@@ -1,0 +1,13 @@
+[CRIT] src/orders/service.py: SQL injection vulnerability via direct string interpolation of user_id into query. The `f"SELECT * FROM orders WHERE user_id = '{user_id}'"` pattern allows attackers to inject malicious SQL by providing a crafted user_id value (e.g., `1 OR 1=1`). This should use parameterized queries with `conn.execute(query, {"user_id": user_id})` instead.
+
+[CRIT] src/orders/service.py: Stripe API key exposure risk. `stripe.refund(charge)` is called without any authentication context visible in the diff. If `stripe` is a client initialized elsewhere without proper secret management (env vars, secrets manager), the API key could be hardcoded or leaked. Verify `stripe` is properly configured with secure credentials.
+
+[CRIT] src/orders/service.py: Missing null/edge case handling for `find_nth_occurrence`. Returns `idx` which will be `-1` if needle not found, but the function doesn't validate that `n > 0` or handle cases where fewer than `n` occurrences exist. Should return `None` or raise an exception when `n` occurrences aren't found.
+
+[CRIT] src/orders/service.py: Resource leak - file opened with `open(path)` in `load_translations` is never closed. Use `with open(path) as f:` to ensure the file handle is properly released even if an exception occurs during `json.load()`.
+
+[CRIT] src/orders/service.py: No error handling around `conn.execute(query).fetchall()` in `fetch_user_orders`. Database connection failures, query timeouts, or constraint violations will propagate uncaught exceptions. Wrap in try/except with appropriate logging and graceful failure.
+
+[CRIT] src/orders/service.py: `parse_config` silently accepts any value type via the fallback `return v`. This allows malformed config values to pass through without validation, potentially causing downstream type errors. Add explicit type checking or raise an error for unexpected types.
+
+[CRIT] src/orders/service.py: `coerce` function catches all exceptions (`except:`) and returns the original value. This masks parsing errors (e.g., non-numeric strings passed to `int()`) instead of failing fast. Replace bare `except:` with specific exception handling or re-raise on parse failures.

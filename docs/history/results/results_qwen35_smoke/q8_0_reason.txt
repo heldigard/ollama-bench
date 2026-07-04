@@ -1,0 +1,10 @@
+**Arithmetic:**
+1. **Total Capacity Check**: $40 \text{ pts} \times 3 \text{ sprints} = 120 \text{ pts}$ (Current capacity is insufficient for the full backlog).
+2. **Required Velocity Calculation**: To finish a 200pt backlog in exactly 3 sprints, the team needs an average velocity of $200 / 3 = 66.67$ points per sprint.
+3. **Deficit Analysis (Minimum Required)**: The difference between required and current capacity is $66.67 - 40 = 26.67$. Since the team cannot exceed their actual capacity of 40, they physically *cannot* finish in exactly 3 sprints at any velocity higher than 120pts total (which still leaves them short by 80pts).
+   *Correction*: The prompt asks "Can they finish...?" implying if possible. With a hard cap of 40 pts/sprint, the max output is 120 pts over 3 sprints. Since $120 < 200$, it is **impossible** to finish in exactly 3 sprints regardless of velocity optimization (as they are capped at capacity).
+   *Re-reading intent*: Perhaps the user implies "Can they catch up?" or assumes a higher theoretical max? No, Sprint Capacity is explicitly stated as 40pts. If Velocity > Capacity, it's invalid. Therefore: **No**, they cannot finish in 3 sprints because $200 \text{ pts} / 3 = 66.7$ required velocity exceeds the hard capacity limit of 40 pts/sprint.
+   
+   *Alternative Interpretation*: Did the user mean "If we assume infinite scaling, what is the math?" No, usually these questions highlight a constraint violation. Let's calculate the shortfall assuming they could magically work at the required rate: They need +26.7 per sprint over capacity (40), but since 40+26.7=66.7 > 40 (capacity), this is impossible.
+   
+   Wait, let me re-read carefully: "Sprint capacity 40pts". This usually means the maximum they can do in a week. Backlog = 200. Time = 3 weeks. Max

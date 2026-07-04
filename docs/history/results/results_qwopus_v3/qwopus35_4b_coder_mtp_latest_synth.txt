@@ -1,0 +1,26 @@
+The user wants to know the default context window of Acme-LLM v3 and if it is stable across sources, based on the provided text.
+
+I need to:
+1. Identify the stated default context window from each source.
+2. Check for stability/contradictions between sources.
+3. Synthesize concisely with bullet points and citations [n].
+
+Source 1: Official release notes say "default context window of 128,000 tokens".
+Source 2: Migration guide says "context window is now 128k tokens by default", but mentions it drops to 64k if low-memory preset is enabled.
+Source 3: Reddit discussion has a contradiction (one user claims 200k, another corrects them saying docs say 128k).
+
+Synthesis:
+- Default context window stated as 128,000 tokens [1].
+- Migration guide confirms default is 128k tokens but notes it drops to 64k with low-memory preset enabled in config.yaml [2].
+- Reddit discussion contains a user claim of 200k which was corrected by another user citing official docs stating 128k [3].
+
+Contradictions:
+- Source 3 has an internal contradiction between users, but aligns with Sources 1 and 2 on the documented value.
+- Source 2 adds a conditional state (low-memory preset) where it is not stable at 128k.
+
+Let's structure this clearly.
+</think>
+
+*   **Default Context Window:** The official release notes [1] and migration guide [2] both state that Acme-LLM v3 ships with a default context window of 128,000 tokens. 
+*   **Conditional Stability:** While the documented default is 128k tokens, the migration guide [2] notes this value drops to 64k tokens when the "low-memory preset" is enabled in `config.yaml`.
+*   **Source Contradictions:** A Reddit discussion [3] contains an internal contradiction where one user claims a 200k context window, which is immediately corrected by another user citing official documentation stating 128k.

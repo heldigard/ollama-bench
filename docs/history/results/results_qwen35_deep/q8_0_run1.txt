@@ -1,0 +1,4 @@
+[SEV HIGH] src/orders/service.py: SQL injection vulnerability in fetch_user_orders due to string formatting with user input.
+[SEV HIGH] src/orders/service.py: Resource leak in load_translations as file handle is opened but never closed or context-managed.
+[SEV MED] src/orders/service.py: Missing error handling for json.load(f) which will crash on invalid JSON files instead of returning a default value.
+[SEV MED] src/orders/service.py: Exception catch-all (except:) in parse_config swallows specific errors like ValueError, masking bugs during config parsing.

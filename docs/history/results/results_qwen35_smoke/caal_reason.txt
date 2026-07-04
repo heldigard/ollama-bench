@@ -1,0 +1,10 @@
+**Arithmetic:**
+1. **Total Points Remaining:** 200 pts.
+2. **Sprints Left:** 3.
+3. **Required Average Velocity:** $200 / 3 = 66.67$ pts/sprint (rounded up to 67 for safety).
+4. **Current Average Velocity:** $(35 + 42 + 38) / 3 = 115 / 3 \approx 38.33$ pts/sprint.
+5. **Feasibility Check:** $38.33 < 66.67$, so they **cannot** finish at current velocity.
+6. **Minimum Velocity Needed:** To finish exactly in 3 sprints, the team needs an average of ~67 points per sprint (e.g., 66, 67, 67).
+7. **Extra Points Over Average:** $66.67 - 38.33 = 28.34$ pts/sprint.
+
+**Final Answer:** No; they need a minimum average velocity of ~67 points per sprint (an increase of ~29 points over their current average).

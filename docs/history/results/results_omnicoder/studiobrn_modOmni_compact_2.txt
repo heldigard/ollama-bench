@@ -1,0 +1,56 @@
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** modOmniCoder (concise coding assistant) / modAI JET (advanced software engineering agent).
+    *   **Task:** Produce a structured handoff note.
+    *   **Format:** Decisions / Root cause / Next steps / Blockers.
+    *   **Constraint:** Preserve ALL key facts. Completeness over brevity. Plain text only, no preamble.
+    *   **Input Data:** Session details about a flaky test in `/home/eldi/proj/tests/test_payment_flow.py`.
+    *   **Key Facts to Preserve:**
+        *   File: `/home/eldi/proj/tests/test_payment_flow.py`
+        *   Test: `test_payment_flow`
+        *   Issue: Timeout error, sometimes fails.
+        *   Suspected Root Cause: Race condition in async DB connection pool.
+        *   Recent Change: User changed pool size from 5 to 10 (yesterday).
+        *   Current Status: Test passed 8/10 runs today (still flaky).
+        *   Next Step 1: Add tracing to identify which pool acquire is slow.
+        *   Decision 1: Switch to loguru for structured logging.
+        *   Commit Branch: `fix/payment-flake`.
+        *   Requirement 1: Need `conftest.py` at repo root.
+        *   Requirement 2: Add `[tool.ruff]` to `pyproject.toml`.
+        *   Build Backend: `hatchling`.
+        *   Blockers: None.
+
+2.  **Drafting the Content:**
+    *   *Structure:* Decisions, Root cause, Next steps, Blockers.
+    *   *Content:* Map the facts to these sections.
+
+    *   *Decisions:*
+        *   Switch to loguru for structured logging.
+        *   Commit fixes in branch `fix/payment-flake`.
+        *   Add `conftest.py` at repo root.
+        *   Add `[tool.ruff]` to `pyproject.toml`.
+        *   Build backend is `hatchling`.
+
+    *   *Root cause:*
+        *   Suspected race condition in async DB connection pool.
+        *   Test: `test_payment_flow` in `/home/eldi/proj/tests/test_payment_flow.py`.
+        *   Error: Timeout error.
+        *   Context: User changed pool size from 5 to 10 yesterday.
+        *   Current stats: Passed 8/10 runs today, still flaky.
+
+    *   *Next steps:*
+        *   Add tracing to identify which pool acquire is slow.
+        *   Implement logging switch (loguru).
+        *   Create `conftest.py` at repo root.
+        *   Update `pyproject.toml` with `[tool.ruff]`.
+
+    *   *Blockers:*
+        *   None.
+
+3.  **Refining for Completeness and Constraints:**
+    *   Ensure no preamble.
+    *   Ensure plain text.
+    *   Ensure all facts are included (paths, branch names, specific config changes, stats).
+
+4.

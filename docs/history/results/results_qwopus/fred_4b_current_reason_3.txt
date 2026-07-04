@@ -1,0 +1,57 @@
+# Sprint Capacity Analysis: Can They Finish on Time?
+
+## Step-by-Step Solution
+
+### Given Information:
+| Parameter | Value |
+|-----------|-------|
+| Total backlog points | 200 |
+| Remaining sprints | 3 |
+| Current sprint capacity (max) | 40 points/sprint |
+| Last sprint velocities | Sprint 1: 35, Sprint 2: 42, Sprint 3: 38 |
+
+### Step 1: Calculate Average Velocity Over Last 3 Sprints**
+
+$$\text{Average velocity} = \frac{\text{Total points delivered}}{\text{Number of sprints}}$$
+
+$$\text{Average velocity} = \frac{35 + 42 + 38}{3} = \frac{115}{3} ≈ 38.33 \text{ points/sprint}$$
+
+### Step 2: Calculate Total Points Deliverable at Current Velocity**
+
+If the team maintains their average velocity of **38.33 points per sprint**:
+
+$$\text{Total deliverable in 3 sprints} = 38.33 × 3 ≈ \mathbf{115 \text{ points}}$$
+
+### Step 3: Compare with Required Work**
+
+| Metric | Value |
+|--------|-------|
+| Points needed to finish backlog | **200 points** |
+| Maximum deliverable at current velocity (3 × 40) | **120 points** |
+| Actual average delivery over last 3 sprints | **115 points** |
+
+### Step 4: Determine if They Can Finish on Time**
+
+$$\text{Maximum possible} = 3 \times 40 = 120 < 200$$
+
+Even at maximum capacity (40 points/sprint), they can only deliver **120 points**, but need to complete **200 points**.
+
+### Step 5: Calculate Minimum Velocity Required**
+
+To finish exactly 200 points in 3 sprints:
+
+$$\text{Minimum velocity per sprint} = \frac{\text{Total work}}{\text{Number of sprints}} = \frac{200}{3} ≈ \mathbf{66.7 \text{ points/sprint}}$$
+
+### Step 6: Calculate Extra Velocity Required**
+
+| Metric | Value |
+|--------|-------|
+| Current average velocity | **38.33 pts/sprint** |
+| Minimum required velocity | **66.70 pts/sprint** |
+| Difference (extra needed) | $66.70 - 38.33 = \mathbf{28.37}$ points/sprint |
+
+---
+
+## Final Answer
+
+$$

@@ -1,0 +1,15 @@
+To determine if the team can finish the backlog, we first calculate the total capacity required versus the maximum possible output at their current velocity:
+- Total work remaining: 200 points
+- Current average velocity: 38.3 points/sprint
+- Maximum output over 3 sprints at current velocity: $3 \times 38.3 = 114.9$ points
+
+Since $114.9 < 200$, they **cannot** finish the entire backlog at their current velocity.
+
+Next, we calculate the minimum velocity required to complete exactly 200 points in 3 sprints:
+- Required total velocity over 3 sprints: $\frac{200}{3} = 66.\overline{6}$ points/sprint
+- Minimum average velocity per sprint needed: $66.67$ (rounded to two decimal places)
+
+Finally, we calculate the extra velocity required per sprint over their current average:
+- Extra velocity needed: $66.67 - 38.3 = 28.37$ points/sprint
+
+They cannot finish at current velocity; they need a minimum of **66.67** points per sprint, which is **28.37** points extra over their current average.

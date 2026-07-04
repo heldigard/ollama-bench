@@ -1,0 +1,4 @@
+[CRITICAL] file: security - SQL injection vulnerability in fetch_user_orders via string formatting with user input.
+[HIGH] file: security - Missing error handling for json.load and open operations in load_translations causing silent failures or leaks.
+[MEDIUM] file: logic bug - find_nth_occurrence returns the last index found instead of the nth occurrence's start position if n > 1, potentially returning None incorrectly on loop exit.
+[HIGH] file: security - Hardcoded async/await mismatch and potential race condition in cancel_order due to missing transaction isolation or locking.

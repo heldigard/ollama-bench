@@ -1,0 +1,32 @@
+{
+  "rows": [
+    {
+      "model": "phi4",
+      "Q": 2.54,
+      "tps": 52.0,
+      "vram": 11548,
+      "COMP": 33.54
+    },
+    {
+      "model": "deepseek-coder-v2:16b",
+      "Q": 2.23,
+      "tps": 82.0,
+      "vram": 12604,
+      "COMP": 40.78
+    },
+    {
+      "model": "qwen2.5-coder:14b",
+      "Q": 2.38,
+      "tps": 45.2,
+      "vram": 11248,
+      "COMP": 25.67
+    },
+    {
+      "model": "granite3.3:8b",
+      "Q": 2.15,
+      "tps": 73.7,
+      "vram": 7536,
+      "COMP": 34.2
+    }
+  ]
+}

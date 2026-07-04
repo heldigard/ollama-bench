@@ -1,0 +1,22 @@
+# Handoff Note: Flaky Test Investigation & Infrastructure Updates
+
+**Session Context:** Investigating intermittent timeout failures in `/home/eldi/proj/tests/test_payment_flow.py` (`test_payment_flow`).
+
+### Decisions
+*   **Logging Upgrade:** Switched from Python stdlib `logging` to the third-party library `loguru` for structured logging.
+*   **Branch Management:** Test fixes will be committed under branch `fix/payment-flake`.
+*   **Build Backend Confirmation:** Confirmed usage of `hatchling` as the build backend (selected over `setuptools` due to performance speed).
+
+### Root Cause & Analysis
+*   **Symptom:** The test occasionally fails with a timeout error.
+*   **Suspected Issue:** Race condition within the async database connection pool.
+*   **Recent Change Impact:** User modified DB pool size from 5 connections yesterday to 10 connections.
+    *   Current status: Test passed in 8 out of 10 runs today, indicating reduced but not eliminated flakiness compared to previous behavior (or potentially a different failure mode).
+
+### Next Steps
+*   **Diagnostic Action:** Implement tracing instrumentation to identify specifically which database pool acquisition call is experiencing latency.
+*   **Test Infrastructure Setup:** Create `conftest.py` at the repository root level to ensure pytest correctly discovers and utilizes fixtures.
+*   **Configuration Updates:** Add a `[tool.ruff]` section to `pyproject.toml`.
+
+### Blockers
+*   None currently identified.

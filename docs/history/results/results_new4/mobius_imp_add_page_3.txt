@@ -1,0 +1,27 @@
+GOAL: Implement a CSV export functionality for the data table displayed on the Reports page, allowing users to download the current filtered view as a .csv file.
+
+FILES:
+- `src/pages/ReportsPage.tsx` (or equivalent): Main UI component for reports.
+- `src/components/DataTable.tsx`: The component rendering the report rows.
+- `src/utils/exportHelpers.ts`: New utility file for CSV generation logic.
+- `src/hooks/useExportData.ts`: Optional hook to manage export state and triggers.
+
+STEPS:
+1. Create a `generateCSV` utility function that takes an array of objects, maps them to headers based on keys, and returns a Blob object with the MIME type `text/csv;charset=utf-8`.
+2. Add an "Export to CSV" button to the Reports page header or table actions menu.
+3. Implement a click handler for the button that captures the current state of the data (including active filters, sorting, and pagination limits).
+4. Pass this filtered/sorted dataset to the `generateCSV` utility.
+5. Trigger a browser download using `URL.createObjectURL()` and a temporary anchor element.
+6. Add a loading state to the button to prevent multiple simultaneous clicks during large data processing.
+
+EDGE CASES:
+- Empty State: If no reports are returned, show a "No data available to export" notification or disable the button.
+- Large Datasets: Ensure the UI doesn't freeze; consider using a Web Worker if rows exceed 5,000.
+- Special Characters: Ensure the CSV utility handles commas, quotes, and non-UTF8 characters (e.g., emojis) correctly by wrapping values in double quotes.
+- Filter Persistence: Verify that only the *filtered* results are exported, not the entire database.
+
+ACCEPTANCE:
+- User can click "Export to CSV" and receive a file named `report_[date].csv`.
+- The CSV content matches the visible rows on the screen exactly (including applied filters).
+- The export button shows a loading spinner/disabled state during processing.
+- No errors occur when exporting data containing special characters or null values.

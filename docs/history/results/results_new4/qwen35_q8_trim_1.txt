@@ -1,0 +1,4 @@
+- Migrated billing service from Node 18 to Node 22 LTS with Stripe webhook handler rewritten in TypeScript at /src/webhooks/stripe.ts and deletion of billing.js.
+- Updated signature verification environment variable usage from STRIPE_SECRET_KEY to STRIPE_WEBHOOK_SECRET while implementing exponential backoff retry logic (max 5 retries, base 200ms).
+- Added test suite located in __tests__/stripe.test.ts which requires the STRIPE_TEST_KEY environment variable for execution.
+- Deployment is configured via azure-pipelines.yml 'deploy-billing' stage with rollback strategy limited to commit reversion due to removal of old handler preventing shadow mode.

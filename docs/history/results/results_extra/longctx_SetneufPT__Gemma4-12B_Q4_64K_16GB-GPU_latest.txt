@@ -1,0 +1,31 @@
+# model=SetneufPT/Gemma4-12B_Q4_64K_16GB-GPU:latest ctx=32768
+# tps=27.4 total_s=16.6s vram=9459MiB
+# entities_preserved=8/8
+
+# Handoff Note: Project Configuration & Tooling Standardization
+
+## Overview
+This session focused on standardizing the project's development environment, build system configuration, and CI/CD deployment readiness. The primary goal was to transition towards modern tooling (`uv`, `ruff`) while ensuring backward compatibility and maintaining high test coverage.
+
+## Top 3 Key Decisions
+1.  **Tooling Selection (Option B):** Consistently chose "Option B" across all technical trade-offs (conftest structure, ruff configuration, package management) because it prioritized **backward compatibility** and **long-term maintainability**.
+2.  **Standardized Build System:** Adopted a unified configuration in `pyproject.toml` to handle complex dependencies like `cffi` and `manylinux` wheels, ensuring consistent builds across different environments.
+3.  **Strict Linting & Type Checking:** Committed to `ruff` for linting and `pyright` in strict mode to ensure code quality remains high as the codebase scales.
+
+## Root Causes Identified
+*   **Dependency Complexity:** Issues with `cffi` dependencies required explicit handling in the build configuration to prevent installation failures.
+*   **Environment Inconsistency:** Variations between `pip` and `uv` workflows necessitated a move toward `uv` for faster, more reliable dependency resolution.
+*   **Deployment Friction:** Challenges with Azure Function deployments were addressed by refining the project structure to meet specific cloud requirements.
+
+## Files Modified
+*   `pyproject.toml`: Updated multiple times to include new sections for tool configurations (ruff, pytest, hatchling), dependency groups, and build requirements.
+
+## Outstanding Action Items
+*   **Git Workflow:** Commit all finalized changes with descriptive messages.
+*   **Branch Management:** Push the current branch to the remote repository.
+*   **Pull Request:** Open a PR for the configuration changes.
+*   **Code Review:** Obtain team approval before merging into the `main` branch.
+
+## Open Questions
+*   Are there any legacy systems that specifically require the "Option A" configurations for non-standard environments?
+*   Should we automate the `uv pip install` step in the local setup script for new contributors?

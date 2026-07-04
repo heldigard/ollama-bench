@@ -1,0 +1,49 @@
+Let me analyze this Sprint Capacity vs Backlog problem step by step.
+
+**Given Data:**
+- Sprint capacity: 40 points each sprint
+- Total backlog remaining: 200 points
+- Sprints left: 3
+- Last 3 sprints velocity: 35, 42, 38 (average = 38.3)
+
+---
+
+## Part 1: Can they finish in 3 sprints at current velocity?
+
+**Current total capacity available:** 
+$$3 \text{ sprints} × 40 \text{ pts/sprint} = 120 \text{ points}$$
+
+**Backlog remaining:**
+$$200 \text{ points}$$
+
+**Comparison:**
+- Capacity (120) < Backlog (200)
+
+They cannot finish at current velocity. Even if they used maximum capacity every sprint, only 120/200 = **60%** of the backlog could be completed.
+
+---
+
+## Part 2: Minimum velocity per sprint to finish in 3 sprints?
+
+**Required total points:**
+$$\frac{200 \text{ pts}}{3 \text{ sprints}} = 66.67 \text{ pts/sprint}$$
+
+Since we can't complete partial work, they need **at least 67 points per sprint**.
+
+---
+
+## Part 3: Extra points needed over average velocity?
+
+**Current average velocity:**
+$$\frac{35 + 42 + 38}{3} = \frac{115}{3} = 38.33 \text{ pts/sprint}$$
+
+**Extra per sprint required:**
+$$67 - 38.33 = 28.67 \text{ points/sprint}$$
+
+---
+
+## Verification:
+- Current capacity used at avg velocity: $3 × 38.33 = 115$ pts (under the 40 pt sprint limit) ✓
+- Required to finish: $3 × 67 = 201$ pts (exceeds 40 pt sprint limit!)
+
+**Critical observation:** The minimum velocity of ~67 points per sprint **exceeds their actual sprint capacity of 40 points**. This means they cannot physically complete the work

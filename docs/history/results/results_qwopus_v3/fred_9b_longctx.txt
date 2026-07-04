@@ -1,0 +1,14 @@
+**Decisions:**  
+- Switched from stdlib logging → **loguru** for structured, async‑safe logs.  
+- Commit test fixes in branch `fix/payment-flake`.  
+- Add `conftest.py` at repo root so pytest discovers fixtures (currently missing).  
+- Add `[tool.ruff]` section to `pyproject.toml` (linting config needed after loguru switch).  
+
+**Root cause:**  
+Flaky timeout stems from a **race condition in the async DB connection pool**. Yesterday’s change increased pool size from 5 → 10, which improved stability but did not eliminate flakiness. The test now passes ~8/10 runs; remaining failures likely involve contention under higher load or timing windows where acquire operations hang longer than expected.
+
+**Next steps:**  
+- Add tracing to capture **which specific pool.acquire() call is slow**, including timestamps and thread IDs, then correlate with loguru logs.  
+- Once traced, either tune the async executor (e.g., `asyncio.Semaphore` limits) or adjust connection reuse logic in the pool implementation.  
+
+**Blockers:** None currently; all identified actions are within scope of existing tooling (hatchling build backend remains unchanged).

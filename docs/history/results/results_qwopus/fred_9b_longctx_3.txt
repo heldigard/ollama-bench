@@ -1,0 +1,15 @@
+**Decisions:**  
+- Switched from stdlib logging to loguru for structured, async-safe logging in this session.  
+- Created conftest.py at repo root so pytest discovers fixtures globally.  
+- Added `[tool.ruff]` section to pyproject.toml (linting config).  
+- Committed test fixes and new files under branch `fix/payment-flake`.  
+
+**Root cause:**  
+The flaky timeout in `/home/eldi/proj/tests/test_payment_flow.py::test_payment_flow` is caused by a race condition when acquiring connections from the async DB connection pool. The user increased the pool size from 5 to 10 yesterday; this reduced but did not eliminate failures (8/10 passes today).  
+
+**Next steps:**  
+- Add tracing/logging around `pool.acquire()` calls in the test code and application layer to identify which acquire operation is slow or hangs under load.  
+- Review connection lifecycle handling when pool size changes are applied dynamically.  
+
+**Blockers:**  
+None currently; all required files (conftest.py, pyproject.toml updates) have been created/committed locally for review in branch `fix/payment-flake`.

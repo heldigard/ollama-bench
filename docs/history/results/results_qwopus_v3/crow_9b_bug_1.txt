@@ -1,0 +1,13 @@
+[CRIT] src/orders/service.py: SQL injection via f-string interpolation of user_id directly into query without parameterization. `f"SELECT * FROM orders WHERE user_id = '{user_id}'"` allows attackers to inject arbitrary SQL. Use `conn.execute("SELECT * FROM orders WHERE user_id = ?", (user_id,))` instead.
+
+[CRIT] src/orders/service.py: Stripe API key exposure risk. `stripe.refund(charge)` uses the global `stripe` module which likely has a hardcoded or improperly scoped API key. Pass the API key explicitly or use a scoped client per request.
+
+[CRIT] src/orders/service.py: No error handling around database operations. `conn.execute(query).fetchall()` will raise on connection failure, network issues, or constraint violations with no recovery strategy or logging. Wrap in try/except with proper error propagation.
+
+[CRIT] src/orders/service.py: No input validation for `order_id` in `cancel_order`. The function assumes `get_order(order_id)` succeeds and returns a dict with `"payment"` and `"payment.charge_id"` keys. Missing checks for None, missing keys, or invalid charge_id format.
+
+[CRIT] src/orders/service.py: `find_nth_occurrence` returns -1 on not found but caller may treat it as valid index. If n > 0 and needle not found, idx stays at initial -1, then loop continues with `haystack.find(needle, 0)`, eventually returning -1. This is actually correct behavior, but the function name implies it should raise or return a sentinel that clearly indicates "not found" vs "found at position". Consider raising ValueError when n > 0 and not found.
+
+[LOW] src/orders/service.py: `parse_config` silently coerces all values to int on exception, which could mask real configuration errors. A value like "abc" becomes 0 instead of failing loudly. Either validate types explicitly or let exceptions propagate.
+
+[LOW] src/orders/service.py: `load_translations` uses mutable default argument `cache={}`. This is a classic Python gotcha where the cache persists across calls unexpectedly. Use `cache = {}` as a local variable and pass it explicitly, or use `None` as default and create dict inside.

@@ -1,0 +1,30 @@
+GOAL: Identify and resolve a security vulnerability or functional failure within the authentication flow (e.g., session hijacking, incorrect password hashing, JWT expiration issues, or failed login redirects).
+
+FILES: 
+- auth_middleware.py / middleware/auth.js (Authentication logic)
+- user_model.py / models/user.js (User schema and password storage)
+- login_route.py / routes/auth.js (Login endpoint handlers)
+- session_manager.py / utils/session.js (Session handling & cookie configuration)
+
+STEPS:
+1. Audit the authentication logs to identify specific error codes or failed request patterns.
+2. Verify that passwords are being hashed using a secure algorithm (e.g., Argon2, BCrypt) before storage.
+3. Check JWT implementation for proper secret key management and expiration (`exp`) claims.
+4. Validate session cookie attributes: Ensure `HttpOnly`, `Secure`, and `SameSite=Strict` flags are enabled.
+5. Test the "Forgot Password" flow to ensure reset tokens are single-use and time-limited.
+6. Implement rate limiting on login endpoints to prevent brute-force attacks.
+7. Verify that unauthorized requests to protected routes return a 401 Unauthorized or 403 Forbidden status.
+
+EDGE CASES:
+- Concurrent logins from multiple devices (Session management).
+- Expired tokens being reused in headers.
+- SQL injection attempts in the username/password fields.
+- Users attempting to register with an email that already exists (Handle gracefully without leaking info).
+- Handling of null or malformed JWT payloads.
+
+ACCEPTANCE:
+- Authentication succeeds for valid credentials and fails for invalid ones.
+- Tokens are invalidated upon logout.
+- No plain-text passwords exist in the database.
+- All auth-related API endpoints return correct HTTP status codes.
+- Security headers are present in all authentication responses.

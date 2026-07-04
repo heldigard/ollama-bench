@@ -1,0 +1,8 @@
+Total backlog: 200 pts. Remaining sprints: 3.
+Required average velocity: 200 / 3 ≈ 66.7 pts/sprint.
+Current average velocity: (35 + 42 + 38) / 3 = 115 / 3 ≈ 38.3 pts/sprint.
+Can they finish? No (38.3 < 66.7).
+Minimum required velocity per sprint: 67 pts.
+Extra points needed per sprint over current average: 67 - 38.3 = 28.7 pts.
+
+No, minimum velocity is 67/sprint, extra needed is 28.7/sprint.

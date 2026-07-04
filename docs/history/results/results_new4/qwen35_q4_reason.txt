@@ -1,0 +1,12 @@
+**Arithmetic:**
+
+1.  **Total Points Needed**: The backlog has 200 story points remaining.
+2.  **Sprints Available**: There are 3 sprints left.
+3.  **Required Velocity Calculation**: To finish exactly 200 points in 3 sprints, the team needs to average:
+    $$ \text{Required Average} = \frac{\text{Total Points}}{\text{Number of Sprints}} = \frac{200}{3} \approx 66.67 \text{ points per sprint} $$
+4.  **Current Velocity**: The team's average velocity over the last 3 sprints is:
+    $$ \text{Average Current Velocity} = \frac{35 + 42 + 38}{3} = \frac{115}{3} \approx 38.33 \text{ points per sprint} $$
+5.  **Extra Points Needed**: The difference between the required velocity and the current average:
+    $$ \text{Difference} = 66.67 - 38.33 = 28.34 \text{ points per sprint} $$
+
+**Final Answer:** No, they cannot finish; they need a minimum average velocity of approximately **66.7 points per sprint**, which is about **28.3 points higher** than their current average.

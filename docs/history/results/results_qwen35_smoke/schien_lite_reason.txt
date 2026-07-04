@@ -1,0 +1,16 @@
+Total backlog: 200 pts. Remaining sprints: 3.  
+Required average velocity = 200 / 3 ≈ **67** points/sprint (rounded up to ensure completion).  
+
+Current average velocity is ~38.3, so the shortfall per sprint is roughly 29 points. To finish exactly in 3 sprints at a constant rate:
+- Target total for remaining work = 200 pts.  
+- Sprint 1 target: **67** (or higher).  
+- Sprint 2 target: **67**.  
+- Sprint 3 target: **66** (since 67+67+66=200, or if rounding up strictly to guarantee finish without underestimating capacity, aim for ~68 each sprint totaling 204).  
+
+Assuming strict integer math where you need at least 200 total and cannot exceed current max velocity (which is unknown but assumed >35), the minimum constant velocity required per sprint is **67** to average out exactly. If we round up every sprint to guarantee finish:  
+Sprint 1: 68, Sprint 2: 68, Sprint 3: 64 = 200 (avg ~66). But if you want a single "minimum velocity" number that covers all sprints safely: **67** per sprint gives 201 total.  
+
+Extra over current average (~38):  
+Current avg ≈ 38.3. Needed ≈ 67. Difference = 67 - 38.3 = **~29 points extra per sprint**.
+
+Final Answer: No, they cannot finish at current velocity; minimum required is ~67 pts/sprint (avg), requiring an increase of ~29 pts over the historical average each sprint to total exactly 200 in 3 sprints [[sprint_planning_calc]].

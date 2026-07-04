@@ -1,0 +1,11 @@
+[HIGH] src/orders/service.py: SQL injection via f-string in fetch_user_orders; use parameterized queries instead
+
+[HIGH] src/orders/service.py: find_nth_occurrence can return -1 (not found) which is then used as start index in next iteration, returning incorrect result or looping on invalid offset
+
+[MED] src/orders/service.py: parse_config's bare except swallows all errors and silently returns unparsed values instead of failing on bad config
+
+[MED] src/orders/service.py: mutable default cache={} persists across calls; new paths overwrite old entries in a shared dict
+
+[LOW] src/orders/service.py: load_translations opens file without closing (use context manager)
+
+[LOW] src/orders/service.py: cancel_order assumes get_order never returns None and charge always exists before refunding

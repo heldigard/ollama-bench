@@ -1,0 +1,53 @@
+1.  **Analyze the Query:** The user wants to know the default context window of Acme-LLM v3 and if it is stable across sources, based *only* on the provided text. I need to cite sources using [n] format, use bullet points, ignore marketing fluff, note contradictions, and omit a Sources section at the end.
+
+2.  **Analyze Source [1]:**
+    *   Model: Acme-LLM v3
+    *   Release Date: 2026-03-15
+    *   Default Context Window: 128,000 tokens
+    *   Max Output: 8,192 tokens
+    *   Pricing: $2 per million input tokens
+    *   Known Issue: Crashes on inputs > 120k tokens in streaming mode.
+
+3.  **Analyze Source [2]:**
+    *   Context Window: Now 128k tokens by default (when migrating from v2).
+    *   Caveat: Drops to 64k tokens if "low-memory preset" is enabled in config.yaml.
+    *   Tool-calling syntax change: 'tools=[...]' parameter.
+    *   Release Date: March 2026.
+
+4.  **Analyze Source [3]:**
+    *   Reddit discussion regarding context window size.
+    *   u/dev42 claims 200k tokens (much bigger than v2).
+    *   u/mod99 corrects this, citing official docs saying 128k.
+    *   u/dev42 admits mistake ("oh you're right, my bad").
+
+5.  **Synthesize and Structure:**
+    *   State the default context window clearly based on sources [1] and [2].
+    *   Address stability/conditions (low-memory preset) from source [2].
+    *   Note the contradiction regarding a larger claimed size in source [3], which was self-corrected.
+
+6.  **Drafting the Content:**
+    *   Default context window: 128,000 tokens [1][2].
+    *   Stability/Conditions: Drops to 64k tokens if "low-memory preset" is enabled in config.yaml [2].
+    *   Contradiction: A Reddit user initially claimed a 200k context window but self-corrected after being cited by another user referencing official documentation stating 128k [3].
+
+7.  **Refining for Conciseness and Formatting:**
+    *   Use bullet points as requested.
+    *   Ensure no filler text.
+    *   Check citation format [n].
+
+8.  **Final Review against Constraints:**
+    *   Factual? Yes, based strictly on provided sources.
+    *   Cite sources? Yes, using [1], [2], [3].
+    *   No filler? Yes.
+    *   Use only provided sources? Yes.
+    *   Concise and well-organized synthesis? Yes.
+    *   Bullet points used? Yes.
+    *   Contradictions noted? Yes (Reddit claim vs official docs).
+    *   Sources section omitted at the end? Yes.
+
+9.  **Final Output Generation:** (Matches the drafted content above).
+</think>
+
+*   **Default Context Window**: The default context window for Acme-LLM v3 is 128,000 tokens [1][2].
+*   **Stability and Conditions**: While the default remains 128k tokens, it drops to 64k tokens if the "low-memory preset" is enabled in config.yaml during migration from v2 [2].
+*   **Contradictions**: A Reddit user initially claimed a 200k context window for Acme-LLM v3 but self-corrected after another user cited official documentation stating the limit is 128k tokens [3].

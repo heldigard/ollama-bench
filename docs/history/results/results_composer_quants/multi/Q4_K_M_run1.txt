@@ -1,0 +1,11 @@
+[HIGH] src/orders/service.py: SQL injection via f-string in fetch_user_orders; use parameterized queries instead of interpolating user_id into the query string
+
+[HIGH] src/orders/service.py: mutable default argument cache={} persists across all calls to load_translations, leaking state between different paths and potentially serving wrong translations
+
+[MED] src/orders/service.py: find_nth_occurrence can return -1 if needle is not found; n=0 returns the first occurrence even when it doesn't exist — add validation for n>0 and check idx != -1 before looping
+
+[MED] src/orders/service.py: parse_config uses a bare except in coerce, masking real errors (e.g., TypeError from int(None)) and silently returning invalid types instead of failing fast on bad config
+
+[LOW] src/orders/service.py: cancel_order calls stripe.refund without checking if the order is already cancelled or refunded; idempotent refund check prevents double-refund error
+
+[LOW] src/orders/service.py: find_nth_occurrence's loop can return -1 as a valid index after n iterations when needle is absent — validate idx before each next() call

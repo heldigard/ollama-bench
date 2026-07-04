@@ -1,0 +1,10 @@
+**Arithmetic:**
+1. **Total Remaining Work**: 200 pts.
+2. **Remaining Sprints**: 3 sprints.
+3. **Required Average Velocity**: $200 \div 3 = 66.67$ pts/sprint (rounded up to 67 for safety).
+4. **Current Average Velocity**: $(35 + 42 + 38) \div 3 = 115 \div 3 = 38.33$ pts/sprint.
+5. **Feasibility Check**: Since $38.33 < 66.67$, they cannot finish at current velocity.
+6. **Minimum Velocity Needed per Sprint**: To finish exactly in 3 sprints, each sprint must average $\approx 66.7$ pts (practically requiring a minimum of **67** pts/sprint to ensure completion).
+7. **Extra Points Over Average**: $66.67 - 38.33 = 28.34$ pts/sprint.
+
+**Final Answer:** No; Minimum velocity required is ~67 pts/sprint, which is an extra ~28.3 pts over the current average of 38.3 pts per sprint.

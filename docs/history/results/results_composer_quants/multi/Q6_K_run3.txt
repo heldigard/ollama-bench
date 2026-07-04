@@ -1,0 +1,5 @@
+[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders; use parameterized query instead
+[HIGH] src/orders/service.py: find_nth_occurrence can return -1 on any iteration and continue, returning a misleading index for n > 1 when needle is missing
+[MED] src/orders/service.py: load_translations uses mutable default cache={}, so different calls share the same cache object across all callers
+[MED] src/orders/service.py: parse_config's bare except returns raw v on failure, silently ignoring malformed values instead of raising or logging
+[LOW] src/orders/service.py: load_translations opens file without a context manager; file handle is never closed

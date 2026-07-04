@@ -1,0 +1,59 @@
+# model=qwen3.5:4b ctx=32768
+# tps=74.0 total_s=13.8s vram=6371MiB
+# entities_preserved=8/8
+
+# Comprehensive Session Handoff Note
+
+## Executive Summary
+This session involved an extensive, repetitive optimization cycle focused on standardizing the Python project's build and test infrastructure. The user repeatedly requested guidance across 12 distinct technical domains (ranging from `pytest` configuration to Azure deployment). In every instance, a consistent decision was made: **Option B** regarding all tradeoffs presented by the assistant. This choice universally prioritized backward compatibility and long-term maintainability over immediate convenience or shorter-term gains.
+
+The core activity across 120+ turns resulted in identical actions being executed repeatedly for each topic area (editing `pyproject.toml`, installing dependencies via `uv`, running tests, verifying linting/formatting). The session concluded with the project maintaining a stable state of **94% test coverage**, passing all linters (`ruff` clean), and type checkers (`pyright` strict mode) after each incremental change.
+
+---
+
+## Top 3 Key Decisions
+1.  **Universal Adoption of Option B:** Across every technical domain discussed (from `pytest conftest` to Azure deployment), the team consistently selected "Option B." The rationale provided and accepted was that this option best preserves backward compatibility while ensuring better long-term maintainability compared to alternative approaches.
+2.  **Toolchain Standardization via `uv`:** Despite multiple comparisons between tools (`pip` vs `uv`, `hatchling` vs `setuptools`), the final configuration consistently utilized `pyproject.toml` with sections managed under the assumption of using `uv` for dependency management and installation, as evidenced by the repeated command: `uv pip install -e '.[dev]'`.
+3.  **Strict Quality Gates:** The project enforces a high bar for code quality before any changes are considered complete or merged. Every decision point required validation against three specific criteria:
+    *   Test Suite Integrity (12/12 passing).
+    *   Code Coverage Maintenance (>94%).
+    *   Static Analysis Compliance (`ruff` clean and `pyright` strict mode passes).
+
+---
+
+## Root Causes Identified
+*Note: The transcript indicates a pattern of repeated questions on the same topics. While specific root causes for each topic were not explicitly detailed in the summary logs, the following patterns emerged as recurring drivers:*
+
+1.  **Repetitive Configuration Drift:** The user repeatedly asked about `pyproject.toml` modifications across different domains (pytest, ruff, coverage, wheels). This suggests an ongoing effort to consolidate or migrate configuration management strategies within a single file rather than using multiple config files per tool.
+2.  **Dependency Management Transition:** The repeated comparison of `pip` vs `uv`, `hatchling` vs `setuptools`, and the consistent use of `uv pip install -e '.[dev]'` indicates an active migration or stabilization phase from traditional Python packaging tools to a modern, unified toolchain (`uv`).
+3.  **Cross-Platform & Deployment Concerns:** The recurring questions about "manylinux wheels," "cffi deps," and "azure function deploy" point to root causes related to:
+    *   Ensuring binary compatibility across Linux distributions (ManyLinux).
+    *   Handling native extensions (`cffi`) in a reproducible build environment.
+    *   Preparing the project for serverless deployment on Azure Functions, which often has strict runtime constraints regarding dependencies and architecture.
+
+---
+
+## Files Modified
+*Based on every single action item across all 120+ turns:*
+
+*   **`pyproject.toml`**: This is the primary file modified in every turn (Turns 0–119). The specific sections added or updated included:
+    *   `pytest` configuration (`conftest` handling).
+    *   Linting rules for `ruff`.
+    *   Coverage reporting settings.
+    *   Build system definitions (`hatchling` vs `setuptools`).
+    *   Dependency resolution and installation scripts (referencing `uv`).
+    *   Wheel build configurations (`manylinux`).
+    *   Native dependency handling (`cffi`).
+    *   Deployment configuration for Azure Functions.
+
+*   **Implicit Files Modified/Verified:** While not explicitly listed as "edited," the following files were actively verified and validated in every turn:
+    *   `tests/*`: Verified via `pytest tests/ -v`. Result: 12/12 pass.
+    *   Source Code (Python): Verified via `pyright` strict mode passes.
+    *   Formatted Code: Verified via `ruff clean`.
+
+---
+
+## Outstanding Action Items
+The session concluded with a consistent set of pending actions that must be executed to finalize the changes made in this cycle and integrate them into the main branch. These items are identical for every topic discussed, as they represent the finalization step after each configuration tweak:
+
+1.  **Commit Changes:**

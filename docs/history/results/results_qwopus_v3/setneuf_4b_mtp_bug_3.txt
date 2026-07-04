@@ -1,0 +1,6 @@
+[HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` via string formatting (`f"SELECT * ... '{user_id}' ..."`) instead of parameterized queries.
+[MED] src/orders/service.py: Missing error handling for `json.load` in `load_translations` which will crash if the file is corrupted or empty.
+[MED] src/orders/service.py: Missing error handling for `conn.execute` in `fetch_user_orders` which will crash if the database connection fails.
+[MED] src/orders/service.py: Missing error handling for `stripe.refund` in `cancel_order` which will crash if the refund fails.
+[LOW] src/orders/service.py: `parse_config` catches bare `except` which swallows all exceptions including `ValueError` from `int()` conversion.
+[LOW] src/orders/service.py: `find_nth_occurrence` uses `range(n)` but returns index after `n-1` iterations; should use `range(1, n+1)` to correctly handle `n=0`.

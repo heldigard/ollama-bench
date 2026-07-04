@@ -1,0 +1,5 @@
+[SEV] fetch_user_orders: SQL injection vulnerability - user_id interpolated directly into query string without sanitization or parameterization
+[SEV] load_translations: No error handling for file open operation - will raise uncaught exception if file doesn't exist
+[SEV] find_nth_occurrence: Returns first occurrence when n=0, not nth occurrence as documented; also no handling for negative n
+[SEV] cancel_order: Assumes payment always has "charge_id" key - will crash if payment made via alternative method (e.g., direct card)
+[SEV] parse_config: No validation on allowed keys - arbitrary keys can be passed through to downstream code

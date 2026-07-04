@@ -1,0 +1,21 @@
+GOAL: Resolve authentication failures occurring during user login and token validation by patching `AuthService` to correctly handle expired JWTs without forcing immediate re-authentication for valid sessions with pending refresh tokens.
+
+FILES:
+- src/services/AuthService.ts (Update logic in validateToken() and refreshToken())
+- tests/unit/auth.service.spec.ts (Add test cases for edge-case expiration scenarios)
+
+STEPS:
+1. Inspect `validateToken()` to identify the root cause of premature rejection; likely a mismatch between token expiry time calculation or incorrect header parsing.
+2. Modify `refreshToken()` logic in AuthService to check if an active session exists before issuing new tokens, preventing duplicate sessions that confuse downstream auth checks.
+3. Update database schema migration (if applicable) to ensure the 'last_activity' timestamp is updated correctly upon successful login attempts.
+4. Implement retry mechanism with exponential backoff for transient network errors during token refresh in `AuthService`.
+
+EDGE CASES:
+- User has multiple active sessions; verify that revoking one session does not inadvertently lock out others unless explicitly requested via logout endpoint.
+- Token expires exactly at the boundary of the allowed grace period (e.g., 5 minutes before expiry); ensure validation logic accounts for this window rather than strict equality checks.
+- Concurrent login attempts from different devices causing race conditions in token generation; add locking mechanism to prevent duplicate tokens during high concurrency.
+
+ACCEPTANCE:
+- Unit tests pass, specifically covering scenarios where the JWT is within the grace period but technically expired by standard clock time.
+- Integration test confirms a user can log in with an expiring token and receive a new valid session without being prompted for credentials immediately upon subsequent API calls.
+- No increase in 401 Unauthorized errors reported during load testing of the authentication flow.

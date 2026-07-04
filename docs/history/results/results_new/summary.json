@@ -1,0 +1,73 @@
+{
+  "rows": [
+    {
+      "model": "kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest",
+      "Q": 2.54,
+      "tps": 80.3,
+      "vram": 14907,
+      "COMP": 51.75
+    },
+    {
+      "model": "kwangsuklee/Qwen3.5-4B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest",
+      "Q": 2.54,
+      "tps": 115.0,
+      "vram": 4550,
+      "COMP": 74.09
+    },
+    {
+      "model": "kwangsuklee/Qwen3.5-2B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest",
+      "Q": 2.31,
+      "tps": 132.5,
+      "vram": 3652,
+      "COMP": 70.58
+    },
+    {
+      "model": "lfm2.5:8b",
+      "Q": 2.23,
+      "tps": 172.8,
+      "vram": 6655,
+      "COMP": 85.98
+    },
+    {
+      "model": "ornith:latest",
+      "Q": 2.31,
+      "tps": 41.0,
+      "vram": 6633,
+      "COMP": 21.86
+    },
+    {
+      "model": "izy/North-Mini-Code-1.0:IQ4_XS",
+      "Q": 2.77,
+      "tps": 45.4,
+      "vram": 15348,
+      "COMP": 34.84
+    }
+  ],
+  "winners": {
+    "qwen3.5:4b": [
+      2.56,
+      80.9,
+      53.02
+    ],
+    "carstenuhlig/omnicoder-9b:Q4_K_M": [
+      2.56,
+      84.0,
+      55.17
+    ],
+    "fredrezones55/Qwopus3.5:4b": [
+      2.38,
+      88.8,
+      50.11
+    ],
+    "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest": [
+      2.61,
+      43.1,
+      29.38
+    ],
+    "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:latest": [
+      2.29,
+      26.8,
+      14.01
+    ]
+  }
+}

@@ -1,0 +1,255 @@
+{
+  "carstenuhlig_Q4_KM": {
+    "model": "carstenuhlig/omnicoder-9b:Q4_K_M",
+    "compact": [
+      {
+        "recall": 10,
+        "leaks": [
+          "i need to"
+        ],
+        "tps": 129.6,
+        "wall": 8.1,
+        "done": "length"
+      },
+      {
+        "recall": 10,
+        "leaks": [],
+        "tps": 129.2,
+        "wall": 5.9,
+        "done": "length"
+      },
+      {
+        "recall": 10,
+        "leaks": [],
+        "tps": 129.7,
+        "wall": 5.9,
+        "done": "length"
+      }
+    ],
+    "code": [
+      {
+        "keys": 12,
+        "leaks": [
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 129.1,
+        "wall": 6.0,
+        "done": "length"
+      },
+      {
+        "keys": 12,
+        "leaks": [
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 129.3,
+        "wall": 6.0,
+        "done": "length"
+      },
+      {
+        "keys": 12,
+        "leaks": [
+          "</think",
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 129.6,
+        "wall": 4.6,
+        "done": "stop"
+      }
+    ],
+    "compact_recall": 10.0,
+    "code_keys": 12.0,
+    "any_leak": true,
+    "mean_tps": 129.4,
+    "any_length": true
+  },
+  "carstenuhlig_Q8_0": {
+    "model": "carstenuhlig/omnicoder-9b:Q8_0",
+    "compact": [
+      {
+        "recall": 10,
+        "leaks": [],
+        "tps": 87.6,
+        "wall": 13.2,
+        "done": "length"
+      },
+      {
+        "recall": 10,
+        "leaks": [],
+        "tps": 87.8,
+        "wall": 7.5,
+        "done": "length"
+      },
+      {
+        "recall": 10,
+        "leaks": [],
+        "tps": 87.6,
+        "wall": 8.6,
+        "done": "length"
+      }
+    ],
+    "code": [
+      {
+        "keys": 12,
+        "leaks": [
+          "</think",
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 87.6,
+        "wall": 8.6,
+        "done": "length"
+      },
+      {
+        "keys": 12,
+        "leaks": [
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 87.4,
+        "wall": 8.7,
+        "done": "length"
+      },
+      {
+        "keys": 12,
+        "leaks": [
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 87.8,
+        "wall": 7.5,
+        "done": "length"
+      }
+    ],
+    "compact_recall": 10.0,
+    "code_keys": 12.0,
+    "any_leak": true,
+    "mean_tps": 87.6,
+    "any_length": true
+  },
+  "studiobrn_modOmni": {
+    "model": "studiobrn/modOmniCoder:latest",
+    "compact": [
+      {
+        "recall": 10,
+        "leaks": [
+          "step 1"
+        ],
+        "tps": 129.1,
+        "wall": 9.6,
+        "done": "length"
+      },
+      {
+        "recall": 10,
+        "leaks": [
+          "step 1"
+        ],
+        "tps": 128.8,
+        "wall": 6.0,
+        "done": "length"
+      },
+      {
+        "recall": 10,
+        "leaks": [],
+        "tps": 128.9,
+        "wall": 4.8,
+        "done": "length"
+      }
+    ],
+    "code": [
+      {
+        "keys": 12,
+        "leaks": [
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 128.6,
+        "wall": 6.0,
+        "done": "length"
+      },
+      {
+        "keys": 12,
+        "leaks": [
+          "</think",
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 128.6,
+        "wall": 6.0,
+        "done": "length"
+      },
+      {
+        "keys": 12,
+        "leaks": [
+          "</think",
+          "i need to",
+          "the user wants"
+        ],
+        "tps": 128.3,
+        "wall": 6.0,
+        "done": "stop"
+      }
+    ],
+    "compact_recall": 10.0,
+    "code_keys": 12.0,
+    "any_leak": true,
+    "mean_tps": 128.7,
+    "any_length": true
+  },
+  "zfujicute_Opus_v2": {
+    "model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+    "compact": [
+      {
+        "recall": 7,
+        "leaks": [],
+        "tps": 121.4,
+        "wall": 5.3,
+        "done": "stop"
+      },
+      {
+        "recall": 7,
+        "leaks": [],
+        "tps": 121.4,
+        "wall": 2.1,
+        "done": "stop"
+      },
+      {
+        "recall": 7,
+        "leaks": [],
+        "tps": 120.9,
+        "wall": 2.1,
+        "done": "stop"
+      }
+    ],
+    "code": [
+      {
+        "keys": 12,
+        "leaks": [],
+        "tps": 121.8,
+        "wall": 2.5,
+        "done": "stop"
+      },
+      {
+        "keys": 12,
+        "leaks": [],
+        "tps": 121.3,
+        "wall": 2.5,
+        "done": "stop"
+      },
+      {
+        "keys": 12,
+        "leaks": [],
+        "tps": 121.3,
+        "wall": 2.5,
+        "done": "stop"
+      }
+    ],
+    "compact_recall": 7.0,
+    "code_keys": 12.0,
+    "any_leak": false,
+    "mean_tps": 121.4,
+    "any_length": false
+  }
+}

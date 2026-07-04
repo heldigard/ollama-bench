@@ -1,0 +1,38 @@
+```python
+import asyncio
+import random
+from typing import Any, Callable, Optional
+
+
+async def retry_with_backoff(
+    fn: Callable[[], Any],
+    max_attempts: int = 3,
+    base_delay: float = 0.5
+) -> Any:
+    """
+    Retry `fn` on ConnectionError or TimeoutError with exponential backoff and jitter.
+
+    Args:
+        fn: The async function to execute.
+        max_attempts: Maximum number of attempts (including the first).
+        base_delay: Base delay in seconds between retries.
+
+    Returns:
+        The result from `fn` on success.
+
+    Raises:
+        The last exception caught after exhausting all attempts.
+    """
+    last_exception = None
+
+    for attempt in range(max_attempts):
+        try:
+            return await fn()
+        except (ConnectionError, TimeoutError) as e:
+            last_exception = e
+            if attempt < max_attempts - 1:
+                delay = base_delay * (2 ** attempt) + random.uniform(0, 0.5)
+                await asyncio.sleep(delay)
+
+    raise last_exception
+```

@@ -1,0 +1,268 @@
+{
+  "v3_9b": {
+    "model": "qwopus35-9b-v3:latest",
+    "reason": {
+      "ok": true,
+      "tps": 99.6,
+      "wall": 9.7,
+      "done": "length",
+      "len": 1703,
+      "leaks": [
+        "the user wants"
+      ]
+    },
+    "longctx": {
+      "recall": "10/10",
+      "hits": 10,
+      "leaks": [
+        "</think",
+        "i need to",
+        "the user wants"
+      ],
+      "tps": 98.9,
+      "wall": 9.1,
+      "done": "length"
+    },
+    "any_leak": true,
+    "any_length": true,
+    "vram_after_load": 8768
+  },
+  "v3_4b_mtp": {
+    "model": "qwopus35-4b-v3-mtp:latest",
+    "reason": {
+      "ok": true,
+      "tps": 133.4,
+      "wall": 8.4,
+      "done": "length",
+      "len": 2187,
+      "leaks": [
+        "first, let",
+        "i need to",
+        "the user wants"
+      ]
+    },
+    "longctx": {
+      "recall": "10/10",
+      "hits": 10,
+      "leaks": [
+        "</think",
+        "i need to",
+        "the user wants"
+      ],
+      "tps": 132.4,
+      "wall": 6.9,
+      "done": "length"
+    },
+    "any_leak": true,
+    "any_length": true,
+    "vram_after_load": 14081
+  },
+  "v3_4b": {
+    "model": "qwopus35-4b-v3:latest",
+    "reason": {
+      "ok": true,
+      "tps": 133.9,
+      "wall": 11.5,
+      "done": "length",
+      "len": 2161,
+      "leaks": [
+        "first, let",
+        "the user wants"
+      ]
+    },
+    "longctx": {
+      "recall": "10/10",
+      "hits": 10,
+      "leaks": [
+        "i need to",
+        "the user wants"
+      ],
+      "tps": 132.8,
+      "wall": 7.0,
+      "done": "length"
+    },
+    "any_leak": true,
+    "any_length": true,
+    "vram_after_load": 14039
+  },
+  "v3_4b_coder_mtp": {
+    "model": "qwopus35-4b-coder-mtp:latest",
+    "reason": {
+      "ok": true,
+      "tps": 132.1,
+      "wall": 8.8,
+      "done": "stop",
+      "len": 990,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 131.1,
+      "wall": 3.0,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 14081,
+    "bugfinding": {
+      "model": "qwopus35-4b-coder-mtp:latest",
+      "bug_hits": {
+        "B1 off-by-one/find_nth": 0,
+        "B2 SQL injection": 3,
+        "B3 bare except": 2,
+        "B4 mutable default": 0,
+        "B5 resource leak": 3,
+        "B6 None/KeyError deref": 0
+      },
+      "mean_recall": 0.44,
+      "mean_tps": 132.7,
+      "any_leak": false
+    }
+  },
+  "v3_4b_coder": {
+    "model": "qwopus35-4b-coder:latest",
+    "reason": {
+      "ok": true,
+      "tps": 132.8,
+      "wall": 11.1,
+      "done": "stop",
+      "len": 937,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 131.9,
+      "wall": 3.4,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 14081,
+    "bugfinding": {
+      "model": "qwopus35-4b-coder:latest",
+      "bug_hits": {
+        "B1 off-by-one/find_nth": 0,
+        "B2 SQL injection": 3,
+        "B3 bare except": 1,
+        "B4 mutable default": 1,
+        "B5 resource leak": 3,
+        "B6 None/KeyError deref": 0
+      },
+      "mean_recall": 0.44,
+      "mean_tps": 125.5,
+      "any_leak": false
+    }
+  },
+  "setneuf_4b_mtp": {
+    "model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU",
+    "reason": {
+      "ok": true,
+      "tps": 174.9,
+      "wall": 9.4,
+      "done": "stop",
+      "len": 417,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 177.5,
+      "wall": 2.1,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 10465,
+    "bugfinding": {
+      "model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU",
+      "bug_hits": {
+        "B1 off-by-one/find_nth": 3,
+        "B2 SQL injection": 3,
+        "B3 bare except": 3,
+        "B4 mutable default": 0,
+        "B5 resource leak": 0,
+        "B6 None/KeyError deref": 0
+      },
+      "mean_recall": 0.5,
+      "mean_tps": 176.7,
+      "any_leak": false
+    }
+  },
+  "fred_9b": {
+    "model": "fredrezones55/Qwopus3.5:9b",
+    "reason": {
+      "ok": true,
+      "tps": 121.7,
+      "wall": 9.6,
+      "done": "stop",
+      "len": 411,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 121.1,
+      "wall": 2.7,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 13945
+  },
+  "qwen35_4b": {
+    "model": "qwen3.5:4b",
+    "reason": {
+      "ok": true,
+      "tps": 185.6,
+      "wall": 8.0,
+      "done": "stop",
+      "len": 1023,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 182.8,
+      "wall": 2.8,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 15403,
+    "bugfinding": {
+      "model": "qwen3.5:4b",
+      "bug_hits": {
+        "B1 off-by-one/find_nth": 0,
+        "B2 SQL injection": 3,
+        "B3 bare except": 2,
+        "B4 mutable default": 0,
+        "B5 resource leak": 2,
+        "B6 None/KeyError deref": 0
+      },
+      "mean_recall": 0.39,
+      "mean_tps": 182.9,
+      "any_leak": false
+    }
+  },
+  "jaahas/crow": {
+    "synth": {
+      "dt": 14.1,
+      "chars": 1211,
+      "s1_128k": true,
+      "s2_200k_contra": true,
+      "s3_not_stable": true,
+      "s4_64k_caveat": true,
+      "s5_no_pricing": true,
+      "s6_clean": true,
+      "score": 6,
+      "leaks": []
+    }
+  }
+}

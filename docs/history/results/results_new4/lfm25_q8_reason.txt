@@ -1,0 +1,26 @@
+<think>
+We need to compute if capacity of 40 story points per sprint * 3 sprints = total capacity = 120 points. Backlog remaining: 200 points. So they cannot finish in 3 sprints because capacity is only 120 < 200. Then we find minimum velocity per sprint needed to complete exactly 200 points over 3 sprints.
+
+Let v be required velocity per sprint (same each sprint). Need 3v = 200 => v = 66.666... story points per sprint, i.e., about 67 points per sprint if rounding up? Minimum integer maybe ceiling: need at least 67 points per sprint to reach or exceed total capacity of 120+? Actually they have only 40 per sprint as capacity; but the question asks "minimum velocity per sprint they would need to finish exactly 200 points in 3 sprints". If we assume they can work more than capacity? Usually velocity is max sustainable, so cannot exceed capacity. But if you want exact finishing without overtime maybe impossible because each sprint limited to 40. However perhaps they could increase velocity beyond current average (which was ~38). The question: "what is the MINIMUM velocity per sprint they would need to finish exactly 200 points in 3 sprints, and how much extra per sprint is that over their current average?" So we compute required v = ceil(200/3) = ceil(66.666...) = 67 points per sprint.
+
+Current average velocity: (35+42+38)/3 = 115/3 ≈ 38.333... Actually sum is 115, so avg = 38.33. Extra needed = 67 - current avg = approx 28.667 points extra per sprint. If we want integer maybe round up to 29? But they ask "how much extra per sprint is that over their current average?" Could be fractional: about 28.7.
+
+Thus answer: No, cannot finish in 3 sprints because capacity only 120 <200. Minimum velocity needed = 67 points/sprint; this is approx 28.7 points more than current avg of 38.33 per sprint. Provide arithmetic then one-line final answer.
+
+We need to show the arithmetic steps and give a one-line final answer: maybe "No – they would need an average of about 67 pts/sprint, which is ~29 pts (≈28.7) above their current 38.3‑point average."
+
+Let's produce.
+</think>
+**Arithmetic**
+
+1. **Total capacity for the next 3 sprints**  
+   \[
+   \text{Capacity per sprint}=40\;\text{points}
+   \]
+   \[
+   \text{Total capacity}=40 \times 3 = 120\;\text{points}
+   \]
+
+2. **Backlog remaining**  
+   \[
+   \text{Backlog}=200\;\text

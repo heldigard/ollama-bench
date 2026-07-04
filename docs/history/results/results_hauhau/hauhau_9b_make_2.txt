@@ -1,0 +1,32 @@
+GOAL
+Optimize the application's initial page load time (Time to Interactive) by reducing client-side bundle size, minimizing critical rendering path blocking resources, and implementing efficient data fetching strategies. Target a reduction in First Contentful Paint (FCP) from current baseline to under 1.5s on 4G networks and reduce Total Blocking Time (TBT) below 200ms.
+
+FILES
+- `src/index.html` (HTML structure & resource loading order)
+- `public/manifest.json` (Service Worker registration logic)
+- `package.json` (Dependencies for bundling tools like Vite/Webpack or Next.js config)
+- `vite.config.ts` / `webpack.config.js` / `next.config.js` (Build configuration, code splitting rules)
+- `src/main.jsx` / `src/_app.tsx` (Root component imports and hydration points)
+- `src/components/Dashboard/` (Specific dashboard components to analyze for heavy rendering)
+- `.env.local` (API endpoints for lazy loading data)
+
+STEPS
+1. **Audit Current Bundle**: Run Lighthouse or Webpack Bundle Analyzer on the current production build. Identify top 3 largest JS chunks and CSS files contributing >20% of total payload size.
+2. **Implement Code Splitting & Lazy Loading**: 
+   - Convert non-critical dashboard widgets into dynamically imported components (`import('./WidgetName')`) to split the initial bundle.
+   - Configure route-based code splitting if using a framework (e.g., Next.js `dynamic` import or React Router lazy loading).
+3. **Optimize Critical Rendering Path**: 
+   - Move critical CSS inline in `<head>` and defer non-critical stylesheets (`<link rel="preload" as="style">`).
+   - Defer all non-essential JavaScript scripts using `defer` attribute; remove unused libraries (e.g., heavy charting libs) from the initial load if not needed immediately.
+4. **Optimize Assets**: 
+   - Convert dashboard images to WebP/AVIF format and implement responsive image sources (`srcset`).
+   - Enable text compression for fonts using `font-display: swap` in CSS or font subsetting via tools like Google Fonts API.
+5. **Enhance Data Fetching Strategy**: 
+   - Replace synchronous data fetching with asynchronous, prioritized requests (Critical UI first, then secondary widgets).
+   - Implement Service Worker caching strategies (`CacheFirst` for static assets, `NetworkFirst` for APIs) to serve cached content on subsequent visits and reduce initial network latency.
+6. **Rebuild & Validate**: Re-run the build process with optimized flags (e.g., `-O3`, tree-shaking enabled). Verify via Lighthouse that "Performance" score reaches 90+ and specific metrics (FCP, TBT) meet targets defined in GOAL.
+
+EDGE CASES
+- **Third-party Scripts**: Ensure analytics or tracking scripts are loaded asynchronously (`window` check before execution) to prevent blocking the main thread during initial load.
+- **Large Datasets**: If the dashboard renders heavy tables/charts immediately upon mount, implement virtualization (e.g., `react-window`) or skeleton loaders until data is fetched and rendered progressively.
+- **Slow Network Environments**: Validate behavior on 3G/4G connections to ensure lazy-loaded chunks don't cause long

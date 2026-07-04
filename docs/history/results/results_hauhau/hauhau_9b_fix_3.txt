@@ -1,0 +1,25 @@
+GOAL
+Isolate and resolve a critical authentication failure in the application where users are unable to successfully complete login or token refresh cycles despite valid credentials being provided by the client. The fix must ensure that session tokens (JWT/OAuth2) are correctly validated, persisted on both server-side storage (Redis/DB) and client-side memory, and that error responses clearly distinguish between network failures, credential errors, and expired sessions without exposing sensitive stack traces to the end-user.
+
+FILES
+1. `src/auth/middleware.ts` - Review middleware logic for token validation and expiration checks.
+2. `src/routes/login.post.ts` (or equivalent controller) - Inspect request body parsing, password hashing comparison, and initial session creation flow.
+3. `src/services/token.service.ts` - Examine JWT signing/verification algorithms, clock skew handling, and payload claims generation.
+4. `.env` or environment config files - Verify secrets (`JWT_SECRET`, `OAUTH_CLIENT_ID`) are loaded correctly and not stale.
+5. Database migrations related to user tables (e.g., password hash columns) if schema changes contributed to the bug.
+
+STEPS
+1. Reproduce: Trigger the specific failure path using Postman or a dedicated test script with known good credentials that previously failed after deployment.
+2. Log Injection: Add structured logging at entry points of `login`, `/refresh-token`, and middleware hooks capturing raw request headers, payload size, timestamp difference between client/server clocks, and exact error codes thrown before the response is sent.
+3. Token Validation Check: Verify if the server clock skew exceeds the JWT tolerance window (default 5-10s) causing silent rejections; adjust `clockSkew` in token verification logic or sync NTP on load balancers.
+4. Session Store Audit: If using Redis, check for key expiration mismatches (`TTL`) between database records and cache entries that might cause "user not found" errors during session lookup.
+5. Password Hash Comparison: Ensure the hashing algorithm (e.g., bcrypt) version matches across client-side encryption (if any) or server re-hashing logic; verify salt rounds are consistent to prevent false negatives in password checks.
+6. Error Handling Refactor: Replace generic 500 errors with specific HTTP status codes (`401 Unauthorized`, `429 Too Many Requests`) and standardized JSON error payloads including a `message` field explaining the root cause (e.g., "Token expired", "Invalid credentials").
+7. Unit Test Update: Create unit tests covering edge cases like near-expiration tokens, concurrent login attempts from multiple devices, and network timeouts during token validation to prevent regression.
+
+EDGE CASES
+- Clock Skew: Server time differs significantly from client or upstream OAuth providers (e.g., Google/Facebook), leading to premature JWT expiration errors.
+- Concurrent Logins: User logs in on Device A then immediately tries to log in with different credentials on Device B, potentially causing race conditions if session tokens are overwritten without invalidating the previous one.
+- Stale Secrets: Deployment of a new `JWT_SECRET` without proper rotation handling or backward compatibility for existing valid sessions.
+- Payload Size Limits: Large user profiles included in JWT claims exceeding standard token size limits (4KB), causing silent truncation or verification failures.
+- Middleware Order: Auth middleware placed incorrectly in the request chain, executing before necessary context initialization (

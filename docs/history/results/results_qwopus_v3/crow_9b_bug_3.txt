@@ -1,0 +1,13 @@
+[CRIT] src/orders/service.py: SQL injection via f-string interpolation of user_id directly into query without parameterization. `f"SELECT * FROM orders WHERE user_id = '{user_id}'"` allows attackers to inject arbitrary SQL. Use `conn.execute("SELECT * FROM orders WHERE user_id = ?", (user_id,))` instead.
+
+[MED] src/orders/service.py: `find_nth_occurrence` returns `None` on failure but callers likely expect an integer. Should raise `ValueError` with a clear message when needle not found or n exceeds occurrences.
+
+[MED] src/orders/service.py: `parse_config` silently accepts any value and coerces only if it fails. This masks configuration errors—should validate against expected types and raise exceptions for invalid values.
+
+[MED] src/orders/service.py: `load_translations` has no error handling for file I/O or JSON decode failures. Should catch `FileNotFoundError`, `PermissionError`, and `json.JSONDecodeError` with appropriate messages.
+
+[MED] src/orders/service.py: `load_translations` uses mutable default argument `cache={}` which causes stale data across calls. Should use `None` as default and create dict inside function.
+
+[MED] src/orders/service.py: `cancel_order` assumes order exists and has payment/charge_id without checking. Should handle `OrderNotFoundError` and missing payment fields gracefully.
+
+[LOW] src/orders/service.py: `fetch_user_orders` doesn't close the cursor/connection explicitly. While SQLite handles this automatically, explicit cleanup is better practice.

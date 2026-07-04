@@ -1,0 +1,4 @@
+[HIGH] src/orders/service.py: SQL injection via f-string user_id in fetch_user_orders; use parameterized query instead
+[HIGH] src/orders/service.py: bare except in coerce returns uncoerced value silently on error, masking malformed config
+[MED] src/orders/service.py: mutable default cache={}, so translations persist across unrelated calls and cannot be cleared
+[LOW] src/orders/service.py: find_nth_occurrence can return -1 if needle is not found; n=0 returns first occurrence, but subsequent finds from idx+1 may behave unexpectedly on no match

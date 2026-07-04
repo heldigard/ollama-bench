@@ -1,0 +1,18 @@
+**Decisions:**
+- Switched logging framework from standard library to `loguru` for better async performance and readability.
+- Implemented tracing logic to monitor slow database pool acquisitions within the test suite.
+- Configured Ruff linting rules via `[tool.ruff]` in `pyproject.toml`.
+- Set up `hatchling` as the build backend for project packaging.
+
+**Root cause:**
+- A race condition exists between asynchronous requests and the database connection pool.
+- The issue manifests intermittently (flaky), passing 8/10 times recently after a configuration change.
+- Pool size was increased from 5 to 10 yesterday, which altered contention dynamics but did not eliminate the flakiness entirely.
+
+**Next steps:**
+- Deploy tracing instrumentation specifically targeting slow pool acquisition events in `test_payment_flow.py`.
+- Analyze trace logs to pinpoint exact timing windows where timeouts occur.
+- Finalize and commit changes to branch `fix/payment-flake` once root cause is confirmed via traces.
+
+**Blockers:**
+- None identified.

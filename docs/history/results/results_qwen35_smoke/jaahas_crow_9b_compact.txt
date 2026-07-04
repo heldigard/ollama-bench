@@ -1,0 +1,28 @@
+```text
+Session: flaky test /home/eldi/proj/tests/test_payment_flow.py fails with timeout. Suspected: race in async DB connection pool. Yesterday pool size changed 5 to 10. Now passes 8/10, still flaky. Next: add tracing for slow pool acquire. Decided: switch to loguru. Commit in branch fix/payment-flake. Need conftest.py at root. Add [tool.ruff] to pyproject.toml. Build backend hatchling. No blockers.
+
+Decisions:
+- Switch logging from stdlib logging to loguru for better async traceability and structured output.
+- Create conftest.py at project root to enable shared fixtures (e.g., async DB pool fixture with tracing).
+- Add [tool.ruff] section to pyproject.toml for linting configuration (target version, line length, etc.).
+- Use hatchling as the build backend for the Python package.
+- Branch name: fix/payment-flake.
+- Tracing approach: instrument pool.acquire() with start/end timestamps and log duration via loguru.
+
+Root cause:
+- Race condition in async DB connection pool when multiple concurrent requests attempt to acquire connections simultaneously.
+- Pool size increased from 5 to 10 yesterday, which reduced contention but did not eliminate it under high load.
+- Test flakiness manifests as timeouts when pool exhaustion occurs during test execution.
+- Lack of visibility into pool state and acquisition latency made debugging difficult.
+
+Next steps:
+1. Implement loguru-based logging for async DB operations.
+2. Add instrumentation to track pool.acquire() duration and log warnings for acquisitions exceeding threshold (e.g., > 1s).
+3. Create conftest.py at /home/eldi/proj/conftest.py with a fixture that configures the DB pool with tracing enabled.
+4. Update pyproject.toml to include [tool.ruff] configuration (e.g., target-version = "py39", line-length = 88).
+5. Commit changes to branch fix/payment-flake.
+6. Run test suite to verify stability improvement.
+
+Blockers:
+- None identified.
+```

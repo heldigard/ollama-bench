@@ -1,0 +1,2 @@
+Arithmetic: Current capacity is 40pts but average velocity is 38.3pts; total remaining work is 200pts; minimum required velocity to finish in 3 sprints is 66.7pts (200/3); extra points per sprint over current average are 28.4pts (66.7-38.3).
+Final answer: No, they cannot finish at current velocity; minimum velocity needed is 66.7pts/sprint with an extra 28.4pts/sprint over the average.

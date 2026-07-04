@@ -1,0 +1,61 @@
+```python
+from __future__ import annotations
+
+import asyncio
+import random
+from functools import wraps
+from inspect import iscoroutinefunction
+from types import CoroutineType
+from typing import TypeVar, ParamSpec, Awaitable, Callable, Any
+
+P = ParamSpec("P")
+R = TypeVar("R", covariant=True)
+
+
+async def retry_with_backoff(
+    fn: Callable[P, R], *, retries: int = 3, base_delay: float = 0.5, jitter: bool = True
+) -> Awaitable[R]:
+    """
+    Calls an async function `fn` and retries on Exception with exponential backoff plus optional random jitter.
+
+    Args:
+        fn (Callable[P, R]): The async function to call.
+        retries (int): Maximum number of retry attempts.
+        base_delay (float): Base delay in seconds for the first attempt's wait time before next try.
+        jitter (bool): If True, adds random noise to the backoff interval.
+
+    Returns:
+        Awaitable[R]: The result of `fn` on success. Raises the last exception if all retries fail.
+
+    Note:
+        This function returns a coroutine that can be awaited directly or used with asyncio.run().
+    """
+    
+    @wraps(fn)
+    async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        attempt = 0
+        
+        while True:
+            try:
+                result = await fn(*args, **kwargs)
+                return result
+            except Exception as e:
+                if attempt >= retries - 1:
+                    raise
+                
+                delay = base_delay * (2 ** attempt)
+                
+                if jitter:
+                    # Add random jitter between 0 and the calculated delay
+                    delay += random.uniform(0, delay / 2)
+                    
+                await asyncio.sleep(delay)
+    
+    return wrapper
+
+
+# Example usage note:
+# async def my_async_func(): ...
+# result = retry_with_backoff(my_async_func).result() # or just call it directly if using a library that supports .result() on coroutines, 
+# but typically you would do: await retry_with_backoff(my_async_func) in an async context.
+```

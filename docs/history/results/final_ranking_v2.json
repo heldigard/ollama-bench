@@ -1,0 +1,220 @@
+{
+  "top2_per_task": {
+    "code": [
+      "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:latest",
+      "qwen3.5:4b"
+    ],
+    "compact": [
+      "carstenuhlig/omnicoder-9b:Q4_K_M",
+      "VladimirGav/gemma4-26b-16GB-VRAM-Uncensored:latest"
+    ],
+    "improve": [
+      "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest",
+      "fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b"
+    ],
+    "longctx": [
+      "fredrezones55/Qwopus3.5:4b",
+      "carstenuhlig/omnicoder-9b:Q4_K_M"
+    ],
+    "reason": [
+      "fredrezones55/Qwopus3.5:4b",
+      "carstenuhlig/omnicoder-9b:Q4_K_M"
+    ]
+  },
+  "all_models": [
+    {
+      "model": "carstenuhlig/omnicoder-9b:Q4_K_M",
+      "Q": 2.56,
+      "tok/s": 84.0,
+      "vram": 7821,
+      "COMP": 55.17,
+      "top2": "\u2605",
+      "n": 16
+    },
+    {
+      "model": "qwen3.5:4b",
+      "Q": 2.56,
+      "tok/s": 80.9,
+      "vram": 15163,
+      "COMP": 53.02,
+      "top2": "\u2605",
+      "n": 59
+    },
+    {
+      "model": "fredrezones55/Qwopus3.5:4b",
+      "Q": 2.38,
+      "tok/s": 88.8,
+      "vram": 6387,
+      "COMP": 50.11,
+      "top2": "\u2605",
+      "n": 16
+    },
+    {
+      "model": "vaultbox/qwen3.5-uncensored:4b",
+      "Q": 2.5,
+      "tok/s": 78.2,
+      "vram": 6456,
+      "COMP": 48.86,
+      "top2": "",
+      "n": 16
+    },
+    {
+      "model": "fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b",
+      "Q": 2.44,
+      "tok/s": 71.2,
+      "vram": 6385,
+      "COMP": 42.32,
+      "top2": "\u2605",
+      "n": 16
+    },
+    {
+      "model": "MobiusDevelopment/gemma4-E2B-it-qat-Q4-unsloth-heretic:latest",
+      "Q": 2.47,
+      "tok/s": 63.9,
+      "vram": 4832,
+      "COMP": 39.11,
+      "top2": "",
+      "n": 59
+    },
+    {
+      "model": "ZimaBlueAI/Qwen3.5-9B-DeepSeek-V4-Flash-GGUF:latest",
+      "Q": 2.44,
+      "tok/s": 64.0,
+      "vram": 7719,
+      "COMP": 38.0,
+      "top2": "",
+      "n": 16
+    },
+    {
+      "model": "VladimirGav/gemma4-26b-16GB-VRAM-Uncensored:latest",
+      "Q": 2.44,
+      "tok/s": 51.1,
+      "vram": 15611,
+      "COMP": 30.45,
+      "top2": "\u2605",
+      "n": 43
+    },
+    {
+      "model": "batiai/gemma4-12b:iq3",
+      "Q": 2.47,
+      "tok/s": 49.2,
+      "vram": 7826,
+      "COMP": 29.9,
+      "top2": "",
+      "n": 43
+    },
+    {
+      "model": "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest",
+      "Q": 2.61,
+      "tok/s": 43.1,
+      "vram": 10198,
+      "COMP": 29.38,
+      "top2": "\u2605",
+      "n": 59
+    },
+    {
+      "model": "maxwellb/gemma4-12b-it-dn:latest",
+      "Q": 2.54,
+      "tok/s": 40.6,
+      "vram": 10245,
+      "COMP": 26.23,
+      "top2": "",
+      "n": 59
+    },
+    {
+      "model": "igorls/gemma-4-12B-it-qat-q4_0-unquantized-heretic:Q4_K_M",
+      "Q": 2.41,
+      "tok/s": 44.6,
+      "vram": 9938,
+      "COMP": 25.83,
+      "top2": "",
+      "n": 27
+    },
+    {
+      "model": "gemma4:12b",
+      "Q": 2.49,
+      "tok/s": 38.5,
+      "vram": 10619,
+      "COMP": 23.92,
+      "top2": "",
+      "n": 59
+    },
+    {
+      "model": "cyborgxx101/gemma-4-12b-opus-finetuned-mlx:4bit",
+      "Q": 2.37,
+      "tok/s": 42.2,
+      "vram": 9940,
+      "COMP": 23.69,
+      "top2": "",
+      "n": 27
+    },
+    {
+      "model": "batiai/gemma4-12b:q4",
+      "Q": 2.4,
+      "tok/s": 38.2,
+      "vram": 10287,
+      "COMP": 21.99,
+      "top2": "",
+      "n": 45
+    },
+    {
+      "model": "SetneufPT/Gemma4-12B_Q4_64K_16GB-GPU:latest",
+      "Q": 2.31,
+      "tok/s": 34.9,
+      "vram": 9713,
+      "COMP": 18.65,
+      "top2": "",
+      "n": 45
+    },
+    {
+      "model": "scorpion7slayer/gemma-4-12b-it-claude-4.6-4.8-opus:latest",
+      "Q": 2.23,
+      "tok/s": 35.3,
+      "vram": 9457,
+      "COMP": 17.59,
+      "top2": "",
+      "n": 13
+    },
+    {
+      "model": "rafw007/qwen35-claude-coder:4b",
+      "Q": 2.06,
+      "tok/s": 40.2,
+      "vram": 6549,
+      "COMP": 17.09,
+      "top2": "",
+      "n": 16
+    },
+    {
+      "model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:latest",
+      "Q": 2.29,
+      "tok/s": 26.8,
+      "vram": 10174,
+      "COMP": 14.01,
+      "top2": "\u2605",
+      "n": 59
+    }
+  ],
+  "in_top2": [
+    "qwen3.5:4b",
+    "VladimirGav/gemma4-26b-16GB-VRAM-Uncensored:latest",
+    "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest",
+    "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:latest",
+    "fredrezones55/Qwopus3.5:4b",
+    "fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b",
+    "carstenuhlig/omnicoder-9b:Q4_K_M"
+  ],
+  "to_delete": [
+    "igorls/gemma-4-12B-it-qat-q4_0-unquantized-heretic:Q4_K_M",
+    "batiai/gemma4-12b:iq3",
+    "ZimaBlueAI/Qwen3.5-9B-DeepSeek-V4-Flash-GGUF:latest",
+    "vaultbox/qwen3.5-uncensored:4b",
+    "rafw007/qwen35-claude-coder:4b",
+    "maxwellb/gemma4-12b-it-dn:latest",
+    "MobiusDevelopment/gemma4-E2B-it-qat-Q4-unsloth-heretic:latest",
+    "SetneufPT/Gemma4-12B_Q4_64K_16GB-GPU:latest",
+    "cyborgxx101/gemma-4-12b-opus-finetuned-mlx:4bit",
+    "scorpion7slayer/gemma-4-12b-it-claude-4.6-4.8-opus:latest",
+    "gemma4:12b",
+    "batiai/gemma4-12b:q4"
+  ]
+}

@@ -1,0 +1,29 @@
+```python
+from __future__ import annotations
+
+import asyncio
+import random
+from typing import Awaitable, ParamSpec, TypeVar, Any
+
+P = ParamSpec("P")
+R = TypeVar("R", covariant=True)
+
+async def retry_with_backoff(fn: Awaitable[P], *, retries: int = 3, base_delay: float = 0.5, jitter: bool = True) -> R:
+    """Call an async function with exponential backoff on Exception."""
+    last_exception: Exception | None = None
+    
+    for attempt in range(retries + 1):
+        try:
+            return await fn()
+        except Exception as exc:
+            last_exception = exc
+            if attempt == retries:
+                raise
+            delay = base_delay * (2 ** attempt)
+            if jitter and attempt < retries:
+                random.uniform(0, delay)
+                delay *= 1.5
+            await asyncio.sleep(delay)
+
+    raise RuntimeError("Retry logic exhausted without success") from last_exception
+```

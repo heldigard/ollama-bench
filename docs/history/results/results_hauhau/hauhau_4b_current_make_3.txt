@@ -1,0 +1,33 @@
+GOAL
+Optimize frontend performance to reduce Time to First Byte (TTFB) and Largest Contentful Paint (LCP) by 40% on initial page loads without degrading user experience during interaction. Focus specifically on the main dashboard view, excluding admin or deep-nested report pages unless they share critical assets.
+
+FILES
+- `src/components/Dashboard/index.tsx` (Main component tree)
+- `public/images/*.png`, `*.svg` (Static asset directory)
+- `package.json` (For dependency audit and build config updates)
+- `.eslintrc.js` / `tsconfig.json` (If linting rules need tightening for unused imports)
+
+STEPS
+1. **Asset Optimization**: 
+   - Run a static analysis on all images used in the Dashboard to identify unoptimized formats or oversized files. Convert remaining PNGs/WebP assets and compress SVG paths where possible using an image optimization toolchain (e.g., `sharp` CLI).
+2. **Bundle Analysis & Tree Shaking**:
+   - Execute `webpack-bundle-analyzer` on a production build to identify the top 3 largest chunks. 
+   - Audit imports in `Dashboard/index.tsx`; remove unused dependencies and split large code-split bundles into separate routes if they do not load simultaneously with core dashboard widgets.
+3. **Code Splitting Implementation**:
+   - Implement dynamic import (`import()`) for heavy chart libraries or data-fetching modules within the Dashboard to ensure only necessary components render on initial load.
+4. **Caching Strategy Update**:
+   - Configure service workers (if using PWA) or CDN headers to aggressively cache static CSS, JS bundles, and images with a 30-day max-age for non-interactive assets.
+5. **Build Configuration Tuning**:
+   - Enable tree-shaking in the build pipeline (`mode: 'production'`, `optimization.usedExports`).
+   - Configure source maps to be minimized or excluded from production output if they are not required for debugging, reducing bundle size by ~20%.
+
+EDGE CASES
+- **Large Data Sets**: If dashboard widgets render >10k data points, ensure pagination or virtual scrolling is implemented before optimization; otherwise, the LCP gain may be negated by rendering time.
+- **Third-party Scripts**: Verify that analytics tags (e.g., Google Analytics) and ad scripts are deferred (`defer` attribute) to prevent blocking main thread execution during initial load.
+- **Network Fluctuations**: Ensure fallback mechanisms exist for slow connections so the "faster" optimization doesn't break functionality on mobile 3G/4G networks.
+
+ACCEPTANCE
+1. Lighthouse Performance score increases from current baseline (e.g., 65) to at least 90 within the Dashboard category.
+2. Largest Contentful Paint (LCP) metric improves by >40% compared to previous build on a standard connection speed test.
+3. Bundle size for `Dashboard` specific chunks reduces by minimum 15%.
+4. No regressions reported in unit tests or manual QA regarding dashboard functionality after code splitting and asset conversion.

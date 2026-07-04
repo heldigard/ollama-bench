@@ -1,0 +1,30 @@
+GOAL
+Resolve authentication failures occurring during user login and session management by identifying root causes in `auth_service.py` and related database queries within `api/routes/auth.js`. The fix must ensure valid credentials result in immediate token issuance, invalid tokens are rejected with appropriate HTTP status codes (401/403), and concurrent sessions can be managed according to policy.
+
+FILES
+- src/services/auth_service.py: Core logic for credential verification and JWT generation.
+- api/routes/auth.js: Request handlers for login/register endpoints.
+- database/models/UserModel.ts: Schema definitions including password hashing algorithms (bcrypt).
+- logs/app.log: Recent error traces related to `AuthError` or connection timeouts during auth flow.
+
+STEPS
+1. Analyze recent application logs (`logs/app.log`) filtered by "auth" tags for the last 24 hours to identify specific failure patterns (e.g., timeout, hash mismatch, invalid token).
+2. Execute a local test login with known valid credentials and capture stack traces from `src/services/auth_service.py` using Python's `logging` module at DEBUG level.
+3. Inspect database queries in `api/routes/auth.js` to verify correct parameter binding (prevent SQL injection) and ensure the query targets the active user table, not a shadow or legacy table.
+4. Review password hashing configuration (`bcrypt`) in `database/models/UserModel.ts`. Verify that the cost factor matches current security standards and that salt generation is deterministic where required for this specific implementation.
+5. Implement fixes:
+   - Add missing error handling blocks to catch `DatabaseConnectionError` specifically within the login endpoint.
+   - Correct any logic errors in token expiration calculation (e.g., using UTC timestamps instead of local time).
+6. Run unit tests (`tests/unit/auth_service.test.py`) and integration tests (`tests/integration/api_auth.e2e.js`) against a fresh database instance to validate fixes without side effects on existing data.
+
+EDGE CASES
+- User account locked due to excessive failed login attempts (implement exponential backoff or temporary lockout).
+- Concurrent requests from the same user attempting simultaneous logins (ensure only one active session per IP/User ID unless multi-device policy is enabled).
+- Token expiration race condition where a request arrives exactly at `T` seconds before expiry.
+- Database connection pool exhaustion during peak auth traffic spikes causing timeouts that are misinterpreted as authentication failures rather than infrastructure issues.
+
+ACCEPTANCE
+1. Successful login with valid credentials returns HTTP 200 and includes a valid JWT in the response header within <500ms latency on average.
+2. Login attempts with invalid username/password return HTTP 401 immediately without database query retries (unless retry logic is explicitly configured).
+3. Expired tokens result in HTTP 401 upon validation, allowing for seamless refresh token rotation if implemented.
+4. No new error logs appear related to `AuthError` or unhandled exceptions after the fix deployment across all monitored environments.

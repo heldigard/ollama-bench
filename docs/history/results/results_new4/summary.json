@@ -1,0 +1,476 @@
+{
+  "lfm25_q8": {
+    "model": "pierreprudh/lfm2.5-8b-a1b:Q8_0",
+    "reason": {
+      "ok": true,
+      "tps": 312.1,
+      "wall": 8.0,
+      "done": "length",
+      "len": 2343,
+      "leaks": [
+        "<think",
+        "</think"
+      ]
+    },
+    "longctx": {
+      "recall": "10/10",
+      "hits": 10,
+      "leaks": [
+        "<think",
+        "</think",
+        "the user wants"
+      ],
+      "tps": 311.3,
+      "wall": 0.8,
+      "done": "length"
+    },
+    "any_leak": true,
+    "any_length": true,
+    "vram_after_load": 10644
+  },
+  "lfm25_q4": {
+    "model": "hf.co/LiquidAI/LFM2.5-8B-A1B-GGUF:Q4_K_M",
+    "reason": {
+      "ok": true,
+      "tps": 422.3,
+      "wall": 6.2,
+      "done": "length",
+      "len": 2248,
+      "leaks": [
+        "<think",
+        "</think"
+      ]
+    },
+    "longctx": {
+      "recall": "10/10",
+      "hits": 10,
+      "leaks": [
+        "<think",
+        "</think",
+        "the user wants"
+      ],
+      "tps": 419.2,
+      "wall": 2.3,
+      "done": "length"
+    },
+    "any_leak": true,
+    "any_length": true,
+    "vram_after_load": 6970
+  },
+  "hauhau_9b": {
+    "model": "baytout3/Qwen3.5-Uncensored-HauhauCS-Aggressive:9b",
+    "reason": {
+      "ok": true,
+      "tps": 123.9,
+      "wall": 8.5,
+      "done": "stop",
+      "len": 1229,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 122.6,
+      "wall": 4.5,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 14098
+  },
+  "hauhau_4b": {
+    "model": "fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b",
+    "reason": {
+      "ok": true,
+      "tps": 181.0,
+      "wall": 4.9,
+      "done": "stop",
+      "len": 862,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 178.4,
+      "wall": 2.4,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 15590
+  },
+  "crow_4b": {
+    "crow_roles": {
+      "synth": {
+        "s1_128k": false,
+        "s2_contra": false,
+        "s3_not_stable": false,
+        "s4_64k": false,
+        "no_pricing": true,
+        "clean": true,
+        "score": 2
+      },
+      "bug": {
+        "mean": 2.67,
+        "runs": [
+          {
+            "n": 1,
+            "found": [
+              "B2 SQLi"
+            ],
+            "leaks": []
+          },
+          {
+            "n": 3,
+            "found": [
+              "B1 off-by-one",
+              "B2 SQLi",
+              "B6 None deref"
+            ],
+            "leaks": []
+          },
+          {
+            "n": 4,
+            "found": [
+              "B1 off-by-one",
+              "B2 SQLi",
+              "B4 mutable default",
+              "B5 resource leak"
+            ],
+            "leaks": []
+          }
+        ]
+      }
+    }
+  },
+  "crow_9b": {
+    "crow_roles": {
+      "synth": {
+        "s1_128k": true,
+        "s2_contra": true,
+        "s3_not_stable": true,
+        "s4_64k": true,
+        "no_pricing": true,
+        "clean": true,
+        "score": 6
+      },
+      "bug": {
+        "mean": 4.0,
+        "runs": [
+          {
+            "n": 4,
+            "found": [
+              "B1 off-by-one",
+              "B2 SQLi",
+              "B4 mutable default",
+              "B5 resource leak"
+            ],
+            "leaks": []
+          },
+          {
+            "n": 4,
+            "found": [
+              "B1 off-by-one",
+              "B2 SQLi",
+              "B3 bare except",
+              "B4 mutable default"
+            ],
+            "leaks": []
+          },
+          {
+            "n": 4,
+            "found": [
+              "B2 SQLi",
+              "B3 bare except",
+              "B4 mutable default",
+              "B5 resource leak"
+            ],
+            "leaks": []
+          }
+        ]
+      }
+    }
+  },
+  "qwen35_q8": {
+    "model": "qwen3.5:4b-q8_0",
+    "reason": {
+      "ok": true,
+      "tps": 135.0,
+      "wall": 14.6,
+      "done": "length",
+      "len": 1940,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "9/10",
+      "hits": 9,
+      "leaks": [],
+      "tps": 133.4,
+      "wall": 3.8,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": true,
+    "vram_after_load": 11584,
+    "universal": {
+      "model": "qwen3.5:4b-q8_0",
+      "bugfinding": {
+        "mean": 1.33,
+        "runs": [
+          {
+            "found": [
+              "B2 SQLi",
+              "B3 bare except",
+              "B5 resource leak"
+            ],
+            "n": 3,
+            "tps": 133.0,
+            "done": "stop",
+            "leaks": []
+          },
+          {
+            "found": [
+              "B2 SQLi",
+              "B3 bare except",
+              "B5 resource leak"
+            ],
+            "n": 3,
+            "tps": 134.9,
+            "done": "stop",
+            "leaks": []
+          },
+          {
+            "found": [
+              "B2 SQLi",
+              "B5 resource leak"
+            ],
+            "n": 2,
+            "tps": 133.8,
+            "done": "stop",
+            "leaks": []
+          }
+        ]
+      },
+      "rerank": {
+        "mean_pos": 5.0,
+        "runs": [
+          {
+            "order": "S1,S3,S5,S4,S2",
+            "pos_correct": 5,
+            "tps": 136.1
+          },
+          {
+            "order": "S1,S3,S5,S4,S2",
+            "pos_correct": 5,
+            "tps": 138.7
+          },
+          {
+            "order": "S1,S3,S5,S4,S2",
+            "pos_correct": 5,
+            "tps": 136.3
+          }
+        ]
+      },
+      "pii": {
+        "mean_leaks": 0.0,
+        "runs": [
+          {
+            "raw_leaks": 0,
+            "tps": 137.3
+          },
+          {
+            "raw_leaks": 0,
+            "tps": 137.4
+          },
+          {
+            "raw_leaks": 0,
+            "tps": 136.8
+          }
+        ]
+      },
+      "smarttrim": {
+        "mean_ent": 10.67,
+        "runs": [
+          {
+            "entities": "11/11",
+            "n": 11,
+            "bullets": 4,
+            "tps": 132.6,
+            "done": "stop"
+          },
+          {
+            "entities": "11/11",
+            "n": 11,
+            "bullets": 5,
+            "tps": 133.6,
+            "done": "stop"
+          },
+          {
+            "entities": "10/11",
+            "n": 10,
+            "bullets": 5,
+            "tps": 133.8,
+            "done": "stop"
+          }
+        ]
+      }
+    }
+  },
+  "qwen35_q4": {
+    "model": "qwen3.5:4b",
+    "reason": {
+      "ok": true,
+      "tps": 173.7,
+      "wall": 4.1,
+      "done": "stop",
+      "len": 969,
+      "leaks": []
+    },
+    "longctx": {
+      "recall": "10/10",
+      "hits": 10,
+      "leaks": [],
+      "tps": 169.1,
+      "wall": 2.4,
+      "done": "stop"
+    },
+    "any_leak": false,
+    "any_length": false,
+    "vram_after_load": 15578,
+    "universal": {
+      "model": "qwen3.5:4b",
+      "bugfinding": {
+        "mean": 1.33,
+        "runs": [
+          {
+            "found": [
+              "B1 off-by-one",
+              "B2 SQLi",
+              "B5 resource leak"
+            ],
+            "n": 3,
+            "tps": 175.2,
+            "done": "stop",
+            "leaks": []
+          },
+          {
+            "found": [
+              "B2 SQLi",
+              "B5 resource leak"
+            ],
+            "n": 2,
+            "tps": 177.6,
+            "done": "stop",
+            "leaks": []
+          },
+          {
+            "found": [
+              "B1 off-by-one",
+              "B2 SQLi",
+              "B5 resource leak"
+            ],
+            "n": 3,
+            "tps": 181.1,
+            "done": "stop",
+            "leaks": []
+          }
+        ]
+      },
+      "rerank": {
+        "mean_pos": 5.0,
+        "runs": [
+          {
+            "order": "S1,S3,S5,S4,S2",
+            "pos_correct": 5,
+            "tps": 179.4
+          },
+          {
+            "order": "S1,S3,S5,S4,S2",
+            "pos_correct": 5,
+            "tps": 178.9
+          },
+          {
+            "order": "S1,S3,S5,S4,S2",
+            "pos_correct": 5,
+            "tps": 124.6
+          }
+        ]
+      },
+      "pii": {
+        "mean_leaks": 0.0,
+        "runs": [
+          {
+            "raw_leaks": 0,
+            "tps": 186.2
+          },
+          {
+            "raw_leaks": 0,
+            "tps": 186.7
+          },
+          {
+            "raw_leaks": 0,
+            "tps": 183.1
+          }
+        ]
+      },
+      "smarttrim": {
+        "mean_ent": 11.0,
+        "runs": [
+          {
+            "entities": "11/11",
+            "n": 11,
+            "bullets": 5,
+            "tps": 179.2,
+            "done": "stop"
+          },
+          {
+            "entities": "11/11",
+            "n": 11,
+            "bullets": 5,
+            "tps": 178.5,
+            "done": "stop"
+          },
+          {
+            "entities": "11/11",
+            "n": 11,
+            "bullets": 5,
+            "tps": 174.3,
+            "done": "stop"
+          }
+        ]
+      }
+    }
+  },
+  "hauhau_9b_baytout3": {
+    "improve": {
+      "model": "baytout3/Qwen3.5-Uncensored-HauhauCS-Aggressive:9b",
+      "mean_struct": 6.11,
+      "acc_rate": 1.0,
+      "mean_len": 3572.0,
+      "any_leak": false,
+      "any_length": true
+    }
+  },
+  "hauhau_4b_fred": {
+    "improve": {
+      "model": "fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b",
+      "mean_struct": 6.22,
+      "acc_rate": 1.0,
+      "mean_len": 2469.0,
+      "any_leak": false,
+      "any_length": false
+    }
+  },
+  "mobius": {
+    "improve": {
+      "model": "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf",
+      "mean_struct": 6.0,
+      "acc_rate": 1.0,
+      "mean_len": 2012.0,
+      "any_leak": false,
+      "any_length": false
+    }
+  }
+}

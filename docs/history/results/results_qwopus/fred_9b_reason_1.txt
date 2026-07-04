@@ -1,0 +1,6 @@
+**Arithmetic:**  
+- Current backlog: **200 pts**. Remaining time: **3 sprints**. Required velocity to finish exactly on deadline = 200 ÷ 3 ≈ **66.7 points/sprint**.  
+- Team's recent average velocity (last 3 sprints): **(35 + 42 + 38) / 3** = 115/3 ≈ **38.3 pts/sprint**.  
+- Extra needed per sprint: **66.7 − 38.3** ≈ **28.4 points/sprint**.
+
+**One-line final answer:** No; they need a minimum of ~66.7 points/sprint, which is about 28.4 extra points above their current average velocity.

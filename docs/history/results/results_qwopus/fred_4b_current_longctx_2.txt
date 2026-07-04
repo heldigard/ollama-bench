@@ -1,0 +1,82 @@
+# Structured Handoff Note: Flaky Test Investigation & Infrastructure Updates
+
+## Decisions Made
+
+### Logging Framework Migration
+- **Decision**: Switch from Python's standard `logging` module to [`loguru`](https://github.com/Delgan/loguru) for structured logging
+- **Rationale**: 
+  - Loguru provides automatic correlation IDs, timestamps with timezone awareness, and better stack trace formatting
+  - Enables more efficient log aggregation in CI/CD pipelines
+  - Reduces boilerplate code compared to manual `logging.basicConfig` configuration
+
+### Build Backend Selection
+- **Decision**: Use [`hatchling`](https://pypi.org/project/hatch/) as the build backend instead of setuptools
+- **Rationale**: 
+  - Hatch provides faster dependency resolution and installation times (typically 20-30% improvement)
+  - Better support for modern Python packaging standards (PEP 621, PEP 584)
+  - Improved handling of complex dependencies with many transitive requirements
+
+### Test Fix Branch Creation
+- **Decision**: Create branch `fix/payment-flake` to contain test fixes and investigation results
+- **Rationale**: 
+  - Isolates changes from main development work
+  - Enables easy rollback if new issues are discovered during debugging
+  - Provides clear audit trail for the flakiness issue
+
+### Configuration File Structure
+- **Decision**: Add `conftest.py` at repository root level to enable pytest fixture discovery without needing per-test-file fixtures
+- **Rationale**: 
+  - Centralizes shared test configuration and fixtures
+  - Reduces code duplication across multiple test files
+  - Enables global test setup/teardown logic
+
+## Root Cause Analysis (Pending)
+
+### Current Hypothesis: Async DB Connection Pool Race Condition
+**Suspected Issue**: The async database connection pool is experiencing race conditions during concurrent operations.
+
+#### Supporting Evidence:
+1. **Configuration Change Correlation**: 
+   - Yesterday's change increased the connection pool size from 5 to 10 connections
+   - Test behavior changed immediately after this configuration modification
+   
+2. **Partial Success Pattern**: 
+   - Today observed success rate of only 8/10 runs (80% pass rate)
+   - Indicates intermittent failure rather than consistent bug or environment issue
+
+3. **Timeout Errors**: 
+   - Failures specifically manifest as timeout exceptions
+   - Suggests resource contention during connection acquisition under load
+   
+4. **Async Context Nature**: 
+   - The pool operates in an async context, making race conditions more likely with concurrent requests attempting to acquire connections simultaneously
+
+#### Verification Needed:
+- Confirm whether the increased pool size (10 vs 5) actually improved or worsened performance for this specific workload pattern
+- Determine if test execution order affects failure rates (indicates resource contention between tests)
+
+## Next Steps & Action Items
+
+### Immediate Actions Required
+
+**1. Implement Distributed Tracing/Logging Enhancement**
+```python
+# Priority: HIGH | Owner: Current Session | Due: Before next commit
+- Add loguru-based tracing to identify slowest pool acquisition calls
+- Instrument the connection pool with timing metrics per acquire operation
+- Capture full call stacks for failed acquisitions in structured JSON format
+- Correlate test failures with specific pool operations using correlation IDs
+```
+
+**2. Database Connection Pool Investigation**
+```python
+# Priority: HIGH | Owner: Current Session | Due: Before next commit  
+- Verify if the increased connection count (10) is appropriate for async workload patterns used in tests
+- Check if there are any deadlocks or lock contention issues with current pool configuration
+- Consider implementing circuit breakers to prevent cascading failures during timeout conditions
+```
+
+**3. Test Infrastructure Updates**
+```python
+# Priority: MEDIUM | Owner: Current Session | Due: Before next commit  
+- Create `conft

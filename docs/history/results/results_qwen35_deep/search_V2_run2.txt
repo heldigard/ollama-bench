@@ -1,0 +1,5 @@
+[SEV] src/orders/service.py: fetch_user_orders uses f-string with user_id directly in SQL query, leading to SQL injection vulnerability.
+[SEV] src/orders/service.py: load_translations opens file without context manager (with statement), risking resource leak on failure.
+[SEV] src/orders/service.py: parse_config catches bare Exception instead of specific types like ValueError or TypeError for type coercion.
+[MED] src/orders/service.py: find_nth_occurrence uses inefficient repeated find() calls; could be optimized with regex or index tracking.
+[MED] src/orders/service.py: cancel_order assumes order exists and has payment.charge_id without checking for None or missing keys.

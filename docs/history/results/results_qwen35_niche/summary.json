@@ -1,0 +1,12 @@
+{
+  "rerank": {
+    "base": 6.0,
+    "search_V2": 1.0,
+    "crow_9b": 6.0
+  },
+  "pii": {
+    "base": 5.0,
+    "pii_v4": 5.0,
+    "crow_9b": 5.0
+  }
+}

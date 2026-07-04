@@ -1,0 +1,4 @@
+[CRITICAL] file: fetch_user_orders.py SQL injection vulnerability due to string formatting in query.
+[HIGH] file: load_translations.py missing context manager for file handle causing resource leak on error or exit.
+[MEDIUM] file: parse_config.py bare except clause swallows exceptions and returns invalid types instead of raising errors.
+[LOW] file: find_nth_occurrence.py inefficient O(n*m) search logic using repeated string.find() calls.

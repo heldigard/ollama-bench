@@ -1,0 +1,25 @@
+{
+  "Q8_0": {
+    "model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0",
+    "rep_pen": null,
+    "recall": "4/6",
+    "found": [
+      "B2 SQL injection (f-string user_id into query)",
+      "B3 bare except swallows (parse_config.coerce)",
+      "B4 mutable default arg (cache={})",
+      "B6 None/KeyError deref (order['payment']['charge_id'] unchecked)"
+    ],
+    "missed": [
+      "B1 off-by-one (find_nth over-counts, ignores n=0/missing)",
+      "B5 resource leak (open() no close/with)"
+    ],
+    "leaks": [],
+    "fp_proxy": 5,
+    "clean": false,
+    "tok_s": 56.0,
+    "wall_s": 4.2,
+    "done_reason": "stop",
+    "eval_count": 180,
+    "output": "[HIGH] src/orders/service.py: SQL injection via f-string in fetch_user_orders; use parameterized query instead\n\n[HIGH] src/orders/service.py: find_nth_occurrence returns -1 on no match, which silently corrupts subsequent calls and callers that assume a valid index\n\n[MED] src/orders/service.py: load_translations uses mutable default cache={}, so every call shares the same dict across all requests; also never closes file f\n\n[MED] src/orders/service.py: parse_config's bare except swallows KeyboardInterrupt and SystemExit, and returns uncoerced values silently on bad input\n\n[LOW] src/orders/service.py: cancel_order assumes order[\"payment\"][\"charge_id\"] exists without checking; will KeyError if payment is missing or charge_id unset"
+  }
+}

@@ -1,0 +1,40 @@
+The user wants me to solve a problem about sprint capacity, backlog, velocity, and deadlines.
+
+ Given:
+ - Sprint capacity: 40 story points per sprint (this might be relevant for checking feasibility, but let's see)
+ - Backlog remaining: 200 points
+ - Sprints left: 3
+ - Velocity over last 3 sprints: 35, 42, and 38 points
+ - Average velocity: 38.3 (let me verify: (35+42+38)/3 = 115/3 = 38.333...)
+
+ Question parts:
+ 1. Can they finish the entire backlog in the 3 remaining sprints at current velocity?
+ 2. If not, what is the MINIMUM velocity per sprint they would need to finish exactly 200 points in 3 sprints?
+ 3. How much extra per sprint is that over their current average?
+
+ Let me calculate:
+
+ Part 1: Can they finish at current velocity?
+ - Current average velocity = (35 + 42 + 38) / 3 = 115 / 3 ≈ 38.33 points/sprint
+ - In 3 sprints at this rate: 3 × 38.33... = 115 points
+ - Backlog is 200 points
+ - 115 < 200, so NO, they cannot finish the entire backlog at current velocity.
+
+ Part 2: Minimum velocity per sprint needed to finish exactly 200 points in 3 sprints.
+ - Total points needed: 200
+ - Number of sprints: 3
+ - Required velocity = 200 / 3 ≈ 66.67 points/sprint
+
+ Part 3: Extra per sprint over current average.
+ - Current average: 115/3 ≈ 38.33
+ - Required: 200/3 ≈ 66.67
+ - Difference: (200/3) - (115/3) = 85/3 ≈ 28.33 points/sprint
+
+ Let me double-check the arithmetic:
+ - Current velocity sum: 35 + 42 + 38 = 115
+ - Average: 115/3 = 38.333...
+ - Points they would complete in 3 sprints at current rate: 115 points (since that's exactly what they've done in the last 3 sprints)
+ - Backlog remaining: 200
+ - Shortfall: 200 - 115 = 85 points
+
+ Required velocity per sprint: 200/3 = 6

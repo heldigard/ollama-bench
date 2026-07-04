@@ -1,0 +1,5 @@
+[SEV HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` via string formatting (`f"SELECT ... '{user_id}' ..."`) instead of parameterized queries.
+[SEV HIGH] src/orders/service.py: Unsafe file handling in `load_translations` using `open(path)` without context manager, risking resource leaks and path traversal attacks.
+[SEV HIGH] src/orders/service.py: Exception handling in `parse_config` is too broad (`except:`) masking specific errors like `ValueError`, preventing proper debugging.
+[SEV MED] src/orders/service.py: Logic bug in `find_nth_occurrence` which returns the index of the (n+1)-th occurrence instead of the n-th due to off-by-one iteration logic.
+[SEV MED] src/orders/service.py: Missing null/empty check for `order["payment"]["charge_id"]` before calling `stripe.refund`, risking KeyError or runtime failure if payment data is missing.

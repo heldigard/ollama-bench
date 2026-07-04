@@ -1,0 +1,19 @@
+GOAL: Resolve authentication failures occurring during user login by ensuring valid credentials are correctly verified against the database and session tokens are properly issued without expiration logic errors.
+
+FILES: `src/auth/login.service.ts`, `src/middleware/auth.guard.ts`, `database/schema/users.sql`
+
+STEPS:
+1. Inspect `login.service.ts`: Verify that the password comparison uses bcrypt with a consistent cost factor (currently set to 10, needs update if others differ) and ensure no race conditions exist in concurrent login attempts using database locks (`SELECT ... FOR UPDATE`).
+2. Audit `auth.guard.ts`: Confirm JWT payload expiration claims match server time tolerance settings; fix logic where expired tokens are incorrectly accepted or vice versa based on the current implementation.
+3. Update `users.sql` schema: Add a unique constraint to prevent duplicate email addresses if this is causing auth confusion, and ensure the password hash column has sufficient length (256 bits).
+4. Implement retry mechanism in login service for transient database connection failures up to 3 attempts with exponential backoff.
+
+EDGE CASES:
+- User account locked after 5 failed attempts within a rolling window of 1 hour; verify lockout logic is enforced before allowing re-login.
+- Time skew between client and server causing JWT validation errors despite valid token content.
+- Concurrent requests from the same user attempting to log in simultaneously resulting in duplicate session creation or lost state.
+
+ACCEPTANCE:
+- All users with correct credentials can login successfully within 2 seconds under load (50 concurrent users).
+- Invalid passwords result in immediate failure without exposing database structure details via error messages.
+- Expired tokens are rejected, and newly generated tokens remain valid for exactly the configured duration (e.g., 3600s) before expiration.

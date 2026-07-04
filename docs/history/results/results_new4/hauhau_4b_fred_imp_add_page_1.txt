@@ -1,0 +1,30 @@
+GOAL
+Implement a client-side CSV export feature for all rows displayed in the `/reports` view. The exported file must contain only data columns (excluding metadata like timestamps or IDs if not requested), formatted with standard comma separation and proper escaping for special characters.
+
+FILES
+- `src/components/ReportsTable.tsx`: Add an "Export" button header action and handle row selection logic.
+- `src/utils/exportUtils.ts`: Create function to transform table data into a CSV string blob.
+- `public/reports.html` (or equivalent route handler): Ensure the export link triggers download via Blob URL or direct file generation without opening in new tab.
+
+STEPS
+1. Modify `ReportsTable.tsx`:
+   - Inject an "Export" button next to existing action buttons in the table header row.
+   - Bind the button's click event to a handler function: `handleReportExport`.
+2. Implement `exportUtils.ts`:
+   - Create `generateCSV(dataArray, headers)`: Takes array of objects and key names; returns a Blob containing CSV content with UTF-8 encoding.
+   - Handle edge cases: Empty arrays (return empty file), special characters in values (wrap quotes if necessary).
+3. Wire up the handler:
+   - In `handleReportExport`, call `generateCSV` using current table data and column headers.
+   - Create a temporary `<a>` element with `download` attribute set to filename `reports_export.csv`.
+   - Set `href` to URL.createObjectURL(blob) and click programmatically, then revoke object URL on success.
+
+EDGE CASES
+- **Empty Dataset**: If no reports exist in the current view/filters, display a toast notification "No data available for export" instead of generating an empty file.
+- **Special Characters**: Ensure values containing commas or quotes are correctly escaped (e.g., `"value with comma"`).
+- **Browser Compatibility**: Verify download behavior works on Chrome/Firefox/Safari; fallback to console log if `URL.createObjectURL` fails in legacy environments.
+- **Large Datasets**: If dataset exceeds ~10,000 rows, implement chunked export or streaming logic to prevent browser freezing (optional but recommended).
+
+ACCEPTANCE
+- User clicks "Export" button on the Reports page header.
+- Browser downloads a file named `reports_export.csv`.
+- Opening the downloaded CSV in Excel/Sheets displays all visible table columns and data rows correctly formatted as text, not merged cells or HTML artifacts.

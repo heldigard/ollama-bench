@@ -1,0 +1,6 @@
+Decisions/Root cause/Next steps/Blockers
+
+- Decisions: Switched logging framework from standard library to loguru; committed changes in branch fix/payment-flake. Added [tool.ruff] configuration to pyproject.toml. Configured build backend as hatchling. Ensured conftest.py exists at the project root.
+- Root cause: Race condition within async database connection pool suspected after yesterday's change from pool size 5 to 10; test flakiness persists (8/10 passes) despite increased capacity, indicating intermittent contention or acquisition delays.
+- Next steps: Implement distributed tracing specifically for slow pool acquire operations to pinpoint latency sources and validate the race condition hypothesis.
+- Blockers: None

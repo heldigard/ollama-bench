@@ -1,0 +1,37 @@
+GOAL: Optimize the frontend and backend performance of the main analytics dashboard to reduce Time to Interactive (TTI) and Largest Contentful Paint (LCP) by at least 40%.
+
+FILES:
+- `src/components/Dashboard.tsx` (Main layout)
+- `src/hooks/useFetchData.ts` (API fetching logic)
+- `src/api/dashboardApi.ts` (Endpoint definitions)
+- `public/assets/` (Static assets)
+- `docker-compose.yml` / `nginx.conf` (Infrastructure config, if applicable)
+
+STEPS:
+1. Audit Performance: Run a Lighthouse audit and Chrome DevTools Network tab analysis to identify specific bottlenecks (e.g., large payloads, render-blocking scripts, or slow API responses).
+2. Implement Pagination/Infinite Scroll: Modify `useFetchData.ts` to replace "fetch all" logic with limit/offset pagination for large datasets.
+3. Data Fetching Optimization: 
+    - Implement React Query (or similar) for caching and stale-while-revalidate logic.
+    - Add `select` transformations to fetch only necessary fields from the backend.
+4. Component Level Optimizations:
+    - Wrap heavy components in `React.memo`.
+    - Implement "Skeleton Screens" to improve perceived performance during loading states.
+    - Use `useDeferredValue` or `useTransition` for non-critical UI updates (e.g., filtering results).
+5. Asset Optimization: 
+    - Convert images/icons to WebP format and implement lazy loading.
+    - Implement code splitting using `React.lazy()` for dashboard widgets that are below the fold.
+6. Backend/Network Layer:
+    - Verify if Gzip or Brotli compression is enabled on the server.
+    - Check for N+1 query issues in the backend controller providing data to the dashboard.
+
+EDGE CASES:
+- Handling "Empty States" when pagination returns no results.
+- Ensuring UI remains responsive during high-frequency filtering/sorting actions.
+- Graceful degradation for users on 3G/slow mobile connections (e.g., disabling heavy animations).
+- Error handling for partial data loads (one widget fails, others should still render).
+
+ACCEPTANCE:
+- LCP (Largest Contentful Paint) < 2.5 seconds on a standard 4G connection.
+- TTI (Time to Interactive) < 3.8 seconds.
+- API response time for the primary dashboard payload < 500ms.
+- Zero "Maximum call stack size exceeded" errors during heavy filtering.

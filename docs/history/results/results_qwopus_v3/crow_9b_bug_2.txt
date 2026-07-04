@@ -1,0 +1,13 @@
+[CRIT] src/orders/service.py: SQL injection via f-string interpolation of user_id directly into query without parameterization. `f"SELECT * FROM orders WHERE user_id = '{user_id}'"` is vulnerable to injection attacks.
+
+[CRIT] src/orders/service.py: Stripe API key exposure risk. `stripe.refund(charge)` uses a global client that likely has credentials embedded or loaded insecurely. No validation that the charge belongs to this service's account before refunding.
+
+[HIGH] src/orders/service.py: `fetch_user_orders` returns raw DB rows with no type conversion or null handling. Could leak internal schema details and crash downstream code on unexpected NULLs.
+
+[HIGH] src/orders/service.py: `load_translations` uses mutable default argument `cache={}` which causes shared state across calls and potential race conditions in async context.
+
+[MED] src/orders/service.py: `parse_config` silently accepts any value for unknown keys instead of raising an error. This masks configuration drift and makes debugging harder.
+
+[MED] src/orders/service.py: `find_nth_occurrence` returns -1 when needle not found, but callers may expect None or raise an exception. Inconsistent error semantics.
+
+[MED] src/orders/service.py: `cancel_order` assumes order exists and has payment data without checking. Will raise KeyError or AttributeError if order is missing or payment field absent.

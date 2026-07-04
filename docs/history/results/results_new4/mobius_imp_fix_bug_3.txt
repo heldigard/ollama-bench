@@ -1,0 +1,29 @@
+GOAL: Identify and resolve a security vulnerability or functional failure within the authentication system (e.g., session hijacking, incorrect password hashing, JWT expiration issues, or unauthorized access to protected routes).
+
+FILES: 
+- `auth_middleware.js` / `auth_controller.js` (Authentication logic)
+- `.env` (Environment variables for secrets/keys)
+- `user_model.js` (Database schema and password hashing logic)
+- `routes/auth.js` (API endpoints for login, signup, logout)
+
+STEPS:
+1. Reproduce the bug: Identify the specific failure point (e.g., "User can access /admin without a token" or "Login fails with valid credentials").
+2. Audit Middleware: Verify that every protected route correctly invokes the authentication middleware and validates the session/token.
+3. Inspect Password Handling: Ensure passwords are being hashed using a secure algorithm (e.g., Argon2 or BCrypt) before storage and compared correctly during login.
+4. Validate Token Logic: Check JWT signing keys, expiration times (`exp`), and issuer claims (`iss`). Verify that `refresh_tokens` are properly rotated.
+5. Test Session Persistence: Ensure cookies/headers are being sent correctly by the client and parsed correctly by the server (CORS, SameSite attributes).
+6. Unit & Integration Testing: Write test cases for successful login, failed login (wrong password), expired tokens, and unauthorized access attempts.
+
+EDGE CASES:
+- Concurrent logins from multiple devices.
+- Brute force attempts (Rate limiting).
+- Expired JWTs being used with valid refresh tokens.
+- SQL injection or NoSQL injection in the username/email fields.
+- Handling of null or undefined values in the request body.
+
+ACCEPTANCE:
+- The specific reported bug is no longer reproducible.
+- All protected routes return 401 Unauthorized for missing/invalid credentials and 403 Forbidden for insufficient permissions.
+- Password hashes are never stored in plain text.
+- Authentication logs correctly capture failed attempts without leaking sensitive data.
+- Unit tests pass with 100% coverage on the auth module.

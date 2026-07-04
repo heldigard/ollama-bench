@@ -1,0 +1,5 @@
+[SEV] src/orders/service.py: SQL injection vulnerability in fetch_user_orders via f-string concatenation.
+[SEV] src/orders/service.py: Missing error handling for file operations in load_translations (no try/except, no context manager).
+[SEV] src/orders/service.py: Unsafe type coercion in parse_config catches all exceptions including KeyError.
+[MED] src/orders/service.py: Resource leak risk in load_translations if json.load fails after opening file.
+[MED] src/orders/service.py: Missing null check for order["payment"]["charge_id"] before calling stripe.refund.

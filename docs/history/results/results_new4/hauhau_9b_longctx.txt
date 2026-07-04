@@ -1,0 +1,26 @@
+# Session Handoff Note: Flaky Test Investigation (`test_payment_flow.py`)
+
+## Decisions
+- **Logging Framework**: Switched from `stdlib logging` to `loguru` for structured, high-performance logging suitable for async debugging and tracing.
+- **Build Backend Selection**: Confirmed usage of `hatchling` as the build backend (selected over `setuptools` specifically for improved speed).
+- **Branch Strategy**: Test fixes will be committed in branch `fix/payment-flake`.
+- **Configuration Updates Required**: 
+  - Add a `[tool.ruff]` section to `pyproject.toml` to configure linting rules.
+  - Create/add `conftest.py` at the repository root to ensure pytest can discover and inject fixtures correctly across test sessions.
+
+## Root Cause Analysis
+- **Symptom**: The test `test_payment_flow` in `/home/eldi/proj/tests/test_payment_flow.py` exhibits flakiness, specifically failing with a timeout error intermittently.
+- **Suspected Mechanism**: A race condition within the async database connection pool is suspected as the primary cause of timeouts and instability under concurrent load or timing variations.
+- **Impact of Recent Changes**: 
+  - Yesterday, the user increased the DB connection pool size from `5` to `10`.
+  - This change improved stability significantly (test passed in 8 out of 10 runs today) but did not fully resolve the flakiness, suggesting that while resource contention is reduced, timing-sensitive race conditions or specific acquire patterns remain problematic.
+
+## Next Steps
+- **Immediate Investigation**: Implement tracing logic to capture detailed metrics on `pool.acquire()` operations. The goal is to identify exactly which acquisition attempts are slow and correlate them with test execution flow.
+- **Infrastructure Setup**: 
+  - Create the root-level `conftest.py` file to centralize fixture definitions and ensure global discovery works as expected.
+  - Update `pyproject.toml` by adding the `[tool.ruff]` configuration section.
+- **Code Integration**: Commit all test-related fixes (including tracing logic) into the dedicated branch `fix/payment-flake`.
+
+## Blockers
+- None currently identified.

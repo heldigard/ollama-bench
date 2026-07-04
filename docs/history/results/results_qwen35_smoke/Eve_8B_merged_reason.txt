@@ -1,0 +1,21 @@
+Let's break this down with a clear head and no fluff.
+
+**1. Can they finish at current average velocity?**
+*   **Current Average Velocity:** 38.3 points/sprint (rounded from 35+42+38 / 3).
+*   **Projected Output for 3 sprints:** $3 \times 38.3 = 114.9$ points.
+*   **Remaining Work:** 200 points.
+*   **Verdict:** No, they are significantly behind schedule. They would only complete about half the remaining work.
+
+**2. What is the minimum velocity required to finish?**
+To clear 200 points in exactly 3 sprints:
+$$ \text{Required Velocity} = \frac{\text{Total Points}}{\text{Number of Sprints}} $$
+$$ \text{Required Velocity} = \frac{200}{3} \approx 66.7 $$
+
+So, they need an average velocity of **~67 points per sprint**.
+
+**3. What is the extra capacity needed over their current average?**
+*   **Target:** ~67 pts/sprint
+*   **Current Avg:** ~38.3 pts/sprint
+*   **Gap (Extra Needed):** $67 - 38.3 = 28.7$ points per sprint.
+
+**Final Answer:** No, they cannot finish at current velocity; they need a minimum average of **~67 pts/sprint**, which is roughly **29 pts more** than their historical average each sprint.

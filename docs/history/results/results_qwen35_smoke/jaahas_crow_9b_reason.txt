@@ -1,0 +1,10 @@
+**Arithmetic:**
+
+1. **Remaining work:** 200 pts  
+2. **Current average velocity:** (35 + 42 + 38) / 3 = 115 / 3 ≈ 38.33 pts/sprint  
+3. **Work done in 3 sprints at current velocity:** 3 × 38.33 = 115 pts  
+4. **Shortfall:** 200 – 115 = 85 pts  
+5. **Velocity needed to finish in 3 sprints:** 200 / 3 ≈ 66.67 pts/sprint  
+6. **Extra per sprint over current average:** 66.67 – 38.33 = 28.34 pts/sprint  
+
+**Final answer:** No, they cannot finish in 3 sprints at current velocity. They need ~66.67 pts/sprint, which is ~28.34 pts/sprint above their current average.

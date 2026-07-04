@@ -1,0 +1,32 @@
+```python
+from collections import OrderedDict
+from typing import Generic, TypeVar, Optional
+
+K = TypeVar("K")
+V = TypeVar("V")
+
+class LRUCache(Generic[K, V]):
+    def __init__(self, capacity: int):
+        if capacity <= 0:
+            raise ValueError("Capacity must be greater than zero.")
+        self._cache: OrderedDict[K, V] = OrderedDict()
+        self._capacity: int = capacity
+
+    def get(self, key: K) -> Optional[V]:
+        if key not in self._cache:
+            return None
+        # Move accessed item to the end (most recently used)
+        self._cache.move_to_end(key)
+        return self._cache[key]
+
+    def put(self, key: K, value: V) -> None:
+        if key in self._cache:
+            # Update existing key and move to end
+            self._cache[key] = value
+            self._cache.move_to_end(key)
+        else:
+            # Add new key; evict least recently used (first item) if at capacity
+            if len(self._cache) >= self._capacity:
+                oldest_key, _ = self._cache.popitem(last=False)
+            self._cache[key] = value
+```

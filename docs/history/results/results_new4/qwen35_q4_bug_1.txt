@@ -1,0 +1,4 @@
+[CRIT] file: security: SQL injection vulnerability in fetch_user_orders via f-string interpolation of user_id.
+[HIGH] file: logic: find_nth_occurrence returns -1 for n=0, causing incorrect behavior when searching from the start.
+[MEDIUM] file: error_handling: parse_config catches generic Exception instead of ValueError/TypeError, masking specific conversion errors.
+[LOW] file: resource_management: load_translations opens a file without using context manager (with statement), risking leak on failure.

@@ -1,0 +1,47 @@
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   **Role:** OmniCoder (expert coding assistant).
+    *   **Task:** Produce a structured handoff note.
+    *   **Format:** Structured (Decisions / Root cause / Next steps / Blockers).
+    *   **Constraint:** Preserve ALL key facts. Completeness over brevity. Plain text only, no preamble.
+    *   **Input Data:** A session summary about investigating a flaky test in `/home/eldi/proj/tests/test_payment_flow.py`.
+
+2.  **Extract Key Facts from Input:**
+    *   **File:** `/home/eldi/proj/tests/test_payment_flow.py`
+    *   **Test Name:** `test_payment_flow`
+    *   **Issue:** Flaky test, sometimes fails with a timeout error.
+    *   **Suspected Root Cause:** Race condition in the async DB connection pool.
+    *   **Recent Change:** User changed pool size from 5 to 10 yesterday.
+    *   **Current Status:** Test passed 8/10 runs today (still flaky).
+    *   **Next Action (Immediate):** Add tracing to identify which pool acquire is slow.
+    *   **Logging Decision:** Switch to loguru for structured logging.
+    *   **Branch:** `fix/payment-flake` (where fixes will be committed).
+    *   **Configuration Files:**
+        *   Need `conftest.py` at repo root.
+        *   Add `[tool.ruff]` to `pyproject.toml`.
+    *   **Build Backend:** `hatchling`.
+    *   **Blockers:** None.
+
+3.  **Draft the Handoff Note:**
+    *   Structure: Decisions, Root cause, Next steps, Blockers.
+    *   Content: Fill in the extracted facts under each header.
+    *   Style: Plain text, no markdown preamble, clear sections.
+
+4.  **Review and Refine:**
+    *   *Check:* Did I include the file path? Yes.
+    *   *Check:* Did I include the test name? Yes.
+    *   *Check:* Did I include the specific error (timeout)? Yes.
+    *   *Check:* Did I include the pool size change (5 -> 10)? Yes.
+    *   *Check:* Did I include the pass rate (8/10)? Yes.
+    *   *Check:* Did I include the logging decision (loguru)? Yes.
+    *   *Check:* Did I include the branch name? Yes.
+    *   *Check:* Did I include the config file requirements (conftest.py, pyproject.toml)? Yes.
+    *   *Check:* Did I include the build backend (hatchling)? Yes.
+    *   *Check:* Did I include blockers status? Yes.
+    *   *Check:* Is it plain text? Yes.
+    *   *Check:* Is there a preamble? No.
+
+5.  **Final Polish:** Ensure clear separation between sections.
+
+    *   *Decisions:* Switch to loguru for structured logging. Commit fixes in branch `fix/payment-flake`. Add `[tool.ruff]` to

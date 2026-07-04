@@ -1,0 +1,27 @@
+GOAL
+Optimize the application's initial page load time (Time to Interactive) by reducing client-side bundle size, minimizing critical rendering path blocking resources, and implementing efficient data fetching strategies. Target a reduction in First Contentful Paint (FCP) from current baseline to under 1.5s on average network conditions.
+
+FILES
+- `src/main.tsx` / `index.html`: Entry points for bundling optimization and meta tags.
+- `package.json`: Dependencies audit for tree-shaking opportunities or lighter alternatives.
+- `vite.config.ts` (or equivalent build config): Configuration for code splitting, lazy loading, compression settings, and asset handling.
+- `src/components/Dashboard/`.tsx: Components requiring memoization or virtual scrolling if data-heavy.
+- `public/index.html`: Critical CSS injection strategy.
+
+STEPS
+1. **Audit & Bundle Analysis**: Run build with verbose output (e.g., `vite --build` + `source-map-explorer`) to identify largest bundles and unused dependencies. Remove dead code via tree-shaking configuration in the bundler config.
+2. **Code Splitting Implementation**: Configure dynamic imports (`import()`) for non-critical dashboard modules (charts, heavy tables) so they load after initial shell rendering. Ensure route-based splitting if using a router like React Router or SolidRouter.
+3. **Critical CSS Extraction**: Extract only styles required above the fold into `index.html` `<style>` tags before loading full CSS files to reduce render-blocking time. Use `rel="preload"` for fonts and critical assets with explicit font-display: swap.
+4. **Data Fetching Optimization**: Replace synchronous or blocking API calls in component mounts with asynchronous patterns (e.g., React Query, SWR) that allow UI skeleton rendering while data loads. Implement pagination or infinite scroll instead of loading all dashboard widgets at once if dataset > 10k rows.
+5. **Asset Compression & Caching**: Enable gzip/brotli compression for text-based assets in build config. Configure `Cache-Control` headers via a reverse proxy (Nginx/Apache) to cache static JS/CSS/Assets with long max-age values and stale-while-revalidate strategies.
+6. **Lazy Load Images/Videos**: Replace standard `<img>` tags with lazy-loading attributes (`loading="lazy"`) or IntersectionObserver-based loaders for images below the fold.
+
+EDGE CASES
+- **Third-party SDKs**: Ensure heavy libraries (e.g., Google Charts, D3) are loaded asynchronously and only when specific widgets are interacted with to prevent blocking main thread.
+- **SSR/ISR Hydration Mismatch**: If using Next.js or Remix, ensure server-rendered HTML matches client hydration expectations to avoid "hydration mismatch" delays that stall interactivity.
+- **Large JSON Responses**: Implement response compression on the backend (Gzip/Brotli) and consider streaming large datasets instead of buffering entire responses in memory before sending.
+
+ACCEPTANCE
+- Lighthouse Performance score for "Initial UI Render" increases by at least 20% compared to baseline.
+- Bundle size reduced by >15% after code splitting and tree-shaking.
+- Time to Interactive (TTI) drops below 1.8s on a simulated 3G network using Chrome DevTools throttling.

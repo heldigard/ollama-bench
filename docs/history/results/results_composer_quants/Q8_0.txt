@@ -1,0 +1,9 @@
+[HIGH] src/orders/service.py: SQL injection via f-string in fetch_user_orders; use parameterized query instead
+
+[HIGH] src/orders/service.py: find_nth_occurrence returns -1 on no match, which silently corrupts subsequent calls and callers that assume a valid index
+
+[MED] src/orders/service.py: load_translations uses mutable default cache={}, so every call shares the same dict across all requests; also never closes file f
+
+[MED] src/orders/service.py: parse_config's bare except swallows KeyboardInterrupt and SystemExit, and returns uncoerced values silently on bad input
+
+[LOW] src/orders/service.py: cancel_order assumes order["payment"]["charge_id"] exists without checking; will KeyError if payment is missing or charge_id unset

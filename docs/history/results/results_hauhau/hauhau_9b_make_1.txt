@@ -1,0 +1,21 @@
+GOAL
+Optimize the application's initial page load time (Time to Interactive) by reducing client-side bundle size, minimizing critical rendering path blocking resources, and implementing efficient data fetching strategies. Target a reduction in First Contentful Paint (FCP) from current baseline to <1.5s on 3G networks and reduce Total Blocking Time (TBT) to <200ms.
+
+FILES
+- `src/main.tsx` / `index.html`: Entry points for bundling optimization and meta tag adjustments.
+- `package.json`: Dependencies audit for tree-shaking opportunities or lighter alternatives.
+- `vite.config.ts` / `webpack.config.js`: Configuration for code splitting, lazy loading, asset compression (brotli/gzip), and build cache handling.
+- `/src/components/Dashboard/`: Components requiring refactoring to support dynamic imports/lazy rendering.
+- `/public/assets/images/`: Static assets needing WebP conversion or responsive image sets (`<picture>`).
+- `/.vite/cache` / `.next/cache`: Build artifacts for incremental builds (if applicable).
+
+STEPS
+1. **Bundle Analysis**: Run `rollup-plugin-visualizer` or `webpack-bundle-analyzer` to identify the top 5 largest modules in the dashboard bundle. Flag heavy libraries (e.g., moment.js, lodash) for replacement with tree-shakeable alternatives (date-fns/lodash-es).
+2. **Code Splitting & Lazy Loading**: Refactor non-critical components (charts, data tables, user profile settings) to be loaded via `React.lazy` or dynamic imports (`import()`) only when the user interacts with specific dashboard sections. Update routing logic in React Router/Vue Router to ensure route-based chunk splitting is active by default.
+3. **Critical CSS Extraction**: If using a CSS-in-JS library (e.g., Emotion, Styled-components) or Tailwind via JIT, extract critical above-the-fold styles into an inline `<style>` block within `index.html` and defer non-critical stylesheet loading with the `media="print"` hack followed by JS injection.
+4. **Asset Optimization**: Convert all static images in `/public/assets/images/` to WebP format using a build script (e.g., `sharp`) or CDN transformation, implementing `<picture>` tags for fallbacks. Enable Brotli compression (`gzip: true`, `brotliSize: 1024 * 1024`) in the Vite/Webpack dev/prod server configuration.
+5. **HTTP/3 & Caching Headers**: Update `.vite` or Nginx config to serve assets over HTTP/3 if possible, and set appropriate `Cache-Control` headers (`max-age=86400` for static assets) with versioned filenames (e.g., `dashboard.a1b2c3.css`) to prevent cache busting issues during updates.
+6. **Data Fetching Optimization**: Replace synchronous API calls blocking the main thread in initialization code with asynchronous, non-blocking fetches using `Promise.allSettled` or Web Workers for heavy data processing (e.g., chart calculations). Implement request deduplication and caching of immutable dashboard metadata.
+
+EDGE CASES
+- **SSR/ISR Hydration Mismatch**: Ensure server-side rendered content matches client hydration to prevent "hydration mismatch" errors that can stall the main thread after

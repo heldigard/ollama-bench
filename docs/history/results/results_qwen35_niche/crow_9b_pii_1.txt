@@ -1,0 +1,1 @@
+Ticket #4821: Customer [NAME] (email: [EMAIL], phone: [PHONE]) reported a charge of $1,240.77 on card ending 8821. SSN on file: [SSN]. Reach him at [EMAIL] or backup [PHONE]. Account ID: [ACCOUNT].

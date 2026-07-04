@@ -1,0 +1,5 @@
+[HIGH] src/orders/service.py: SQL injection in fetch_user_orders via f-string user_id
+[HIGH] src/orders/service.py: Bare except in coerce swallows KeyboardInterrupt and SystemExit
+[MED] src/orders/service.py: mutable default argument cache={1} persists across calls; use None
+[MED] src/orders/service.py: find_nth_occurrence can return -1 on no match, which is then used as start in next find() call
+[LOW] src/orders/service.py: parse_config returns original v on failed cast instead of raising — silent data corruption for invalid ints

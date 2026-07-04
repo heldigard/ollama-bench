@@ -1,0 +1,58 @@
+# Structured Handoff Note: Flaky Test Investigation & Infrastructure Improvements
+
+## Decisions Made
+
+### Logging Framework Migration
+- **Decision**: Switch from Python stdlib `logging` to [`loguru`](https://github.com/Delgan/loguru) for structured logging  
+- **Rationale**: loguru provides better performance, automatic indentation, and cleaner syntax compared to manual formatting with stdlib logging. This will enable more effective tracing of async operations without verbose boilerplate code.
+
+### Build Backend Selection
+- **Decision**: Use [`hatchling`](https://pypi.org/project/hatch/) as the build backend instead of setuptools  
+- **Rationale**: hatchling provides faster builds and better support for modern Python packaging standards, particularly beneficial given our project structure with multiple test files and fixtures.
+
+### Test Infrastructure Setup
+- **Decision**: Create `conftest.py` at repository root to centralize pytest configuration and shared fixtures  
+- **Impact**: Enables fixture reuse across all tests in the payment flow module without duplicating setup code.
+
+---
+
+## Root Cause Analysis (Current Hypothesis)
+
+**Primary Suspected Issue**: Race condition in async database connection pool management  
+
+### Evidence Supporting This Theory
+1. **Timing Correlation**: The flakiness appeared immediately after yesterday's deployment where DB connection pool size was increased from 5 to 10 connections  
+2. **Partial Success Rate**: Test passes ~8/10 times today, suggesting intermittent contention rather than complete failure  
+3. **Async Context**: The test involves async operations with multiple concurrent database requests  
+
+### Potential Mechanism
+- With the larger connection pool (10 vs 5), there may be a race condition where:
+  - Multiple threads acquire connections simultaneously during high load
+  - Connection cleanup or release timing conflicts occur in an asynchronous context  
+  - The test creates temporary contention that only manifests under specific execution conditions  
+
+---
+
+## Next Steps & Action Items
+
+### Immediate Priority (High)
+**Add Distributed Tracing for Pool Acquire Operations**
+- Implement tracing to identify which pool acquisition call is experiencing latency spikes
+- Focus on: `acquire()` calls in the async DB connection handling code  
+- Expected output: Pinpoint exact line numbers and thread IDs where connections are being held too long
+
+### Infrastructure Setup (Medium Priority)
+1. **Create Repository Root Configuration**
+   - Add `conftest.py` at `/home/eldi/proj/conftest.py` to discover fixtures globally across all test files  
+2. **Update Project Configuration**
+   - Modify [`pyproject.toml`](https://github.com/Delgan/pyproject-toml) with `[tool.ruff]` section for linting configuration  
+
+### Code Changes (Scheduled)
+- Commit fixes in branch: `fix/payment-flake`  
+- Include test modifications and any necessary code changes to support the tracing implementation
+
+---
+
+## Blockers & Dependencies
+
+**Current Status**: No blockers identified. All required files can be created locally without external dependencies or coordination with other team members at this time.

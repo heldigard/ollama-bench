@@ -1,0 +1,86 @@
+{
+  "qwen35_4b_BASE": {
+    "model": "qwen3.5:4b",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 1,
+      "B2 SQL injection": 3,
+      "B3 bare except": 3,
+      "B4 mutable default": 0,
+      "B5 resource leak": 3,
+      "B6 None/KeyError deref": 0
+    },
+    "mean_recall": 0.56,
+    "mean_tps": 172.2,
+    "any_leak": false
+  },
+  "q8_0": {
+    "model": "qwen3.5:4b-q8_0",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 0,
+      "B2 SQL injection": 3,
+      "B3 bare except": 1,
+      "B4 mutable default": 0,
+      "B5 resource leak": 3,
+      "B6 None/KeyError deref": 0
+    },
+    "mean_recall": 0.39,
+    "mean_tps": 132.4,
+    "any_leak": false
+  },
+  "search_V2": {
+    "model": "jbaptistedaniel/search-ai-qwen3.5-4B-V2-q4",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 0,
+      "B2 SQL injection": 3,
+      "B3 bare except": 2,
+      "B4 mutable default": 0,
+      "B5 resource leak": 2,
+      "B6 None/KeyError deref": 1
+    },
+    "mean_recall": 0.44,
+    "mean_tps": 178.3,
+    "any_leak": false
+  },
+  "eve_solforg3": {
+    "model": "jeffgreen311/eve-qwen35-4b-solforg3-v2",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 2,
+      "B2 SQL injection": 3,
+      "B3 bare except": 3,
+      "B4 mutable default": 0,
+      "B5 resource leak": 3,
+      "B6 None/KeyError deref": 3
+    },
+    "mean_recall": 0.78,
+    "mean_tps": 131.6,
+    "any_leak": false
+  },
+  "jaahas_crow_9b": {
+    "model": "jaahas/crow:9b",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 3,
+      "B2 SQL injection": 3,
+      "B3 bare except": 3,
+      "B4 mutable default": 2,
+      "B5 resource leak": 3,
+      "B6 None/KeyError deref": 3
+    },
+    "mean_recall": 0.94,
+    "mean_tps": 108.3,
+    "any_leak": false
+  },
+  "thinhphan_q4km": {
+    "model": "thinhphan97/qwen3.5-4B:q4km",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 1,
+      "B2 SQL injection": 3,
+      "B3 bare except": 2,
+      "B4 mutable default": 0,
+      "B5 resource leak": 3,
+      "B6 None/KeyError deref": 2
+    },
+    "mean_recall": 0.61,
+    "mean_tps": 178.5,
+    "any_leak": false
+  }
+}

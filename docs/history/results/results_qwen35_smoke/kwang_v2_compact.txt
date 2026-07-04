@@ -1,0 +1,24 @@
+Thinking Process:
+
+1.  **Analyze the Request:**
+    *   Input: A raw text summary of a session regarding a flaky test (`test_payment_flow.py`).
+    *   Task: Produce a structured handoff note with specific sections (Decisions, Root cause, Next steps, Blockers).
+    *   Constraint 1: Preserve ALL key facts.
+    *   Constraint 2: Plain text format.
+    *   Constraint 3: No preamble.
+
+2.  **Analyze the Input Data:**
+    *   Session Topic: flaky test `/home/eldi/proj/tests/test_payment_flow.py` fails with timeout. Suspected: race in async DB connection pool. Yesterday pool size changed 5 to 10. Now passes 8/10, still flaky. Next: add tracing for slow pool acquire. Decided: switch to loguru. Commit in branch `fix/payment-flake`. Need conftest.py at root. Add `[tool.ruff]` to pyproject.toml. Build backend hatchling. No blockers.
+
+3.  **Map Input to Output Sections:**
+    *   **Decisions:** Switch to loguru, commit in branch fix/payment-flake.
+    *   **Root cause:** Race in async DB connection pool (suspected). Context: Pool size changed from 5 to 10 yesterday; test passes 8/10 times now but still flaky. Original issue: `/home/eldi/proj/tests/test_payment_flow.py` fails with timeout.
+    *   **Next steps:** Add tracing for slow pool acquire, need conftest.py at root, add `[tool.ruff]` to pyproject.toml, build backend hatchling.
+    *   **Blockers:** None (No blockers).
+
+4.  **Drafting the Content (Iterative refinement):**
+
+    *   *Attempt 1:*
+        Decisions: Switched to loguru. Committed in branch fix/payment-flake.
+        Root cause: Race condition in async DB connection pool. Pool size increased from 5 to 10 yesterday. Test passes 8/10 times now but remains flaky. Original test path: /home/eldi/proj/tests/test_payment_flow.py fails with timeout.
+        Next steps: Add tracing for slow pool acquire. Ensure conftest.py is at

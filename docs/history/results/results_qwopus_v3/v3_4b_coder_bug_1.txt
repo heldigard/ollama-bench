@@ -1,0 +1,4 @@
+[SEV HIGH] src/orders/service.py: SQL injection vulnerability in `fetch_user_orders` due to string formatting with user-provided `user_id`.
+[MED] src/orders/service.py: Missing error handling (try/except) for file operations and JSON parsing in `load_translations`.
+[MED] src/orders/service.py: Unsafe use of global mutable dictionary `cache` in `load_translations`, risking data leakage across calls.
+[LOW] src/orders/service.py: Unnecessary async wrapper around synchronous `cancel_order` logic; could be simplified to sync function.

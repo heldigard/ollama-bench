@@ -1,0 +1,53 @@
+{
+  "Q4_K_M": {
+    "model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:latest",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 5,
+      "B2 SQL injection": 5,
+      "B3 bare except": 5,
+      "B4 mutable default": 5,
+      "B5 resource leak": 4,
+      "B6 None/KeyError deref": 3
+    },
+    "mean_recall": 0.9,
+    "mean_findings": 5.6,
+    "mean_tok_s": 83.8,
+    "mean_wall_s": 3.6,
+    "any_leak": false,
+    "done_length_any": false
+  },
+  "Q6_K": {
+    "model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q6_K",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 5,
+      "B2 SQL injection": 5,
+      "B3 bare except": 5,
+      "B4 mutable default": 5,
+      "B5 resource leak": 4,
+      "B6 None/KeyError deref": 2
+    },
+    "mean_recall": 0.87,
+    "mean_findings": 4.8,
+    "mean_tok_s": 67.8,
+    "mean_wall_s": 3.9,
+    "any_leak": false,
+    "done_length_any": false
+  },
+  "Q8_0": {
+    "model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0",
+    "bug_hits": {
+      "B1 off-by-one/find_nth": 5,
+      "B2 SQL injection": 5,
+      "B3 bare except": 5,
+      "B4 mutable default": 5,
+      "B5 resource leak": 5,
+      "B6 None/KeyError deref": 4
+    },
+    "mean_recall": 0.97,
+    "mean_findings": 5.2,
+    "mean_tok_s": 55.4,
+    "mean_wall_s": 5.2,
+    "any_leak": false,
+    "done_length_any": false
+  }
+}

@@ -1,0 +1,43 @@
+```python
+from __future__ import annotations
+
+import asyncio
+import random
+from typing import Any, Callable, Coroutine, Optional
+
+
+async def retry_with_backoff(
+    fn: Callable[[], Coroutine[Any, Any, Any]],
+    *,
+    retries: int = 3,
+    base_delay: float = 0.5,
+    jitter: bool = True,
+) -> Any:
+    """
+    Calls an async function `fn` with exponential backoff on exception.
+
+    Args:
+        fn: An async callable that returns a coroutine.
+        retries: Maximum number of retry attempts (not including the initial call).
+        base_delay: Base delay in seconds between retries.
+        jitter: If True, adds random jitter to each delay.
+
+    Returns:
+        The result of `fn` on success.
+
+    Raises:
+        Exception: The last exception raised by `fn` after exhausting retries.
+    """
+    attempt = 0
+    while attempt <= retries:
+        try:
+            return await fn()
+        except Exception as exc:
+            if attempt == retries:
+                raise
+            delay = base_delay * (2 ** attempt)
+            if jitter:
+                delay *= random.uniform(0.5, 1.5)
+            await asyncio.sleep(delay)
+            attempt += 1
+```

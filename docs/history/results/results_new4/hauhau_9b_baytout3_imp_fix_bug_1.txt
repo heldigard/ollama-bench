@@ -1,0 +1,31 @@
+GOAL
+Isolate and resolve the authentication failure in the current codebase by identifying whether the root cause is a logic error (e.g., incorrect token validation flow), an implementation detail mismatch (e.g., wrong hash algorithm, expired session handling), or infrastructure misconfiguration. The fix must ensure users can successfully authenticate via all supported methods (password, OAuth, SSO) and that subsequent authorization checks pass without intermittent 401/403 errors under load.
+
+FILES
+- `src/auth/*.py` / `/lib/auth.js`: Core authentication logic (login endpoint handlers, token generation/validation).
+- `config/security.yaml` or `.env`: Environment variables for secret keys, JWT expiration times, OAuth client IDs/secrets.
+- `models/User.ts` or similar: User schema definition including password hashing fields and session metadata.
+- `src/middleware/auth.middleware.*`: Middleware responsible for intercepting requests to validate tokens/cookies before route execution.
+- Database migration scripts (e.g., `migrations/user_password_hash_algo.sql`) if a recent change altered the storage format of credentials.
+
+STEPS
+1. Reproduce: Trigger the failure using an automated script that cycles through all auth methods with valid and edge-case inputs to confirm consistency.
+2. Log Analysis: Inspect server-side logs immediately preceding the 401/500 errors for stack traces, specific error messages (e.g., "Token expired," "Invalid signature"), or timing gaps indicating race conditions.
+3. State Inspection: Query the database directly with a valid user ID to verify that `password_hash`, `last_login_at`, and `is_active` flags match expected states post-login attempt.
+4. Token Validation Flow Trace: Add temporary debug logging inside token validation functions (`verify_jwt()`, `check_session_cookie()`) to trace exactly where the boolean check fails (e.g., signature mismatch vs. payload expiration).
+5. Secret Key Verification: Confirm that application secrets used for signing tokens match those configured in production environment variables; a common cause of "sudden" auth bugs is key rotation without updating all instances or config files simultaneously.
+6. Hash Algorithm Audit: Ensure the hashing library (e.g., `bcrypt`, `argon2`) version and cost factor haven't drifted between dev/prod, causing hash comparison failures on password login attempts.
+7. Implement Fix: Apply code changes to correct logic errors or update configurations for secret keys/hashing parameters; ensure database migrations run if schema changed.
+8. Regression Test: Execute the reproduction script again against both development and staging environments with concurrent requests (load test) to verify stability under stress.
+
+EDGE CASES
+- **Clock Skew**: Server time differs significantly from client or token issuer, causing premature JWT expiration checks; implement a configurable clock skew tolerance window in validation logic.
+- **Concurrent Logins**: User account locked after N failed attempts triggers auth failure before password check completes; verify lockout duration and unlock mechanism are correctly implemented.
+- **Case Sensitivity**: Email/username fields compared case-sensitively when the database stores them lowercase (or vice versa), causing "user not found" errors for valid credentials.
+- **Timezone Handling**: Timestamps stored in UTC but validated against local server time without conversion, leading to incorrect expiration calculations across regions.
+- **Cookie Attributes**: `SameSite` or `Secure/HttpOnly` flags missing on session cookies preventing browser from sending auth tokens over HTTPS (or vice versa).
+
+ACCEPTANCE
+1. All reproduction scenarios pass consistently with 200 OK responses for valid credentials and appropriate error codes/messages for invalid ones.
+2. Token validation logs show successful signature verification within the expected clock skew tolerance window (<5 seconds) across all tested regions/timezones.
+3. Load testing (e.g., 1,000 concurrent login attempts over 60s) results in

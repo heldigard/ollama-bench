@@ -1,0 +1,65 @@
+The user wants a structured handoff note with specific sections: Decisions, Root cause, Next steps, and Blockers. They want ALL key facts preserved, completeness over brevity.
+
+ Let me extract all the facts from the session description:
+
+ 1. **Session context**: Investigating flaky test in `/home/eldi/proj/tests/test_payment_flow.py`
+ 2. **Test name**: `test_payment_flow` (sometimes fails with timeout error)
+ 3. **Suspected root cause**: Race condition in async DB connection pool
+ 4. **Recent change**: Yesterday user changed pool size from 5 to 10 connections
+ 5. **Current status**: After the change, test passed 8/10 runs today (still flaky)
+ 6. **Next step**: Add tracing to identify which pool acquire is slow
+ 7. **Decision made**: Switch to loguru for structured logging instead of stdlib logging
+ 8. **Branch name**: `fix/payment-flake` (will commit test fixes here)
+ 9. **Infrastructure changes needed**: 
+    - Add `conftest.py` at repo root so pytest discovers fixtures
+    - Add `[tool.ruff]` section to `pyproject.toml`
+ 10. **Build system**: Uses hatchling as build backend (chosen over setuptools for speed)
+ 11. **Blockers**: None currently
+
+ Now I need to organize this into the four required sections:
+
+ **Decisions**: 
+ - Switched pool size from 5 to 10 connections
+ - Decided to use loguru instead of stdlib logging
+ - Chose hatchling over setuptools as build backend (for speed)
+
+ **Root cause**:
+ - Race condition in async DB connection pool (suspected)
+ - Test `test_payment_flow` sometimes fails with timeout error
+ - Recent change: pool size increased from 5 to 10 yesterday
+
+ **Next steps**:
+ - Add tracing to identify which pool acquire is slow
+ - Commit test fixes in branch `fix/payment-flake`
+ - Add `conftest.py` at repo root for pytest fixture discovery
+ - Add `[tool.ruff]` section to `pyproject.toml`
+
+ **Blockers**:
+ - None currently
+
+ I should make sure all file paths, names, and specific details are preserved exactly as given. The user emphasized completeness over brevity, so I shouldn't summarize or omit anything.
+
+ Let me double-check:
+ - File path: `/home/eldi/proj/tests/test_payment_flow.py` ✓
+ - Test name: `test_payment_flow` ✓
+ - Error type: timeout error ✓
+ - Pool size change: 5 to 10 connections ✓
+ - Timing: Yesterday changed, today passed 8/10 runs ✓
+ - Branch name: `fix/payment-flake` ✓
+ - Logging switch: loguru vs stdlib logging ✓
+ - Build backend: hatchling over setuptools (for speed) ✓
+ - Infrastructure: conftest.py at repo root for pytest fixtures ✓
+ - Config: [tool.ruff] section in pyproject.toml ✓
+
+ The structure looks good. I'll format it clearly with headers and bullet points where appropriate to ensure readability while maintaining completeness.
+</think>
+
+**Decisions**
+- Increased DB connection pool size from 5 connections to 10 connections (implemented yesterday)
+- Switched logging implementation from stdlib `logging` module to **loguru** for structured logging
+- Selected **hatchling** as the build backend over setuptools (chosen specifically for speed improvements)
+
+**Root cause**
+- Test `test_payment_flow` in `/home/eldi/proj/tests/test_payment_flow.py` exhibits flakiness with occasional timeout errors
+- Suspected root cause: race condition within async DB connection pool implementation
+- Cor

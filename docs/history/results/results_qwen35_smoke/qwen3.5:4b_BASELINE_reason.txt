@@ -1,0 +1,13 @@
+**Arithmetic:**
+1. **Total Points Remaining**: The backlog is explicitly stated as **200 pts**. (Note: Even if the total project was larger, only the remaining 200 needs to be completed).
+2. **Sprints Available**: There are **3 sprints** left.
+3. **Required Average Velocity ($V_{req}$)**: To finish exactly 200 points in 3 sprints, divide the work by time: $200 / 3 \approx 66.7$. Since velocity must be an integer (representing whole story points), we round up to ensure completion: **67 pts/sprint**.
+4. **Current Average Velocity ($V_{avg}$)**: The last three sprints were 35, 42, and 38. Sum = $115$. Average = $115 / 3 \approx 38.3$ (rounded to nearest whole number for planning purposes is usually **38**, but using the precise decimal helps calculate the delta).
+   * Using integer average of last sprints: $(35+42+38)/3 = 38$.
+   * Difference needed per sprint: $67 - 38 = 29$ pts.
+   *(If calculating based on exact decimals: $66.67 - 38.33 \approx 28.3$, which still rounds up to needing an extra ~29 points to guarantee finish).*
+
+**Conclusion:**
+No, they cannot finish in the current velocity (avg ~38). They need a minimum average of **67 pts/sprint**. This requires increasing their output by approximately **29 points per sprint** over their historical average.
+
+Final Answer: No; Minimum avg velocity required is 67 pts/sprint (an increase of approx +29 pts/sprint over the current ~38 pt avg).
