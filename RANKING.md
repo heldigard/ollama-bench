@@ -1,18 +1,24 @@
-# Current Ranking — installed Ollama models (snapshot 2026-07-04, Ollama 0.31.1)
+# Current Ranking — installed Ollama models (snapshot 2026-07-05, Ollama 0.31.1)
 
 > Combined rank = avg(deep_rank, tie_break_rank). Lower = better.
 > Only **currently installed** models. For the full test history (incl. eliminated), see `RANKING_HISTORY.md`.
+>
+> **2026-07-05 round-3 update**: added `Grug-12B` (improve PRIMARY via 2× hard-prompt win) + `HauhauCS Gemma4 Balanced` (code_gen tier-2 saturated tie). DeepSeek-V4-Flash dropped (leak). Full report: `topics/candidates-round-3-2026-07-05.md`.
 
 
 ## improve
 
 | # | combined | deep (rank/score) | tie-break (rank/score) | model |
 |---|---|---|---|---|
-| 1 | 2.5 | #2 / 3.44 | #3 / 8.57 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
-| 2 | 3.5 | #6 / 2.59 | #1 / 8.75 | `Librellama/gemma4:e2b-Uncensored` |
-| 3 | 5.5 | #1 / 4.74 | #10 / 3.82 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| 4 | 6.5 | #9 / 2.21 | #4 / 8.52 | `jaahas/crow:9b` |
-| 5 | 9.0 | #4 / 3.03 | #14 / 3.63 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
+| **1** | **1.0** | **#1 / 3.54** | **#1 / 8.39 (verified 8.53)** | **`hf.co/kai-os/Grug-12B-GGUF:Q4_K_M`** ← **NEW #1 (2026-07-05)** |
+| 2 | 2.5 | #2 / 3.44 | #3 / 4.15 (was 8.57 in pre-7/5 bench) | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (demoted to #2) |
+| 3 | 3.5 | #6 / 2.59 | — / 5.08 (round-3 tie-break) | `Librellama/gemma4:e2b-Uncensored` |
+| 4 | 5.5 | — / — | — / — | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| 5 | 6.5 | #9 / 2.21 | #4 / 8.52 | `jaahas/crow:9b` |
+
+> Note: pegasus912's pre-7/5 tie-break score of 8.57 was on a different prompt iteration;
+> 2026-07-05 re-run on Grug vs pegasus912-only gave pegasus912 4.37 (Grug 8.53, delta +4.16).
+> Grug-12B confirmed winner under both bench seeds.
 
 ## codeq_sum
 
@@ -50,34 +56,35 @@
 |---|---|---|---|---|
 | 1 | 6.0 | #7 / 6.00 | #5 / 16.00 | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
 | 2 | 6.0 | #3 / 6.00 | #9 / 16.00 | `fredrezones55/Qwopus3.5:9b` |
+| 2 | 6.0 | #5 / 6.00 | #1 / 16.00 (round-3) | **`hf.co/kai-os/Grug-12B-GGUF:Q4_K_M`** (saturated tie — rewire TBD) |
+| 2 | 6.0 | — / — | #1 / 16.00 (round-3, ties 3-way) | **`hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M`** ← NEW 2026-07-05 |
 | 3 | 7.0 | #1 / 7.00 | #13 / 16.00 | `qwen3.5:4b` |
-| 4 | 7.5 | #9 / 6.00 | #6 / 16.00 | `batiai/gemma4-e4b:q4` |
-| 5 | 8.0 | #6 / 6.00 | #10 / 16.00 | `free01/gemma4:e4b` |
 
 ## bug_finding (separate bench: count bugs found in a diff)
 
 | # | score | model |
 |---|---|---|
-| 1 | **17.98** | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` ← NEW #1 (2026-07-04) |
-| 2 | **15.86** | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` (beats xentriom Q8_0 14.26) |
-| 3 | **15.50** | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (Opus 4.6 + function-calling) |
-| 4 | 15.21 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
-| 5 | 15.00 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| 5 | 15.00 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (leaks `<think>`, strippable) |
-| 7 | 14.56 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| 1 | **18.50** | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` (re-verified 2026-07-05) |
+| 2 | **15.35** | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` (re-verified 2026-07-05) |
+| 3 | **15.09** | **`hf.co/kai-os/Grug-12B-GGUF:Q4_K_M`** ← NEW 2026-07-05 (only 0.26 below #2) |
+| 4 | 14.37 | **`hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M`** ← NEW 2026-07-05 |
+| 5 | 12.15 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
 
 ## tool_call (structured JSON output — new slice, ground-truth)
 
 | # | score | model |
 |---|---|---|
-| 1 | **9.85** | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (function-calling fine-tune) |
-| 2 | 9.83 | `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` |
-| 3 | 9.82 | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
-| 4 | 8.74 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` |
+| 1 | **9.85** | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` (function-calling fine-tune; re-verified 2026-07-05) |
+| 2 | **9.82** | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` (re-verified 2026-07-05) |
+| 2 | **9.81** | **`hf.co/kai-os/Grug-12B-GGUF:Q4_K_M`** ← NEW 2026-07-05 (0.01 within noise vs huihui) |
+| 4 | 9.02 | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` ← NEW 2026-07-05 |
+| 5 | 8.67 | `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` |
 
-> No harness consumer wired to tool_call YET (the slice is new). functiongemma
-> is the champion when a tool-dispatch role (agent-browser, MCP, n8n) needs a
-> local model.
+> **Update 2026-07-05**: Grug-12B is statistically tied with huihui (9.81 vs 9.82, within tps-bonus noise).
+> Either is a safe #1. functiongemma is the original champion.
+>
+> tool_call harness wiring status:  subagent PRIMARY=functiongemma
+> (per ). Grug-12B / huihui are drop-in alternates.
 
 ## browser_tool (ref-grounded a11y action — new slice, ground-truth)
 

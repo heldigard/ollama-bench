@@ -22,15 +22,19 @@ LOGS_DIR = Path.home() / ".cache" / "ollama-bench" / "logs"
 # Each feature extends these with its own per-prompt items.
 #
 # primary/fallback mirror the per-task winners in RANKING.md (re-bench
-# 2026-07-04, Ollama 0.31.1). They are documentary (not consumed by the bench
+# 2026-07-05, Ollama 0.31.1). They are documentary (not consumed by the bench
 # runner) but MUST stay aligned with RANKING.md — the harness wires these tags
 # into ~/.claude/{hooks,scripts}/. Drift here = drift in the live harness.
+#
+# 2026-07-05 round-3: improve primary swapped pegasus912 → kai-os/Grug-12B
+# (Grug won improve by 2× on hard prompts: 8.39 vs 4.15). See
+# topics/candidates-round-3-2026-07-05.md. pegasus912 demoted to fallback.
 TASKS: dict[str, dict] = {
     "improve": {
         "description": "prompt-improver hook — vague input → structured spec",
         "budget_words": 120,
-        "primary_model_default": "hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest",
-        "fallback_model": "Librellama/gemma4:e2b-Uncensored",
+        "primary_model_default": "hf.co/kai-os/Grug-12B-GGUF:Q4_K_M",
+        "fallback_model": "hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest",
     },
     "codeq_sum": {
         "description": "codeq summary — 1-line orientation of a function body",

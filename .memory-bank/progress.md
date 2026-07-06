@@ -39,3 +39,49 @@ The CLI `ollama-bench` is the way to regenerate these.
 - 2026-07-04T21:33:03Z | status:completed | 2026-07-04 iter-2 complete: Qwen3-Coder-30B-A3B MoE (3B active, user request) benched + DEL — hypothesis (large knowledge + small active compute) did NOT pan out (slower 20s AND weaker than dense 9-12B on all tasks except tool_call 9.81). Culled, 14GB freed. functiongemma KEPT (tool_call #1 9.85, code_gen #1-tier 7.0). Embed decision resolved (bge-m3 ties embeddinggemma, no reindex). Lineup: 22 models (19 LLM + 3 embed). Registry: 72 tested, 22 kept, 50 elim. MoE lesson registered in RANKING_HISTORY.
 - 2026-07-04T21:52:37Z | status:completed | 2026-07-04T21:51:59Z | Harness config review (4 tools: prompt-improve, smart-trim, web-research, code-intelligence). prompt-improve + web-research + diff-review already aligned. FIX: smart-trim PRIMARY/SECONDARY was BACKWARDS — SetneufPT is smart_trim #1 (combined 1.0) but ran SECONDARY; qwen3.5:4b (#14) ran PRIMARY. Swapped in source + precompact labels + enforcing tests (smart-trim 144 tests green). codeq --summary help text + llm.py default → batiai (prior uncommitted). ~/.claude scripts sweep: diff-review→huihui, project-memory→batiai, agent_browser+pdf→pegasus912, web_research/synth→batiai (Mobius culled, no longer safe default). 3 commits: smart-trim b74762b, codeq 3fee248, ~/.claude adaafa6. FOUND live-env drift: CODEQ_SUMMARY_MODEL=LFM2.5 (stale, uninstalled) silently breaks codeq enrichment THIS session; source+zshrc correct → fix = relaunch Claude Code. Topic: topics/harness-wiring-2026-07-04.md.
 - 2026-07-04T22:42:36Z | status:completed | 2026-07-04T22:30:00Z | 2 new ground-truth slices: browser_tool (ref-grounded a11y action; 6 cases, +3 JSON/+3 action/+3 grounded ref) + pdf_extract (schema field extraction + abstention; 5 cases, +3 JSON/+1.5 field/+2 abstain/-2 hallucinate). Both registered in cli.py (14 subcommands now). PROXY RETIREMENT: agent_browser PRIMARY was pegasus912 (proxy) — bench showed it's only #5 (9.70); functiongemma is #1 (10.19) → promoted to PRIMARY, pegasus912 demoted to gemma4-diversity FALLBACK. pdf_extract: pegasus912 tied #1 (11.14, field saturated within 0.03) → proxy caveat retired, stays as sound default. Live bench on 6 champions each. 124 tests pass (was 105). RANKING + RANKING_HISTORY updated. ruff clean.
+
+## 2026-07-05 — Round-3 candidate bench (3 HF models tested)
+
+- Pulled 3 Tier-S/Tier-A HF candidates: Jackrong/DeepSeek-V4-Flash (Q4_K_M), kai-os/Grug-12B (Q4_K_M), HauhauCS/Gemma4-12B-Balanced (Q4_K_M).
+- **Ollama infra fix**: ollama binary at /usr/local/bin/ollama was a dev build (38MB, no llama-server bundled). Reinstalled via official installer (sh ollama.com/install.sh). All 22 installed models now load OK. ~2 min downtime; model blobs persisted in ~/.ollama/models.
+- **Smoke gate**: DeepSeek-V4-Flash LEAKED (`thinking_process`, strippable=1 — same pattern as kwangsuklee reasoning-distilled). Grug-12B + HauhauCS passed.
+- **Tie-break decisive**: Grug-12B won `improve` on hard prompts by **2×** (8.39 vs 4.15 for incumbent pegasus912). Verified by re-run (8.53 vs 4.37). Same delta on reproduce → robust.
+- **Hero slices**: Grug-12B tied huihui on tool_call (9.81 vs 9.82, 0.01 within noise), ranked #3 on bug_finding (15.09 vs incumbent 15.35).
+- **Decisions**: KEEP Grug-12B (new improve PRIMARY, gemma4 arch diversity, 7.4 GB), KEEP HauhauCS (code_gen tier-2 saturated tie, 7.6 GB), DROP DeepSeek-V4-Flash (leak, 6.6 GB freed). Final lineup: 17 LLM + 2 embed = 19 models, 84 GB.
+- **Codeq_sum incumbent holds** (fredrezones55 13.00 vs Grug 8.09) — neither new candidate is competitive.
+- **Pending user action**: edit `~/prompt-improve/src/prompt_improve/shared/config.py::_DEFAULT_IMPROVE_CHAIN` to prepend Grug-12B (currently starts with pegasus912). Cross-repo edit, requires explicit user opt-in.
+- Full report: `topics/candidates-round-3-2026-07-05.md`.
+
+## 2026-07-05 — Ollama self-healing cron (3 deliverables)
+
+- Verified systemd infra: `ollama.service` already enabled + active + `Restart=always`. `override.conf` runs as `eldi` user (reads `/home/eldi/.ollama/models`).
+- Verified pre-existing auto-update: `~/.local/bin/ollama-update` (4.2K, well-designed) + `~/update_all_clis.sh` step 9/10 cron 3×/day + @reboot. No new updater script needed.
+- **Added**: `~/.local/bin/ollama-watchdog` — healthcheck + auto-restart for HUNG server (systemd's `Restart=always` only catches binary crashes, not process-alive-but-unresponsive). Cron `*/5 * * * *`. Sudo NOPASSWD already configured for eldi.
+- Test: watchdog --status returns OK + `/api/version`. Health-check run also OK. Cron entry verified.
+- Two more dead-ends recorded in dead-ends.md: dev-build broken ollama + auto-update cron rationale.
+
+## 2026-07-05 — Cross-project rewire: pegasus912 → Grug-12B (improve role)
+
+Round-3 rewire extended to consumer projects. pegasus912 lost the improve slot (was #1, now #2 behind Grug-12B's 2× upset).
+
+**Files touched (4 sources + 1 test):**
+1. `~/ollama-bench/src/ollama_bench/shared/config.py::TASKS["improve"]` — canonical improve primary pegasus912 → Grug-12B; fallback demoted to pegasus912.
+2. `~/prompt-improve/src/prompt_improve/shared/config.py::_DEFAULT_IMPROVE_CHAIN` — Grug-12B prepended (chain 3 → 4).
+3. `~/prompt-improve/scripts/ollama-warmup.sh` — `OLLAMA_IMPROVE_WARM_MODEL` default pegasus912 → Grug-12B.
+4. `~/prompt-improve/tests/test_improve_prompt.py::test_role_model_map_prefers_gemma4` — assertion updated from name-substring (`"gemma" in tag`) to ollama `details.family == "gemma4"` (robust to fine-tunes whose name doesn't contain "gemma", e.g. kai-os/Grug-12B).
+5. `~/prompt-improve/.memory-bank/REFERENCE.md` — docs updated (Primary=Grug-12B, #2=pegasus912, #3=Librellama, anchor=qwen3.5:4b).
+
+**KEEP (not rewired — bench-validated, not proxy):**
+- `~/cli-orchestration/src/cli_orchestration/browser/{subagent.py,_subagent_call.py}` — pegasus912 is browser-tool FALLBACK (bench #5 9.70), not improve proxy. Different rationale.
+- `~/ollama-bench/src/ollama_bench/features/pdf_extract/command.py` — pegasus912 is pdf_extract tied-#1 (bench). Different slice.
+
+**Verification matrix (per `verify-on-edit.md` discipline):**
+- `python3 -m py_compile` ✓ on all .py edits
+- `ruff check` ✓ clean on all .py edits
+- `shellcheck -S warning` ✓ clean on warmup.sh
+- `pytest tests/` 102/102 ✓ on prompt-improve
+- `pytest tests/test_layout.py tests/test_list.py -q` 9/9 ✓ on ollama-bench
+- E2E: 5/5 chain lookups return Grug-12B; ollama `details.family` confirmed `gemma4`
+- Full e2e: `python3 -c "from prompt_improve.shared.config import _DEFAULT_IMPROVE_CHAIN; ..."` confirms 4-element chain with Grug-12B at position 0.
+
+**Lessons / `dead-ends.md` addendum:** old test was brittle to model naming — it asserted `"gemma" in model_name.lower()`. New fine-tunes like `kai-os/Grug-12B` don't have "gemma" in the tag even though they're gemma4 arch. Fixed by switching to ollama `details.family` check (authoritative metadata, not name pattern).

@@ -30,3 +30,21 @@
 - Tried: put `"think": false` inside the request's `options` dict.
 - Failed: silently ignored. qwen3.x and gemma4 still emit thinking trace in response.
 - Worked instead: put `think` at TOP LEVEL of the request body. `CallOpts.think` is enforced at this level by `shared/ollama.call()`.
+## 2026-07-05 — Ollama dev-build broken at session start
+
+- Symptom: ALL ollama calls returned HTTP 500 with "error starting llama-server: llama-server binary not found". Affected every installed model (22 in `~/.ollama/models/blobs`).
+- Root cause: `/usr/local/bin/ollama` was a 38 MB dev build (no llama-server bundled). Binary **birth = 2026-07-05 17:08** (= session start). Release tarball is ~140 MB and bundles llama-server.
+- Worked instead: `sh <(curl -fsSL https://ollama.com/install.sh)` reinstalled official v0.31.1. ~2 min downtime, model blobs preserved. `/usr/local/lib/ollama/llama-server` now exists.
+- Lesson: birth-time on `/usr/local/bin/ollama` (vs release ~140 MB) is a useful tell for "is this a real release or a botched dev build?".
+
+## 2026-07-05 — Ollama auto-update cron (3 deliverables)
+
+Pre-existing scaffolding already covers most of the ask:
+- `~/.local/bin/ollama-update` (4.2K) — well-designed: `--check` (no sudo), `--interactive` (sudo prompts), default cron-safe (NOPASSWD-required, SKIP-not-abort if not). Calls official install.sh + `systemctl restart`.
+- `~/update_all_clis.sh` step 9/10 invokes `ollama-update` 3×/day + @reboot (crontab entries `17 3`, `42 13`, `3 21`, `@reboot`).
+- `ollama.service` already has `Restart=always` + `RestartSec=3` (covers binary crash).
+
+Added the missing piece:
+- **`~/.local/bin/ollama-watchdog`** (new) — healthcheck + auto-restart for HUNG server (process alive, HTTP unresponsive — systemd's `Restart=always` does NOT catch this). Pings `/api/version`; on failure, `sudo -n systemctl restart ollama` + 15 s recovery probe. Cron `*/5 * * * *`.
+- Log dir: `~/.cache/ollama-watchdog/cron.log`.
+- Sudo NOPASSWD confirmed: `eldi: (ALL : ALL) NOPASSWD: ALL` per `sudo -nl`.

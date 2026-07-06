@@ -7,7 +7,7 @@
 
 | tool | role | model (default; env override) | repo | status |
 |---|---|---|---|---|
-| prompt-improve | improve (rewrite/clarify) | `pegasus912` → `Librellama/gemma4:e2b` → `qwen3.5:4b` (`OLLAMA_IMPROVE_MODELS`) | ~/prompt-improve | ✅ aligned (improve #1, #2) |
+| prompt-improve | improve (rewrite/clarify) | `hf.co/kai-os/Grug-12B-GGUF:Q4_K_M` → `pegasus912` → `Librellama/gemma4:e2b` → `qwen3.5:4b` (`OLLAMA_IMPROVE_MODELS`) | ~/prompt-improve | ✅ **REWIRED 2026-07-05** — Grug-12B won improve by 2× (hard prompts: 8.39 vs pegasus912 4.15); prepended to `_DEFAULT_IMPROVE_CHAIN`. Warmup script (`scripts/ollama-warmup.sh`) default also swapped. Tests 102/102 pass. `test_role_model_map_prefers_gemma4` assertion updated from name-substring to ollama `details.family` check (robust to future gemma4 fine-tunes). |
 | smart-trim | PreCompact summarize | PRIMARY `SetneufPT/Qwopus3.5-4B-Coder-MTP`, SECONDARY `qwen3.5:4b` (`SMART_TRIM_PRIMARY_MODEL` / `_SECONDARY_MODEL`) | ~/smart-trim | ✅ aligned (smart_trim #1) — **swapped 2026-07-04, was backwards** |
 | web-research | web_synth (final cited answer) | `batiai/gemma4-e4b:q4` (`OLLAMA_SYNTH_MODEL`); general `qwen3.5:4b` (`OLLAMA_MODEL`); cloud `deepseek-v4-flash` | ~/.claude/scripts/web_research | ✅ aligned (web_synth #1) |
 | web-research | query_profile / focused_extract | `qwen3.5:4b` (high-freq per-page) | same | ✅ anchor |
@@ -62,3 +62,8 @@ source fix. GLM PATH-persistence gotcha (rules/model-specific.md) applies.
 no bench slice measures browser-tool dispatch or PDF extraction. Add slices
 (roadmap: `browser_tool`, `pdf_extract`) to retire the guess — same pattern as
 `tool_call` (functiongemma #1) and `embedding_retrieval` (embeddinggemma #1).
+
+**2026-07-05 round-3 update**: improve proxy recommendation is now `Grug-12B`
+(2× better than pegasus912 on hard prompts, per `topics/candidates-round-3-2026-07-05.md`).
+`agent_browser` + `pdf-extract` proxies still use pegasus912 (gemma4-family diversity rationale
+holds — pegasus912 is a different fine-tune from Grug-12B even though same arch family).

@@ -3,13 +3,16 @@
 
 ## Architecture / methodology
 - [bench-methodology](bench-methodology.md) — smoke → deep → tie-break → bug-finding pipeline (+ `--strip` think-strip, 14 leak patterns)
-- [local-ollama-lineup](local-ollama-lineup.md) — 16 LLM winners + per-role map (re-bench 2026-07-04)
+- [local-ollama-lineup](local-ollama-lineup.md) — 17 LLM winners + per-role map (re-bench 2026-07-05; +Grug-12B, +HauhauCS Balanced)
 - [harness-wiring-2026-07-04](harness-wiring-2026-07-04.md) — cross-CLI consumer → champion map (smart-trim/codeq/web-research/diff-review/etc.) + live-env drift gotcha
 
 ## Bench iterations (2026-07-04)
 - [new-benchmarks-roadmap-2026-07-04](new-benchmarks-roadmap-2026-07-04.md) — 8 new bench dimensions → cross-CLI consumers (tool_call + embedding_retrieval landed)
 - [new-models-bench-2026-07-04](new-models-bench-2026-07-04.md) — HF candidates benched; huihui = bug_finding #1 (17.98)
 - [quant-comparison-2026-07-04](quant-comparison-2026-07-04.md) — Q4 vs Q5/Q6/Q8 evidence (Q4 is the ceiling)
+
+## Bench iterations (2026-07-05)
+- [candidates-round-3-2026-07-05](candidates-round-3-2026-07-05.md) — 3 HF candidates tested; Grug-12B won improve by 2× (hard prompts); DeepSeek-V4-Flash dropped (leak); ollama infra fixed.
 
 ## Resolved / reference
 - [ollama-0.23.2-gemma4-q4_0-incompat](ollama-0.23.2-gemma4-q4_0-incompat.md) — resolved (Ollama 0.31.1 fixed it)
