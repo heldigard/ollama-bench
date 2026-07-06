@@ -12,6 +12,7 @@ from ollama_bench import __version__
 from ollama_bench.features.browser_bench.command import add_parser as add_browser_bench
 from ollama_bench.features.browser_tool.command import add_parser as add_browser_tool
 from ollama_bench.features.bug_finding.command import add_parser as add_bug_finding
+from ollama_bench.features.candidates.command import add_parser as add_candidates
 from ollama_bench.features.deep.command import add_parser as add_deep
 from ollama_bench.features.embedding.command import add_parser as add_embedding
 from ollama_bench.features.embedding_retrieval.command import add_parser as add_embedding_retrieval
@@ -30,6 +31,7 @@ from ollama_bench.features.tool_call.command import add_parser as add_tool_call
 _SLICES = [
     ("smoke", add_smoke, "1-prompt leak gate per model (fast filter)"),
     ("deep", add_deep, "5-task x N model bench"),
+    ("candidates", add_candidates, "End-to-end candidate sweep: pull + smoke + deep + MD report"),
     ("tie-break", add_tie_break, "Re-bench tied candidates with harder prompts"),
     ("bug-finding", add_bug_finding, "Diff-review bench (count bugs found)"),
     ("tool-call", add_tool_call, "Structured JSON tool-call bench (ground-truth)"),

@@ -141,3 +141,45 @@ Ported `~/cli-orchestration/src/cli_orchestration/browser/model_bench.py` + 3 si
 - Hard-prompt tie-break saturation continues to hide real winners in smart_trim / web_synth / code_gen at 10.50 / 16.00. Bump upper bound OR add 3rd hard prompts.
 - MTP-tagged models may benchmark poorly without ollama MTP wiring. Treat MTP capability as throughput-only (not capability).
 - Vision-capable models needed for browser-bench-vision T1/T2; current champion qwen3.5:4b only.
+
+## 2026-07-05 — Project improvements (meta-task per user)
+
+User asked: identify improvements / enhancements / fixes across the project now that round-3+4 + browser-bench port are landed.
+
+**Inventory findings:**
+- 0 TODOs/FIXMEs in source (clean debt)
+- README.md only listed 6/14 subcommands (heavy drift after rounds 3-4)
+- `activeContext.md` stale ("Iter-2 task" — pre-round-3)
+- Tie-break saturation at 10.50/16.00 hides real winners (documented; deferred to bump scoring bounds)
+- Manual `pull → smoke → deep` workflow repeated 2 rounds — encapsulable into one command
+- `cheap_bench.py` cross-provider bench (deferred)
+- Browser-bench-vision ported but `gemma3:4b-vision` not added to lineup for T1/T2 (deferred)
+
+**Wins executed (3):**
+
+1. **README.md rewritten** — 14 subcommands documented (was 6). Added pipeline diagram, current 2026-07-05 lineup table, cross-CLI bench ownership section, deferred-work section (tie-break cap bump, cheap_bench port, vision-capable model, CI).
+
+2. **activeContext.md refreshed** — replaced stale "Iter-2 task" with current state (3 commits pushed, 21 winners, browser-bench-vision landed, watchdog active). Includes Preserved Negative Constraints (don't pull reasoning-distilled, Q5/Q6/Q8 of Q4 winners, MTP without ollama MTP support).
+
+3. **`candidates` slice added** (NEW, 4-file vertical slice per CLAUDE.md pattern):
+   - `features/candidates/command.py` — orchestrator that runs `pull → smoke → deep → MD report` for a list of HF model tags in one command. Reuses `smoke` and `deep` slices via subprocess (no slice-to-slice imports).
+   - Wired into `cli.py::_SLICES` as `(candidates, add_candidates, ...)`.
+   - `cmd_candidates(args)` named entry function satisfies `test_layout.py::test_every_feature_has_cmd_function`.
+   - `ollama-bench candidates 'hf.co/owner/model:Q4_K_M'` — encapsules ~15 min of manual orchestration per round. Pull log + smoke gate + deep scores + recommendations in one MD file.
+
+**Wins deferred (3):**
+
+- Tie-break saturation cap bump (10.50 → higher) — scoring formula change, needs design discussion before code.
+- `cheap_bench.py` cross-provider port from `~/cheap-llm/` — separate repo, lower impact than browser-bench-vision.
+- Vision-capable model for browser-bench-vision T1/T2 (e.g. `gemma3:4b-vision` from Ollama library).
+- `claude-code` hooks/scripts refactor: `~/.claude/scripts/browser-model-bench.py` could become a thin wrapper around `ollama-bench browser-bench-vision` instead of its own duplicate. Cross-repo change.
+- GitHub Actions CI: smoke on every PR. Currently local-only gate.
+
+**Verification matrix:**
+
+- `python3 -m py_compile` ✓ (candidates/command.py + cli.py)
+- `ruff check` ✓ clean
+- `codeq refs` ✓ (1 ref to add_candidates in cli.py::_SLICES)
+- `pytest tests/test_layout.py tests/test_list.py` ✓ 9/9 (incl. new candidates slice)
+- `ollama-bench candidates --help` ✓ shows positional models + --tasks + --keep-on-pull-fail
+- `ollama-bench candidates` (no args) ✓ errors with "at least one model required"
