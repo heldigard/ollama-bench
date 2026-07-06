@@ -1,10 +1,10 @@
-# Local Ollama Model Lineup (RTX 5080, 16GB) — RE-BENCH 2026-07-05 (Ollama 0.31.1)
+# Local Ollama Model Lineup (RTX 5080, 16GB) — RE-BENCH 2026-07-05 round-5 (Ollama 0.31.1)
 
 > **Purpose:** Single source of truth for LOCAL Ollama winners + per-role map.
-> Two re-bench cycles to date: 2026-07-04 (16 winners) + 2026-07-05 round-3
-> (added Grug-12B improve upset, added HauhauCS code_gen tie). 20 LLM winners + 3 embeddings = 23 models (84 GB).
+> Three re-bench cycles to date: 2026-07-04 (16 winners) + 2026-07-05 round-3
+> (Grug-12B improve upset) + 2026-07-05 round-5 (e4b collapse → SetneufPT/crow). 20 LLM winners + 3 embeddings = 23 models (84 GB).
 >
-> Round-3 details: `topics/candidates-round-3-2026-07-05.md`.
+> Round-5 details: `topics/candidates-round-5-2026-07-05.md`. Round-3: `topics/candidates-round-3-2026-07-05.md`.
 
 ## Final lineup — 20 LLM winners + 3 embeddings = 23 models (84 GB)
 
@@ -14,11 +14,11 @@ Combined-rank = avg(deep_rank, tie_break_rank). Top-5 per task with ties.
 
 | task | #1 (PRIMARY) | #2 (fallback) |
 |---|---|---|
-| improve | **`hf.co/kai-os/Grug-12B-GGUF:Q4_K_M`** ← rewired 2026-07-05 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl` |
-| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` |
-| smart_trim | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` | `fredrezones55/Qwopus3.5:9b` |
-| web_synth | `batiai/gemma4-e4b:q4` | `batiai/gemma4-12b:iq3` |
-| code_gen | `fredrezones55/Qwopus3.5:9b` | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` ← added 2026-07-05 |
+| improve | **`hf.co/kai-os/Grug-12B-GGUF:Q4_K_M`** ← rewired 2026-07-05 r3 (r5 confirmed: tb 8.35 >> field) | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` |
+| codeq_sum | **`SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU`** ← rewired 2026-07-05 r5 (e4b collapsed tb 9.00) | `batiai/gemma4-e4b:q4` (demoted) |
+| smart_trim | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` (saturated; maintained r5) | `fredrezones55/Qwopus3.5:9b` |
+| web_synth | **`jaahas/crow:9b`** ← rewired 2026-07-05 r5 (e4b collapsed tb 5.50) | `batiai/gemma4-e2b:q4` |
+| code_gen | `aratan/gemma-4-E4B-it-heretic:Q6_K` (saturated; maintained r5) | `fredrezones55/Qwopus3.5:9b` |
 | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6` |
 | tool_call | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
 
@@ -30,7 +30,7 @@ SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU  (smart_trim #1, codeq_sum #2, b
 aratan/gemma-4-E4B-it-heretic:Q6_K               (code_gen #3, smart_trim #3, bug_finding mid)
 batiai/gemma4-12b:iq3                            (web_synth #2, smart_trim #7)
 batiai/gemma4-e2b:q4                             (code_gen tied, smart_trim alt — Q4 only; Q6 deleted, see quant-comparison) ✅ re-installed 2026-07-05 round-4
-batiai/gemma4-e4b:q4                             (codeq_sum #1, web_synth #1, bug_finding mid)
+batiai/gemma4-e4b:q4                             (was codeq_sum/web_synth #1 — DEMOTED r5: collapsed tb 9.00/5.50; now codeq_sum fallback)
 cryptidbleh/gemma4-claude-opus-4.6               (codeq_sum #5, smart_trim #8, web_synth #6, code_gen #7, bug_finding mid)
 cryptidbleh/gemma4-claude-sonnet-4.6             (bug_finding #2, codeq_sum #3, smart_trim #9, web_synth #7, code_gen #8)
 fredrezones55/Qwopus3.5:9b                       (code_gen #1, smart_trim #2, codeq_sum #7, web_synth #8, improve mid)

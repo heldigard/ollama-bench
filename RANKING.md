@@ -1,7 +1,14 @@
-# Current Ranking — installed Ollama models (snapshot 2026-07-05, Ollama 0.31.1)
+# Current Ranking — installed Ollama models (snapshot 2026-07-05 round-5, Ollama 0.31.1)
 
 > Combined rank = avg(deep_rank, tie_break_rank). Lower = better.
 > Only **currently installed** models. For the full test history (incl. eliminated), see `RANKING_HISTORY.md`.
+>
+> **2026-07-05 round-5 update**: full re-bench of all 20 LLM winners (smoke + deep + tie-break).
+> Two material changes — `codeq_sum` and `web_synth` #1 both flipped OFF `batiai/gemma4-e4b:q4`
+> (it collapsed in r5 tie-break: 9.00 rank #11 codeq_sum, 5.50 rank #13 web_synth — likely
+> Ollama 0.31.x sampling drift on hard prompts). New #1: `SetneufPT` (codeq_sum) + `jaahas/crow:9b`
+> (web_synth). `improve` (Grug), `smart_trim`, `code_gen` maintained — saturated tiers showed no
+> real signal beyond the e4b collapse. Full report: `topics/candidates-round-5-2026-07-05.md`.
 >
 > **2026-07-05 round-3 update**: added `Grug-12B` (improve PRIMARY via 2× hard-prompt win) + `HauhauCS Gemma4 Balanced` (code_gen tier-2 saturated tie). DeepSeek-V4-Flash dropped (leak). Full report: `topics/candidates-round-3-2026-07-05.md`.
 
@@ -22,13 +29,19 @@
 
 ## codeq_sum
 
+> **2026-07-05 round-5 update**: `batiai/gemma4-e4b:q4` (long-time #1) collapsed in r5 tie-break
+> (9.00, rank #11) — likely Ollama 0.31.x sampling drift on the hard summary prompt. Demoted to
+> fallback. `SetneufPT/Qwopus3.5-4B-Coder-MTP` (already smart_trim #1) takes codeq_sum #1 with
+> consistent deep #1 + tb #3. Saturated tier (11.00) below #2 — discrimination is deep-driven.
+
 | # | combined | deep (rank/score) | tie-break (rank/score) | model |
 |---|---|---|---|---|
-| 1 | 3.5 | #5 / 6.52 | #2 / 11.00 | `batiai/gemma4-e4b:q4` |
-| 2 | 4.0 | #3 / 6.89 | #5 / 10.93 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| 3 | 6.0 | #9 / 6.13 | #3 / 11.00 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
-| 4 | 6.0 | #8 / 6.26 | #4 / 11.00 | `free01/gemma4:e4b` |
-| 5 | 6.5 | #2 / 7.00 | #11 / 9.00 | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| 1 | **2.0** | **#1 / 7.00** | **#3 / 11.00** | **`SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest`** ← NEW #1 (2026-07-05 r5) |
+| 2 | 2.5 | #3 / 6.65 | #2 / 13.00 | `fredrezones55/Qwopus3.5:9b` |
+| 3 | 4.5 | #5 / 6.40 | #4 / 11.00 | `jaahas/crow:9b` |
+| 4 | 5.0 | #9 / 5.95 | #1 / 13.00 | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
+| 5 | 5.5 | #4 / 6.60 | #7 / 10.99 | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
+| — | — | — | #11 / 9.00 | `batiai/gemma4-e4b:q4` (demoted from #1; colapsed in r5 tb) |
 
 ## smart_trim
 
@@ -42,13 +55,20 @@
 
 ## web_synth
 
+> **2026-07-05 round-5 update**: `batiai/gemma4-e4b:q4` (long-time #1) collapsed in r5 tie-break
+> (5.50, rank #13 — only model below the 10.50 saturation tier; failed the discrepancy-surfacing
+> hard prompt). Demoted. `jaahas/crow:9b` takes #1 (combined 2.5). Note: tb saturates at 10.50 for
+> 12/13 candidates — discrimination is deep-driven + the e4b collapse. Treat the #2-#5 ordering
+> as soft (saturated); #1 crow is the clear signal (deep #2 + non-collapsed tb).
+
 | # | combined | deep (rank/score) | tie-break (rank/score) | model |
 |---|---|---|---|---|
-| 1 | 5.0 | #6 / 7.00 | #4 / 10.50 | `batiai/gemma4-e4b:q4` |
-| 2 | 6.0 | #7 / 7.00 | #5 / 10.50 | `batiai/gemma4-12b:iq3` |
-| 3 | 6.5 | #4 / 7.00 | #9 / 10.50 | `free01/gemma4:e4b` |
-| 4 | 7.5 | #12 / 7.00 | #3 / 10.50 | `Librellama/gemma4:e2b-Uncensored` |
-| 5 | 8.0 | #15 / 5.00 | #1 / 10.50 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 1 | **2.5** | **#2 / 7.00** | **#3 / 10.50** | **`jaahas/crow:9b`** ← NEW #1 (2026-07-05 r5) |
+| 2 | 5.0 | #5 / 7.00 | #5 / 10.50 | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
+| 3 | 5.5 | #1 / 7.00 | #10 / 10.50 | `batiai/gemma4-e2b:q4` (deep #1; tb saturated) |
+| 4 | 6.5 | #4 / 7.00 | #9 / 10.50 | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
+| 5 | 6.5 | #6 / 7.00 | #7 / 10.50 | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| — | — | — | #13 / 5.50 | `batiai/gemma4-e4b:q4` (demoted from #1; failed discrepancy prompt) |
 
 ## code_gen
 
@@ -119,11 +139,11 @@
 
 | task | PRIMARY (#1) | FALLBACK (#2) |
 |---|---|---|
-| improve | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` | `Librellama/gemma4:e2b-Uncensored` |
-| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| improve | `hf.co/kai-os/Grug-12B-GGUF:Q4_K_M` (tb 8.35 >> field; r5 confirmed) | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| codeq_sum | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` ← r5 NEW | `batiai/gemma4-e4b:q4` (demoted) |
 | smart_trim | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `fredrezones55/Qwopus3.5:9b` |
-| web_synth | `batiai/gemma4-e4b:q4` | `batiai/gemma4-12b:iq3` |
-| code_gen | `fredrezones55/Qwopus3.5:9b` | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
+| web_synth | `jaahas/crow:9b` ← r5 NEW | `batiai/gemma4-e2b:q4` |
+| code_gen | `aratan/gemma-4-E4B-it-heretic:Q6_K` (saturated; maintained) | `fredrezones55/Qwopus3.5:9b` |
 | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6:latest` |
 | browser_tool | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (gemma4 family diversity) |
 | pdf_extract | `jaahas/crow:9b` (11.15, edge) | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` (tied 11.14; current pdf-extract default) |

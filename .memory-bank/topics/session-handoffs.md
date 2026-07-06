@@ -37,3 +37,33 @@ POST-COMPACT RULES (next 3 turns):
 3. Use grep/find to locate, read ONLY needed lines (max 50)
 4. DO NOT re-read rules files — they are already loaded
 5. Work from this summary, not from scratch
+
+## 2026-07-05T20:53:27
+Method: ollama-SetneufPT/Qwopus3.5-4B-Coder-MTP
+Session: unknown
+
+## Current Objective (from current-objective.json)
+**Task**: que otros modelos nuevos de hugging face que no hayamos probado crees que podrías probar? descargamos y pruebas? creo que en otro proyectos y en claude code, quedaron tests bench de codigo y browser agent, eso deberias traerlos para aca, o
+**Phase**: Test
+**Next**: Think -> Plan -> Build -> Review -> Test -> Validate -> Ship -> Reflect
+**Files**: /home/eldi/ollama-bench/src/ollama_bench/cli.py, /home/eldi/ollama-bench/src/ollama_bench/features/browser_bench/command.py, /home/eldi/ollama-bench/.memory-bank/topics/candidates-round-4-2026-07-05.md, /home/eldi/ollama-bench/.memory-bank/topics/_index.md, /home/eldi/ollama-bench/.memory-bank/topics/local-ollama-lineup.md, /home/eldi/ollama-bench/README.md, /home/eldi/ollama-bench/.memory-bank/activeContext.md, /home/eldi/ollama-bench/src/ollama_bench/features/candidates/command.py
+
+## Preserved Negative Constraints
+- DO NOT** pull Q5/Q6/Q8 variants of existing Q4 winners — see `topics/quant-comparison-2026-07-04.md
+
+**Task**: Project improvements (README, activeContext, candidates slice)  
+**Acceptance**: All 14 subcommands listed; `ollama-bench candidates` works end-to-end; activeContext reflects 2026-07-05 state; Preserved Negative Constraints intact.  
+**Verified**: `python3 -m py_compile`, `ruff check`, `pytest tests/test_layout.py tests/test_list.py` (9/9); `ollama-bench candidates --help`; `codeq refs` (1 ref added).  
+**Current**: Commit + push completed (`ba463e5`).  
+**Errors**: None.  
+**Decisions**: Encapsulated `pull → smoke → deep → report` into `cmd_candidates`; fixed unused import/f-string in `candidates/command.py`; wired `add_candidates` to `cli.py::_SLICES`; refreshed README with full pipeline + deferred section.  
+**Next**: User meta-task complete; proceed to next round or new feature request.  
+
+**Files**: `/home/eldi/ollama-bench/README.md`, `/home/eldi/ollama-bench/.memory-bank/activeContext.md`, `/home/eldi/ollama-bench/.memory-bank/progress.md`, `/home/eldi/ollama-bench/src/ollama_bench/cli.py`, `/home/eldi/ollama-bench/src/ollama_bench/features/candidates/command.py`
+---
+POST-COMPACT RULES (next 3 turns):
+1. DO NOT re-read files you already know from this summary
+2. DO NOT read screenshots/images into context
+3. Use grep/find to locate, read ONLY needed lines (max 50)
+4. DO NOT re-read rules files — they are already loaded
+5. Work from this summary, not from scratch

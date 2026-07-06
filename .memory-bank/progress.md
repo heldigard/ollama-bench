@@ -1,6 +1,12 @@
 # Progress
 > Bench history for ollama-bench
 
+## 2026-07-05 — Round-5 full re-bench + test hardening
+
+- 2026-07-05T22:00:00Z | status:completed | Round-5 re-bench: smoke (20/20 ok) + deep (20×8 prompts) + tie-break (13×5 hard). 2 material changes — `batiai/gemma4-e4b:q4` collapsed in codeq_sum tb (9.00 #11) + web_synth tb (5.50 #13); demoted. New #1: SetneufPT (codeq_sum, combined 2.0) + jaahas/crow:9b (web_synth, combined 2.5). improve/smart_trim/code_gen maintained (saturated). See `topics/candidates-round-5-2026-07-05.md`.
+- 2026-07-05T21:30:00Z | status:completed | Cross-project rewire: codeq (`llm.py`+`cli.py`), web-research (`config.py`+`engine.py`), `~/.zshrc` (`CODEQ_SUMMARY_MODEL`). 3 repos, all tests green (ollama-bench 174 / codeq 71 / web-research 63).
+- 2026-07-05T21:00:00Z | status:completed | Test hardening: +50 tests (124→174). New: `test_config_drift` (config↔RANKING), `test_score_saturation` (scoring caps), `test_tsv_schema` (writer/reader column contract), `test_leak_coverage` (14 LEAK_PATTERNS exhaustive), `test_prompt_budgets` (budget invariant). Caught 2 real bugs: 8BB→8GB typo + code_gen primary mismatch.
+
 ## 2026-07-04 — Initial v0.1.0 release
 
 - 2026-07-04T15:30:00Z | status:completed | Vertical-slice split: 40+ scripts in `~/bench/ollama/` migrated to `~/ollama-bench/` package (9 vertical slices: smoke, deep, tie_break, lfm_variant, multi_domain, judge, embedding, report, list).

@@ -14,6 +14,7 @@
 ## Bench iterations (2026-07-05)
 - [candidates-round-3-2026-07-05](candidates-round-3-2026-07-05.md) — 3 HF candidates tested; Grug-12B won improve by 2× (hard prompts); DeepSeek-V4-Flash dropped (leak); ollama infra fixed.
 - [candidates-round-4-2026-07-05](candidates-round-4-2026-07-05.md) — Round-4: 3 HF candidates ALL DROPPED (Phi-4 leak + Gemmable MTP tie-break collapse + HauhauCS saturation ties); browser-bench-vision ported from cli-orchestration (5 subtasks T1-T5); batiai/gemma4-e2b:q4 missing winner re-installed.
+- [candidates-round-5-2026-07-05](candidates-round-5-2026-07-05.md) — FULL re-bench of all 20 winners. e4b collapsed in codeq_sum + web_synth tb → SetneufPT (codeq_sum) + crow:9b (web_synth) new #1. improve/smart_trim/code_gen maintained (saturated). Cross-project rewire: codeq + web-research + zshrc.
 
 ## Resolved / reference
 - [ollama-0.23.2-gemma4-q4_0-incompat](ollama-0.23.2-gemma4-q4_0-incompat.md) — resolved (Ollama 0.31.1 fixed it)
