@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 
 from ollama_bench import __version__
+from ollama_bench.features.browser_bench.command import add_parser as add_browser_bench
 from ollama_bench.features.browser_tool.command import add_parser as add_browser_tool
 from ollama_bench.features.bug_finding.command import add_parser as add_bug_finding
 from ollama_bench.features.deep.command import add_parser as add_deep
@@ -33,6 +34,11 @@ _SLICES = [
     ("bug-finding", add_bug_finding, "Diff-review bench (count bugs found)"),
     ("tool-call", add_tool_call, "Structured JSON tool-call bench (ground-truth)"),
     ("browser-tool", add_browser_tool, "Ref-grounded a11y action bench (snap+ref)"),
+    (
+        "browser-bench-vision",
+        add_browser_bench,
+        "Vision-grounded browser bench (OCR/classify/diff/tool/speed) — ported from cli-orchestration",
+    ),
     ("pdf-extract", add_pdf_extract, "Schema field-extraction bench (abstention)"),
     ("lfm-variant", add_lfm, "codeq summary tie-break for LFM family"),
     ("multi-domain", add_multi_domain, "Legacy 4-domain bench"),

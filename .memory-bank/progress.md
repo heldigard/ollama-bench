@@ -100,3 +100,44 @@ User requested: clean Ollama models not in any task's top-5. Audit of installed 
 **Header count fix:** prior version said "17 LLM winners + 2 embeddings = 19 models" but the file actually lists 20 LLMs + 3 embed = 23. Header was off by 3 from a typo carried since round-3 (round-2 added huihui + slyfox but the header wasn't incremented then). Now fixed.
 
 Final state: 20 LLM winners + 3 embeddings (embeddinggemma + nomic-embed-text + bge-m3 alt) = 23 models, ~84 GB.
+
+## 2026-07-05 — Round-4 candidates + cross-CLI bench port
+
+### Round-4: 3 candidates pulled, ALL 3 dropped (~16 GB freed)
+
+Tested 3 fresh HF candidates targeting code/browser/agentic slots:
+
+- `lmstudio-community/Phi-4-mini-reasoning-GGUF` (2.5 GB) — **LEAK** at smoke (`thinking_prefix`). Pattern matches `kwangsuklee` + `DeepSeek-V4-Flash`. **Prediction rule established**: reasoning-distilled small models consistently leak thinking despite `think=False`.
+- `Mia-AiLab/Gemmable-4-12B-MTP-GGUF` (7.4 GB) — pass smoke, **LOSE tie-break** hard prompts (improve -10.00 vs Grug +8.75, codeq_sum -4.03 vs fredrezones55 +13.00). MTP not wired in ollama call path; base response is poor on structured-spec tasks.
+- `HauhauCS/Qwen3.5-9B-Uncensored-HauhauCS-Aggressive` (6.5 GB) — pass smoke, **LOSE tie-break** (improve 2.55, codeq_sum 8.07 vs SetneufPT 4.32 + fredrezones55 13.00). Saturation ties elsewhere inconclusive.
+
+All 3 deleted.
+
+### Missing winner re-installed
+
+`batiai/gemma4-e2b:q4` (3.4 GB) — code_gen tied winner absent from `ollama list` after 2026-07-04 cleanup. **Re-pulled 2026-07-05 round-4**, verified loads.
+
+### Cross-CLI bench port: browser-bench-vision
+
+Ported `~/cli-orchestration/src/cli_orchestration/browser/model_bench.py` + 3 sibling helpers (`_bench_data.py`, `_bench_fixtures.py`, `_bench_scoring.py`) into `~/ollama-bench/src/ollama_bench/features/browser_bench/`. 5 subtasks: T1 vision_ocr, T2 vision_classify (8-class UI state), T3 snapshot_diff, T4 tool_call, T5 speed.
+
+**Wired**: `cli.py::_SLICES` now lists `browser-bench-vision`. `cmd_browser_bench_vision(args)` satisfies `test_layout.py::test_every_feature_has_cmd_function`.
+
+**Imports patched**: relative → absolute (`from ._bench_data` → `from ollama_bench.features.browser_bench._data`).
+
+**Models updated** to current champions (qwen3.5:4b + Grug-12B + huihui — replaces the DROPPED Mobius + the listed HauhauCS-4b typo).
+
+**Verified**: `python3 -m py_compile` ✓, `ruff check` ✓, `pytest tests/test_layout.py tests/test_list.py` 9/9 ✓, `ollama-bench browser-bench-vision --quick` E2E ran T1-T5 successfully on 2 models.
+
+### What was NOT ported (justified)
+
+- `~/smart-trim/tests/test_summarize.py`: monkeypatched ollama unit tests, NOT a model bench.
+- `~/cli-orchestration/tests/test_agent_browser_subagent.py`: snapshot validator (no model calls).
+- `~/codeq/tests/test-code-intelligence.py`: code-intelligence regression, not a model eval.
+- `~/cheap-llm/cheap_bench.py`: cross-provider bench (Ollama + cheap cloud). Defer to round-5.
+
+### Caveats / future work
+
+- Hard-prompt tie-break saturation continues to hide real winners in smart_trim / web_synth / code_gen at 10.50 / 16.00. Bump upper bound OR add 3rd hard prompts.
+- MTP-tagged models may benchmark poorly without ollama MTP wiring. Treat MTP capability as throughput-only (not capability).
+- Vision-capable models needed for browser-bench-vision T1/T2; current champion qwen3.5:4b only.

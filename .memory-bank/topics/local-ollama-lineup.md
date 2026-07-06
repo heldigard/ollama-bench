@@ -29,7 +29,7 @@ Librellama/gemma4:e2b-Uncensored                 (improve #3, codeq_sum #4, web_
 SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU  (smart_trim #1, codeq_sum #2, bug_finding #3, web_synth #5)
 aratan/gemma-4-E4B-it-heretic:Q6_K               (code_gen #3, smart_trim #3, bug_finding mid)
 batiai/gemma4-12b:iq3                            (web_synth #2, smart_trim #7)
-batiai/gemma4-e2b:q4                             (code_gen tied, smart_trim alt — Q4 only; Q6 deleted, see quant-comparison) [⚠️ MISSING FROM ollama — needs re-pull]
+batiai/gemma4-e2b:q4                             (code_gen tied, smart_trim alt — Q4 only; Q6 deleted, see quant-comparison) ✅ re-installed 2026-07-05 round-4
 batiai/gemma4-e4b:q4                             (codeq_sum #1, web_synth #1, bug_finding mid)
 cryptidbleh/gemma4-claude-opus-4.6               (codeq_sum #5, smart_trim #8, web_synth #6, code_gen #7, bug_finding mid)
 cryptidbleh/gemma4-claude-sonnet-4.6             (bug_finding #2, codeq_sum #3, smart_trim #9, web_synth #7, code_gen #8)
@@ -71,7 +71,7 @@ User asked: clean models NOT in top-5 of any task. Audit of installed (24) vs li
 - `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (5.6 GB) — leaks `thinking_process` despite `think=False`; not in any task's top-5. Was kept only as `--strip` demonstrator from round-2. Stale.
 
 **Missing winner (NOT deleted; documented for re-pull):**
-- `batiai/gemma4-e2b:q4` — listed in lineup as code_gen tied (kept because Q6 was deleted in quant-comparison-2026-07-04.md). Currently NOT in `ollama list`. Probably deleted in the 2026-07-04 46-model cleanup. Re-pull on demand: `ollama pull hf.co/batiai/gemma4-e2b:Q4_K_M` (check exact tag at https://ollama.com/batiai/gemma4-e2b/tags).
+- `batiai/gemma4-e2b:q4` ✅ re-installed 2026-07-05 round-4.
 
 **Header count fix:** prior version said "17 LLM winners + 2 embeddings = 19 models (84 GB)" but the file actually lists 20 LLMs + 3 embed = 23. Header was off by 3 from a typo carried since round-3 (when 2 winners were added but the header wasn't incremented for the round-2 winners huihui + slyfox). Fixed.
 
