@@ -2,11 +2,11 @@
 
 > **Purpose:** Single source of truth for LOCAL Ollama winners + per-role map.
 > Two re-bench cycles to date: 2026-07-04 (16 winners) + 2026-07-05 round-3
-> (added Grug-12B improve upset, added HauhauCS code_gen tie). 17 LLM winners + 2 embeddings = 19 models (84 GB).
+> (added Grug-12B improve upset, added HauhauCS code_gen tie). 20 LLM winners + 3 embeddings = 23 models (84 GB).
 >
 > Round-3 details: `topics/candidates-round-3-2026-07-05.md`.
 
-## Final lineup — 17 LLM winners + 2 embeddings = 19 models (84 GB)
+## Final lineup — 20 LLM winners + 3 embeddings = 23 models (84 GB)
 
 Combined-rank = avg(deep_rank, tie_break_rank). Top-5 per task with ties.
 
@@ -22,14 +22,14 @@ Combined-rank = avg(deep_rank, tie_break_rank). Top-5 per task with ties.
 | bug_finding | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6` |
 | tool_call | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
 
-### All 17 LLM winners kept installed (changes from 2026-07-04 marked)
+### All 20 LLM winners (lineup matches actual `ollama list`)
 
 ```
 Librellama/gemma4:e2b-Uncensored                 (improve #3, codeq_sum #4, web_synth #4, smart_trim #3, code_gen #3)
 SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU  (smart_trim #1, codeq_sum #2, bug_finding #3, web_synth #5)
 aratan/gemma-4-E4B-it-heretic:Q6_K               (code_gen #3, smart_trim #3, bug_finding mid)
 batiai/gemma4-12b:iq3                            (web_synth #2, smart_trim #7)
-batiai/gemma4-e2b:q4                             (code_gen tied, smart_trim alt — Q4 only; Q6 deleted, see quant-comparison)
+batiai/gemma4-e2b:q4                             (code_gen tied, smart_trim alt — Q4 only; Q6 deleted, see quant-comparison) [⚠️ MISSING FROM ollama — needs re-pull]
 batiai/gemma4-e4b:q4                             (codeq_sum #1, web_synth #1, bug_finding mid)
 cryptidbleh/gemma4-claude-opus-4.6               (codeq_sum #5, smart_trim #8, web_synth #6, code_gen #7, bug_finding mid)
 cryptidbleh/gemma4-claude-sonnet-4.6             (bug_finding #2, codeq_sum #3, smart_trim #9, web_synth #7, code_gen #8)
@@ -61,6 +61,19 @@ nomic-embed-text + embeddinggemma                (embeddings)
 ## Removed in round-3 (1 model, 2026-07-05)
 
 - **hf.co/Jackrong/Qwen3.5-9B-DeepSeek-V4-Flash-GGUF:Q4_K_M** — pulled expecting DeepSeek-V4-distilled tool_call upset. Failed smoke: leaks `thinking_process` despite `think=False` (reasoning-distilled Qwen3.5-9B pattern; same as `kwangsuklee`). 6.6 GB freed.
+
+## Cleanup 2026-07-05 — top-5 hygiene (post-round-3)
+
+User asked: clean models NOT in top-5 of any task. Audit of installed (24) vs lineup (20 winners + 3 embed) found 2 extras + 1 missing winner.
+
+**Deleted (13 GB freed):**
+- `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` (7.4 GB) — was DROPPED in round-2 (new-models-bench-2026-07-04.md::DECISIONS::DROP) but never `ollama rm`'d. yuxinlu1's other model (the non-tau2 base) is **already** absent from the lineup. Pure leftover.
+- `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (5.6 GB) — leaks `thinking_process` despite `think=False`; not in any task's top-5. Was kept only as `--strip` demonstrator from round-2. Stale.
+
+**Missing winner (NOT deleted; documented for re-pull):**
+- `batiai/gemma4-e2b:q4` — listed in lineup as code_gen tied (kept because Q6 was deleted in quant-comparison-2026-07-04.md). Currently NOT in `ollama list`. Probably deleted in the 2026-07-04 46-model cleanup. Re-pull on demand: `ollama pull hf.co/batiai/gemma4-e2b:Q4_K_M` (check exact tag at https://ollama.com/batiai/gemma4-e2b/tags).
+
+**Header count fix:** prior version said "17 LLM winners + 2 embeddings = 19 models (84 GB)" but the file actually lists 20 LLMs + 3 embed = 23. Header was off by 3 from a typo carried since round-3 (when 2 winners were added but the header wasn't incremented for the round-2 winners huihui + slyfox). Fixed.
 
 ## Bench methodology (smoke → deep → tie-break → bug-finding)
 

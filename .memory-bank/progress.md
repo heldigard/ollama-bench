@@ -85,3 +85,18 @@ Round-3 rewire extended to consumer projects. pegasus912 lost the improve slot (
 - Full e2e: `python3 -c "from prompt_improve.shared.config import _DEFAULT_IMPROVE_CHAIN; ..."` confirms 4-element chain with Grug-12B at position 0.
 
 **Lessons / `dead-ends.md` addendum:** old test was brittle to model naming — it asserted `"gemma" in model_name.lower()`. New fine-tunes like `kai-os/Grug-12B` don't have "gemma" in the tag even though they're gemma4 arch. Fixed by switching to ollama `details.family` check (authoritative metadata, not name pattern).
+
+## 2026-07-05 — Top-5 hygiene cleanup (post-round-3)
+
+User requested: clean Ollama models not in any task's top-5. Audit of installed (24) vs lineup found 2 extras + 1 missing winner.
+
+**Deleted (13 GB freed):**
+- `hf.co/yuxinlu1/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-GGUF:latest` (7.4 GB) — was DROPPED in round-2 (per `new-models-bench-2026-07-04.md::DECISIONS`) but never `ollama rm`'d. Leftover.
+- `kwangsuklee/Qwen3.5-9B-Claude-4.6-Opus-Reasoning-Distilled-GGUF:latest` (5.6 GB) — leaks `thinking_process` despite `think=False`; not in any task's top-5. Was kept only as `--strip` demonstrator from round-2. Stale.
+
+**Missing winner (NOT deleted; documented for re-pull):**
+- `batiai/gemma4-e2b:q4` — listed in lineup as code_gen tied; not in `ollama list`. Probably deleted in the 2026-07-04 46-model cleanup. Re-pull: `ollama pull hf.co/batiai/gemma4-e2b:Q4_K_M`.
+
+**Header count fix:** prior version said "17 LLM winners + 2 embeddings = 19 models" but the file actually lists 20 LLMs + 3 embed = 23. Header was off by 3 from a typo carried since round-3 (round-2 added huihui + slyfox but the header wasn't incremented then). Now fixed.
+
+Final state: 20 LLM winners + 3 embeddings (embeddinggemma + nomic-embed-text + bge-m3 alt) = 23 models, ~84 GB.
