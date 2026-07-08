@@ -53,3 +53,12 @@ PDF-extract structured benchmark produced results_current_models_pdf_extract_202
 - functiongemma, OmniCoder, and crow clustered at 11.96; margin is small.
 
 Decision update: keep Unlimited OCR as pdf_ocr primary. Openclaw is a strong pdf_extract candidate but needs consumer compatibility review before replacing existing functiongemma wiring because the margin is 0.09 and existing configs may value stability.
+
+## 2026-07-08T03:06:52Z
+## Bug-finding follow-up
+
+Bug-finding benchmark produced results_current_models_bug_finding_20260708.md:
+- DeltaCoder 9B ranked #1 at 14.06.
+- OmniCoder ranked #2 at 14.04.
+- HauhauCS Gemma4 ranked #3 at 14.02.
+- The top three are within 0.04, so treat this as a near-tie; do not rewire diff-review/bug-finding consumers without tie-break or stability run.
