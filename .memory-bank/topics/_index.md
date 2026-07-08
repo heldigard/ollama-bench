@@ -22,3 +22,4 @@
 - [session-handoffs](session-handoffs.md) — compaction handoff log
 - [agent-sessions](agent-sessions.md) — auto-generated cross-CLI coordination registry
 - [benchmark-refactor-2026-07-08](benchmark-refactor-2026-07-08.md)
+- [current-models-strip-2026-07-08](current-models-strip-2026-07-08.md)
