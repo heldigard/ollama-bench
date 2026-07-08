@@ -69,7 +69,7 @@ examples:
   ollama-bench list                                    # installed + warn flags
   ollama-bench smoke                                    # 1-prompt leak gate
   ollama-bench deep                                     # 5-task x N model bench
-  ollama-bench tie-break -w 'qwen3.5:4b' 'Huihui gemma4-12B abliterated'
+  ollama-bench tie-break -w 'cryptidbleh/gemma4-claude-opus-4.6:latest' 'Huihui gemma4-12B abliterated'
   ollama-bench lfm-variant                              # LFM family think-strip
   ollama-bench report build                             # render TSV -> MD ranking
 """,

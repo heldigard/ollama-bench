@@ -11,7 +11,7 @@ Tasks (rigorous mode):
 - T5 speed: 5 reps per model cold+warm (mean, p50, p95, tokens/sec)
 
 Models (2 winners + 1 specialist):
-- qwen3.5:4b (vision + tools winner)
+- cryptidbleh/gemma4-claude-opus-4.6:latest (vision + tools winner)
 - MobiusDevelopment/gemma-4-12B-it-qat-q4 (text-reasoning winner)
 - fredrezones55/Qwen3.5-Uncensored-HauhauCS-Aggressive:4b (tool-call tie)
 
@@ -95,7 +95,7 @@ __all__ = [
 OUT_DIR = Path.home() / ".claude" / "state" / "browser-model-bench"
 
 # 2026-07-08 PM: aligned with ~/ollama-bench/.memory-bank/topics/local-ollama-lineup.md
-# - qwen3.5:4b: vision + tools winner (kept; lightweight infra)
+# - cryptidbleh/gemma4-claude-opus-4.6:latest: vision + tools winner (kept; lightweight infra)
 # - HauhauCS-Balanced: smart_trim #1 (replaces Grug-12B, DROPPED 2026-07-08 PM trim)
 # - huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K: tool-call winner (kept)
 PRIMARY_MODELS = [
