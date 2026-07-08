@@ -12,6 +12,9 @@
 - [new-models-bench-2026-07-04](new-models-bench-2026-07-04.md) — HF candidates benched; huihui = bug_finding #1 (17.98)
 - [quant-comparison-2026-07-04](quant-comparison-2026-07-04.md) — Q4 vs Q5/Q6/Q8 evidence (Q4 is the ceiling)
 
+## Bench iterations (2026-07-08)
+- [deep-winners-20260708-pm](deep-winners-20260708-pm.md) — deep pass 4/5 winners CHANGED vs config primaries (Openclaw/DeltaCoder fell out); pending combined rewire
+
 ## Bench iterations (2026-07-05)
 - [candidates-round-3-2026-07-05](candidates-round-3-2026-07-05.md) — 3 HF candidates tested; Grug-12B won improve by 2× (hard prompts); DeepSeek-V4-Flash dropped (leak); ollama infra fixed.
 - [candidates-round-4-2026-07-05](candidates-round-4-2026-07-05.md) — Round-4: 3 HF candidates ALL DROPPED (Phi-4 leak + Gemmable MTP tie-break collapse + HauhauCS saturation ties); browser-bench-vision ported from cli-orchestration (5 subtasks T1-T5); batiai/gemma4-e2b:q4 missing winner re-installed.

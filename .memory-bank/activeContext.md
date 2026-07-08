@@ -20,9 +20,10 @@
 - `scripts/tie_winners.py` (models within 0.5 of per-task top → tie-break winners).
 
 ## Run Status (live)
-- deep: 14/30, GPU ~52°C peak (cool). Incremental TSV+JSONL verified on real exec.
-- Smoke: 31/31 (29 ok + 1 strippable = 30 deep candidates; 1 OCR hard-fail).
-- Orchestrator PID 45450 → Stage-0 wait → auto-runs rest when deep done.
+- deep: ✅ 30/30. tie-break: ✅ 26/26. Specialized: 🔄 running (bug-finding → tool-call → pdf-extract ×30, pdf-ocr ×2).
+- Winners SHIFTED 4/5 vs config primaries (see [deep-winners-20260708-pm](topics/deep-winners-20260708-pm.md)). Openclaw + DeltaCoder fell out of top-5.
+- config.py primaries + RANKING.md STALE → rewire AFTER full pipeline (specialized + combined) done.
+- Noise cleaned: 6 orphan result dumps + 4 old logs + 22 __pycache__; kept _refactor_20260708 baselines.
 
 ## Preserved Negative Constraints
 - DO NOT re-introduce parallel pools (ThreadPoolExecutor) — GPU overheat root cause.
