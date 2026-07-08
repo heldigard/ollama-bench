@@ -1,29 +1,37 @@
 # Active Context
-- 2026-07-08: New model bench complete. Openclaw/DeltaCoder/OmniCoder are new champions.
+- 2026-07-08: Bench methodology improvements complete. Ecosystem verified.
 
 ## Current Objective
-- **Task**: Rewire consumer projects to match new RANKING.md champions
-- **Phase**: Ship (config + RANKING done; consumer repos pending)
-- **Next**: Update prompt-improve, smart-trim, web-research, diff-review with new model defaults; then commit + push all repos
+- **Task**: Improve bench discrimination + verify ecosystem alignment
+- **Phase**: Ship (all changes done, tests pass, pushed)
+- **Next**: Run new bench with improved prompts to validate discrimination
 
 ## Verified This Session
-- 14-model deep --strip bench completed (results_current_models_strip_deep_20260708.tsv)
-- 12-model tool-call bench (still saturated, top-7 within 0.02)
-- 10-model pdf-ocr bench (Unlimited-OCR #1, lift #3, general models fail)
-- 10-model pdf-extract bench (near-saturated, Openclaw #1 by 0.05)
-- 11-model bug-finding bench (DeltaCoder #1, 14.06)
-- 185/185 tests pass
-- config.py updated: improve→OmniCoder, smart_trim→Openclaw, web_synth→DeltaCoder, code_gen→Openclaw, bug_finding→DeltaCoder, pdf_ocr fallback→lift
-- RANKING.md fully rewritten with 2026-07-08 results
-- .tags added to .gitignore
+- 187/187 tests pass (was 185 before adding new cases)
+- All consumer repos pass: prompt-improve (116), smart-trim (158), web-research (65)
+- diff-review.py --help works
+- All configs already point to new champions
+- env vars in ~/.zshrc correct: CODEQ_SUMMARY_MODEL=crow:9b
+- ollama-bench pushed (84ae2d1)
+- Consumer repos already pushed by previous agent
+
+## Bench Improvements Made
+- Split canonical_tasks.py → prompts.py (data) + canonical_tasks.py (scoring)
+- Added 15 new edge-case prompts across 5 canonical tasks (each task now 6-7 regular + 3 hard)
+- Redesigned HARD_PROMPTS: genuine hard scenarios instead of concatenated cases
+- Improved all 5 task scorers: gradated scoring, conflict-flagging, source utilization
+- Added depth scoring to _hygiene: specificity bonus, verbosity penalty
+- Added 4 harder tool_call cases (ambiguous, enum, missing optional, implicit date)
+- Added 2 harder bug_finding diffs (async/concurrency, type confusion)
+- Updated tie_break/command.py to use iter_hard_cases
 
 ## Key Decisions
-- Openclaw is the new smart_trim/code_gen champion (+0.28/+0.00 over old)
+- Hard prompts are NOT just concatenated regular cases — they're genuinely harder scenarios
+- Scorer improvements focus on discrimination, not just correctness
+- prompts.py split keeps files under 500 LOC limit
+- Openclaw is the new smart_trim/code_gen champion
 - DeltaCoder is the new web_synth/bug_finding champion
-- OmniCoder is the new improve champion (+0.41 over old SetneufPT)
-- DeepSeek-V4-Flash kept installed but NOT recommended (strippable but quality-degraded)
-- lift added as pdf_ocr fallback (OCR specialist, 112 tok/s)
-- Near-saturated tasks (tool_call, browser_tool, pdf_extract) keep existing wiring
+- OmniCoder is the new improve champion
 
 ## Preserved Negative Constraints
 - DO NOT pull Q5/Q6/Q8 variants of existing Q4 winners
@@ -32,4 +40,4 @@
 - DO NOT discard strippable models solely for thinking leaks
 
 ## Live-env drift
-- `CODEQ_SUMMARY_MODEL` + `OLLAMA_SYNTH_MODEL` exported in `~/.zshrc`. Live Claude Code sessions don't re-source zshrc → stale export wins until relaunch. Source files correct; drift is live-env only.
+- `CODEQ_SUMMARY_MODEL` exported in `~/.zshrc` as `crow:9b`. Live Claude Code sessions don't re-source zshrc → stale export wins until relaunch.
