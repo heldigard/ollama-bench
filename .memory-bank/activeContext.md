@@ -41,3 +41,5 @@
 
 ## Live-env drift
 - `CODEQ_SUMMARY_MODEL` exported in `~/.zshrc` as `crow:9b`. Live Claude Code sessions don't re-source zshrc → stale export wins until relaunch.
+- 2026-07-08: continuaremos maniana, de momento debes diseniar los bench para que hayan pausas entre prueba y prueba para permitir mantener una temperatura baja, y lo mas no perder los resultados queriendo reiniciar siempre todo el progreso completo
+- 2026-07-08: continuaremos maniana, de momento debes diseniar los bench para que hayan pausas entre prueba y prueba para permitir mantener una temperatura baja, y lo mas no perder los resultados queriendo reiniciar siempre todo el progreso completo

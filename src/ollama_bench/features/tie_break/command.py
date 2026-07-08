@@ -3,6 +3,8 @@
 Use when `deep` still has close models. Harder prompt bundles reuse the same
 task-specific scoring as `deep`, with no single-score saturation cap.
 
+Supports GPU-friendly pacing (--cooldown).
+
 # vs-soft-allow  — end-to-end pipeline (prompts → run → score → rank → MD).
 """
 
@@ -10,8 +12,9 @@ from __future__ import annotations
 
 import argparse
 import json
+import subprocess
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
+import time
 from pathlib import Path
 
 from ollama_bench.features.canonical_tasks import iter_hard_cases, score_task_response
@@ -20,6 +23,38 @@ from ollama_bench.shared.paths import result_path
 from ollama_bench.shared.scorer import strip_reasoning
 
 _TASKS = ("improve", "codeq_sum", "smart_trim", "web_synth", "code_gen")
+DEFAULT_COOLDOWN = 60
+GPU_TEMP_LIMIT = 75
+
+
+def _gpu_temp() -> int:
+    """Return GPU temperature in °C, or 0 if unavailable."""
+    try:
+        out = subprocess.check_output(
+            ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader"],
+            timeout=5,
+            text=True,
+        )
+        return int(out.strip())
+    except (
+        subprocess.CalledProcessError,
+        FileNotFoundError,
+        ValueError,
+        subprocess.TimeoutExpired,
+    ):
+        return 0
+
+
+def _wait_for_cooldown(cooldown: int, temp_limit: int) -> None:
+    """Sleep until GPU cools down and cooldown period passes."""
+    while True:
+        temp = _gpu_temp()
+        if temp > 0 and temp > temp_limit:
+            print(f"  GPU {temp}°C > {temp_limit}°C, waiting 30s...", file=sys.stderr)
+            time.sleep(30)
+        else:
+            break
+    time.sleep(cooldown)
 
 
 def run_model(model: str, opts: CallOpts) -> dict:
@@ -70,24 +105,33 @@ def cmd_tie_break(args: argparse.Namespace) -> int:
     if not candidates:
         print("ERROR: --winners required (space-separated model names)", file=sys.stderr)
         return 2
+    cooldown = int(getattr(args, "cooldown", DEFAULT_COOLDOWN))
+    temp_limit = int(getattr(args, "temp_limit", GPU_TEMP_LIMIT))
     total_cases = sum(len(iter_hard_cases(t)) for t in _TASKS)
     print(
-        f"# Tie-break bench: {len(candidates)} winners × {total_cases} hard prompts",
+        f"# Tie-break bench: {len(candidates)} winners × {total_cases} hard prompts "
+        f"(cooldown={cooldown}s)",
         file=sys.stderr,
     )
     opts = CallOpts(num_predict=300, num_ctx=4096)
 
     results: dict = {}
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        futs = {ex.submit(run_model, m, opts): m for m in candidates}
-        for i, fut in enumerate(as_completed(futs), 1):
-            m = futs[fut]
-            try:
-                r = fut.result()
-            except Exception as e:
-                r = {m: {"err": str(e)}}
-            results.update(r)
-            print(f"  [{i:2d}/{len(candidates)}] {m[:55]}  done", file=sys.stderr, flush=True)
+    for i, model in enumerate(candidates, 1):
+        short = model.split("/")[-1][:55]
+        print(f"  [{i:2d}/{len(candidates)}] {short}", file=sys.stderr, flush=True)
+
+        if i > 1:
+            _wait_for_cooldown(cooldown, temp_limit)
+
+        try:
+            r = run_model(model, opts)
+        except Exception as e:
+            r = {model: {"err": str(e)}}
+        results.update(r)
+
+        temp = _gpu_temp()
+        if temp > 0:
+            print(f"    GPU: {temp}°C", file=sys.stderr)
 
     per_task = _aggregate(results, list(_TASKS))
     out_path = Path(args.output) if args.output else result_path("tiebreak_ranking", ext="md")
@@ -146,4 +190,16 @@ def add_parser(sub, parent: argparse.ArgumentParser) -> None:
         help="Model names to re-bench (space-separated).",
     )
     p.add_argument("-o", "--output", help="Output MD path (default: cache dir).")
+    p.add_argument(
+        "--cooldown",
+        type=int,
+        default=DEFAULT_COOLDOWN,
+        help=f"Seconds to wait between models (default: {DEFAULT_COOLDOWN}).",
+    )
+    p.add_argument(
+        "--temp-limit",
+        type=int,
+        default=GPU_TEMP_LIMIT,
+        help=f"Max GPU °C before forced wait (default: {GPU_TEMP_LIMIT}).",
+    )
     p.set_defaults(cmd=cmd_tie_break)
