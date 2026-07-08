@@ -5,6 +5,7 @@ how many of the EXPECTED_BUGS keywords appear in the model's response.
 
 # vs-soft-allow  — end-to-end pipeline (diff -> call -> count hits -> rank).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -24,9 +25,17 @@ PROMPTS: list[dict] = [
         "id": "diff_v1",
         "n_bugs": 6,
         "expected": (
-            "mutable default", "off-by-one", "none", "attributeerror",
-            "bare except", "swallow", "race", "lock", "sql injection",
-            "format", "execute",
+            "mutable default",
+            "off-by-one",
+            "none",
+            "attributeerror",
+            "bare except",
+            "swallow",
+            "race",
+            "lock",
+            "sql injection",
+            "format",
+            "execute",
         ),
         "expected_groups": (
             ("mutable default", "shared across calls"),
@@ -66,8 +75,15 @@ For each bug, output a line like: `BUG: <one-line description>`. Then `COUNT: <n
         "id": "diff_v2",
         "n_bugs": 5,
         "expected": (
-            "none", "typeerror", "keyerror", "index", "division", "zero",
-            "modulo", "negative", "infinity",
+            "none",
+            "typeerror",
+            "keyerror",
+            "index",
+            "division",
+            "zero",
+            "modulo",
+            "negative",
+            "infinity",
         ),
         "expected_groups": (
             ("division", "zero", "zerodivision"),
@@ -99,8 +115,17 @@ For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
         "id": "diff_v3",
         "n_bugs": 6,
         "expected": (
-            "path traversal", "zip slip", "timeout", "infinite", "resource leak",
-            "close", "decode", "unicode", "overwrite", "atomic", "permission",
+            "path traversal",
+            "zip slip",
+            "timeout",
+            "infinite",
+            "resource leak",
+            "close",
+            "decode",
+            "unicode",
+            "overwrite",
+            "atomic",
+            "permission",
         ),
         "expected_groups": (
             ("path traversal", "zip slip", "../"),
@@ -131,8 +156,17 @@ For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
         "id": "diff_v4",
         "n_bugs": 5,
         "expected": (
-            "timezone", "naive", "retry", "backoff", "idempotency", "duplicate",
-            "secret", "token", "log", "status", "429",
+            "timezone",
+            "naive",
+            "retry",
+            "backoff",
+            "idempotency",
+            "duplicate",
+            "secret",
+            "token",
+            "log",
+            "status",
+            "429",
         ),
         "expected_groups": (
             ("timezone", "naive", "utc"),
@@ -154,6 +188,95 @@ For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
 +        return charge(client, user, amount, token)   # B3: recursive retry no backoff/limit
 +    client.post("/receipt", json={"u": user.id})     # B4: non-idempotent duplicate side effect
 +    return r.json()["id"]                            # B5: ignores non-2xx/missing id
+```
+
+For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
+    },
+    {
+        "id": "diff_v5_async",
+        "n_bugs": 5,
+        "expected": (
+            "race",
+            "concurrent",
+            "gather",
+            "shared",
+            "mutable",
+            "lock",
+            "await",
+            "exception",
+            "cancel",
+            "shield",
+        ),
+        "expected_groups": (
+            ("race", "concurrent", "shared state"),
+            ("gather", "return_exceptions", "cancel"),
+            ("mutable", "shared", "append"),
+            ("lock", "asyncio.lock"),
+            ("shield", "timeout", "cancel"),
+        ),
+        "prompt": """Review this diff. List ALL bugs. Be specific.
+
+```diff
+--- a/async_workers.py
++++ b/async_workers.py
+@@ async def process_batch(items):
++    results = []                              # B1: shared mutable list
++    async def process_one(item):
++        r = await aiohttp.get(item.url)
++        results.append(r.json())              # B2: concurrent append, no lock
++        return r
++    tasks = [process_one(i) for i in items]
++    responses = await asyncio.gather(*tasks)  # B3: no return_exceptions, one failure kills all
++    for r in responses:
++        if r.status == 429:
++            await asyncio.gather(process_one(r.item))  # B4: recursive gather, no backoff
++    return results
+@@ async def fetch_with_timeout(url, timeout):
++    return await asyncio.wait_for(           # B5: timeout cancels inner task
++        aiohttp.get(url),                     #    but doesn't shield cleanup
++        timeout=timeout
++    )
+```
+
+For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
+    },
+    {
+        "id": "diff_v6_types",
+        "n_bugs": 5,
+        "expected": (
+            "type",
+            "dict",
+            "list",
+            "none",
+            "falsy",
+            "zero",
+            "bytes",
+            "str",
+            "encode",
+            "keyerror",
+        ),
+        "expected_groups": (
+            ("dict", "list", "type error"),
+            ("none", "falsy", "zero"),
+            ("bytes", "str", "encode"),
+            ("keyerror", "missing key", "get"),
+            ("isinstance", "type check"),
+        ),
+        "prompt": """Review this diff. List ALL bugs. Be specific.
+
+```diff
+--- a/transform.py
++++ b/transform.py
+@@ def merge_records(old, new):
++    for key in new:                           # B1: if new is a dict, iterates keys not items
++        old[key] = new[key]                   #    if new is a list, TypeError on key
+@@ def safe_divide(a, b):
++    result = a / b if b else 0               # B2: b=0 is falsy, returns 0 instead of handling
+@@ def process_payload(data):
++    body = data["body"]                       # B3: KeyError if "body" missing; use .get()
++    if body:                                  # B4: empty bytes b"" is falsy, valid payload lost
++        return body.decode("utf-8")           # B5: already str? .decode() AttributeError
++    return ""
 ```
 
 For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
@@ -255,9 +378,11 @@ def cmd_bug_finding(args: argparse.Namespace) -> int:
 
 
 def add_parser(sub, parent: argparse.ArgumentParser) -> None:
-    p = sub.add_parser("bug-finding", parents=[parent],
-                       help="Diff-review bench (count bugs found).")
-    p.add_argument("-m", "--models", nargs="+", required=True,
-                   help="Models to bench (space-separated).")
+    p = sub.add_parser(
+        "bug-finding", parents=[parent], help="Diff-review bench (count bugs found)."
+    )
+    p.add_argument(
+        "-m", "--models", nargs="+", required=True, help="Models to bench (space-separated)."
+    )
     p.add_argument("-o", "--output", help="Output MD path (default: cache dir).")
     p.set_defaults(cmd=cmd_bug_finding)

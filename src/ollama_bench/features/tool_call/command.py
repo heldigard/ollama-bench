@@ -136,6 +136,54 @@ Available tools:
 
 Request: Create a high priority ticket for checkout failures.""",
     },
+    {
+        "id": "ambiguous_tool_choice",
+        "expected": ("search_files", "invoice"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- search_files(query): search local files by name or content
+- search_web(query): search the public web
+- open_url(url): open a specific URL
+
+Request: Find the invoice template file.""",
+    },
+    {
+        "id": "enum_arg",
+        "expected": ("set_priority", "critical"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- set_priority(task_id, level): set task priority (level: low|medium|high|critical)
+- create_task(title, assignee): create a new task
+- get_task(task_id): get task details
+
+Request: Set the priority of task AUTH-42 to critical.""",
+    },
+    {
+        "id": "missing_optional",
+        "expected": ("send_notification", "deploy complete"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- send_notification(message, channel, priority): send a notification (channel defaults to #general, priority defaults to normal)
+- create_alarm(time): set an alarm
+- log_event(event, level): log an event
+
+Request: Send a notification that the deploy is complete.""",
+    },
+    {
+        "id": "implicit_date",
+        "expected": ("create_reminder", "tomorrow", "standup"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- create_reminder(what, when): create a reminder
+- create_calendar_event(title, date, time): create a calendar event
+- set_timer(minutes): countdown timer
+
+Request: Remind me about the standup tomorrow morning.""",
+    },
 ]
 
 # Extract the first balanced {...} block (models may wrap in prose/code fence).

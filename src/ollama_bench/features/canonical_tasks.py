@@ -1,7 +1,8 @@
-"""Canonical task prompts and task-specific scoring.
+"""Canonical task scoring + case iteration.
 
-This module is shared by `deep` and `tie_break` so the benchmark measures the
-same capabilities in first-pass and hard-prompt modes.
+Prompt data lives in prompts.py (PROMPTS, HARD_PROMPTS).
+This module provides scoring functions and iter_cases/iter_hard_cases used by
+deep and tie_break.
 """
 
 from __future__ import annotations
@@ -10,11 +11,22 @@ import ast
 import re
 from typing import Any
 
+from ollama_bench.features.prompts import HARD_PROMPTS, PROMPTS
 from ollama_bench.shared.scorer import detect_leaks, prepare_scored_response, tps_bonus
 
 CANONICAL_TASKS = ("improve", "codeq_sum", "smart_trim", "web_synth", "code_gen")
 
 _CODE_FENCE_RE = re.compile(r"```(?:python)?\s*(.*?)```", re.DOTALL | re.IGNORECASE)
+
+# Re-export for downstream imports
+__all__ = [
+    "CANONICAL_TASKS",
+    "PROMPTS",
+    "HARD_PROMPTS",
+    "iter_cases",
+    "iter_hard_cases",
+    "score_task_response",
+]
 
 
 def _words(text: str) -> list[str]:
@@ -62,6 +74,7 @@ def _parse_function(code: str, expected_name: str) -> ast.FunctionDef | None:
 
 
 def _hygiene(res: dict, budget_words: int) -> tuple[float, dict[str, Any]]:
+    """Base score: leaks, budget compliance, truncation, speed."""
     if "err" in res:
         return -100.0, {"error": res["err"]}
     out = str(res.get("out", "") or "")
@@ -95,6 +108,11 @@ def _hygiene(res: dict, budget_words: int) -> tuple[float, dict[str, Any]]:
     if res.get("done") == "length":
         score -= 2.0
         detail["truncated"] = 1
+    # Specificity bonus: concrete numbers/paths beat generic placeholders
+    concrete_patterns = re.findall(r"\b\d+[.,]?\d*\b|[A-Z]:\\|/[a-z]+/|\.\w{2,4}\b", out)
+    if len(concrete_patterns) >= 2:
+        score += 0.5
+        detail["specificity_bonus"] = 0.5
     speed = tps_bonus(float(res.get("tps", 0) or 0), cap=1.5)
     score += speed
     detail["speed_bonus"] = speed
@@ -126,6 +144,7 @@ def score_task_response(
 def _score_improve(out: str, case: dict) -> tuple[float, dict[str, Any]]:
     low = out.lower()
     expected_sections = ("## goal", "## assumptions", "## files", "## steps", "## acceptance")
+    # Gradated section scoring: partial credit for each section present
     section_hits = sum(1 for section in expected_sections if section in low)
     anchors = _keyword_hits(out, tuple(case["anchors"]))
     step_lines = _line_count_with_prefix(out, ("1.", "2.", "3.", "4.", "5.", "- "))
@@ -136,8 +155,10 @@ def _score_improve(out: str, case: dict) -> tuple[float, dict[str, Any]]:
     )
     score = section_hits * 1.0 + min(anchors, 5) * 0.9 + min(step_lines, 5) * 0.35
     score += min(concrete, 4) * 0.35
-    if _contains_any(low, ("generic advice", "best practices", "it depends")):
-        score -= 1.5
+    # Stronger penalty for generic filler
+    for filler in ("generic advice", "best practices", "it depends", "consider using"):
+        if filler in low:
+            score -= 2.0
     return score, {
         "sections": section_hits,
         "anchor_hits": anchors,
@@ -160,6 +181,15 @@ def _score_codeq_sum(out: str, case: dict) -> tuple[float, dict[str, Any]]:
         score -= 1.2
     if _contains_any(stripped, ("this function", "the function")):
         score += 0.4
+    # Reward mentioning side effects / error handling
+    if _contains_any(stripped, ("error", "exception", "throw", "catch", "swallow", "silently")):
+        score += 0.6
+    # Penalize mentioning implementation details (loop type, variable names)
+    impl_details = sum(
+        1 for w in ("for loop", "while loop", "variable", "array", "index") if w in stripped.lower()
+    )
+    if impl_details > 0:
+        score -= 0.5 * impl_details
     return score, {
         "anchor_hits": keyword_hits,
         "sentences": sentences,
@@ -181,6 +211,14 @@ def _score_smart_trim(out: str, case: dict) -> tuple[float, dict[str, Any]]:
         score += 0.4
     if _contains_any(low, ("transcript", "earlier", "assistant explained")):
         score -= 1.0
+    # Reward conflict-flagging when present
+    if _contains_any(low, ("contradict", "conflict", "reverted", "switched back", "changed mind")):
+        score += 1.0
+    # Penalize restating the prompt verbatim
+    prompt_words = set(_words(case["prompt"]))
+    out_words = set(_words(out))
+    if prompt_words and len(out_words & prompt_words) / max(len(out_words), 1) > 0.7:
+        score -= 0.8
     return score, {
         "required_hits": required_hits,
         "anchor_hits": anchors,
@@ -201,6 +239,17 @@ def _score_web_synth(out: str, case: dict) -> tuple[float, dict[str, Any]]:
         score += 1.8 if contradiction else -1.5
     if _contains_any(low, ("according to the sources", "sources say")) and citations == 0:
         score -= 1.0
+    # Source utilization: penalize citing a source without using its key claim
+    cited_nums = set(re.findall(r"\[(\d+)\]", out))
+    for src_num in cited_nums:
+        # Check if at least one anchor from the source context appears near the citation
+        src_context = re.search(rf"\[{src_num}\][^.]*", case["prompt"])
+        if src_context:
+            src_text = src_context.group().lower()
+            # Any anchor mentioned in the source text should appear in the output
+            src_anchors = [a for a in case["anchors"] if a.lower() in src_text]
+            if src_anchors and not any(a.lower() in low for a in src_anchors):
+                score -= 0.3
     return score, {
         "anchor_hits": anchors,
         "citations": citations,
@@ -224,6 +273,13 @@ def _score_code_gen(out: str, case: dict) -> tuple[float, dict[str, Any]]:
         has_return = any(isinstance(n, ast.Return) for n in ast.walk(fn))
         if has_return:
             score += 1.0
+        # Edge-case handling: bonus for defensive patterns
+        has_try = any(isinstance(n, ast.Try) for n in ast.walk(fn))
+        has_if_guard = any(isinstance(n, ast.If) for n in ast.walk(fn))
+        if has_try:
+            score += 0.5
+        if has_if_guard:
+            score += 0.3
     else:
         has_return = False
     if "import " in low_code and not case.get("allow_imports"):
@@ -268,270 +324,6 @@ def _score_code_gen(out: str, case: dict) -> tuple[float, dict[str, Any]]:
     }
 
 
-PROMPTS: dict[str, dict[str, Any]] = {
-    "improve": {
-        "budget_words": 150,
-        "items": [
-            (
-                "improve_auth_flake",
-                "Rewrite this vague request into a concrete implementation spec with sections GOAL, ASSUMPTIONS, FILES, STEPS, ACCEPTANCE. Original: users sometimes cannot login after password reset, fix auth.",
-                ("password reset", "login", "session", "token", "reproduce", "test", "auth"),
-            ),
-            (
-                "improve_dashboard_perf",
-                "Rewrite into an actionable engineering task. Original: haz que el dashboard cargue mas rapido, esta lentisimo cuando hay muchas cuentas.",
-                ("dashboard", "many accounts", "profile", "query", "cache", "metric", "acceptance"),
-            ),
-            (
-                "improve_flaky_test",
-                "Turn this into a precise debugging spec. Original: el test de checkout falla a veces en CI pero local no.",
-                ("checkout", "ci", "flaky", "seed", "timeout", "reproduce", "pytest"),
-            ),
-            (
-                "improve_csv_import",
-                "Rewrite into a concise spec. Original: i need the csv thing to import customers but skip bad rows and tell me what failed.",
-                ("csv", "customers", "bad rows", "validation", "error report", "acceptance"),
-            ),
-            (
-                "improve_conflicting_req",
-                "Rewrite into a spec. Identify conflicts and propose resolution. Original: make the search faster but also return more results, and keep memory usage low.",
-                ("search", "fast", "memory", "tradeoff", "benchmark", "conflict", "resolution"),
-            ),
-            (
-                "improve_missing_context",
-                "Rewrite into a spec. Flag what's MISSING and make reasonable assumptions. Original: we need the notification system to work better.",
-                ("notification", "assumption", "missing", "channels", "throttle", "priority"),
-            ),
-            (
-                "improve_multi_lang",
-                "Rewrite into an actionable spec. Original: el API de reports esta lento, users are complaining que tarda mucho cuando seleccionan un date range grande. Also the PDF export crashes sometimes.",
-                (
-                    "reports",
-                    "date range",
-                    "pdf export",
-                    "performance",
-                    "crash",
-                    "timeout",
-                    "pagination",
-                ),
-            ),
-        ],
-    },
-    "codeq_sum": {
-        "budget_words": 32,
-        "items": [
-            (
-                "sum_send_chat",
-                "Summarize this function in ONE sentence, max 30 words. NO preamble, no code blocks.\n\nasync function sendChatMessage(trimmed: string) {\n  if (!trimmed || sending.value) return;\n  draft.value = '';\n  try {\n    await api.post('/chat', { text: trimmed });\n  } catch (e) {\n    error.value = e.message;\n  }\n}",
-                ("empty", "sending", "clears", "posts", "error"),
-            ),
-            (
-                "sum_chunk_text",
-                "Summarize in ONE sentence, max 30 words. NO preamble.\n\nfunction chunkText(text, maxTokens) {\n  const sentences = text.split(/(?<=[.!?])\\s+/);\n  const out = [];\n  let buf = '';\n  for (const s of sentences) {\n    if ((buf + s).split(/\\s+/).length > maxTokens) { out.push(buf.trim()); buf = s; }\n    else buf += ' ' + s;\n  }\n  if (buf) out.push(buf.trim());\n  return out;\n}",
-                ("sentences", "chunks", "max", "tokens", "buffer"),
-            ),
-            (
-                "sum_subscribe",
-                "Summarize this function in ONE sentence, max 30 words. Mention the important behavior.\n\nasync function subscribeToTopic(topic, handler) {\n  if (subscriptions.has(topic)) return false;\n  const controller = new AbortController();\n  const conn = await openStream(topic, { signal: controller.signal });\n  subscriptions.set(topic, { controller, handler });\n  conn.on('data', msg => {\n    if (msg.type === 'error') { controller.abort(); unsubscribe(topic); }\n    else handler(msg);\n  });\n  return true;\n}",
-                ("topic", "stream", "abort", "unsubscribe", "handler"),
-            ),
-            (
-                "sum_retry",
-                "One-sentence summary, max 30 words. NO preamble.\n\nasync function retry(fn, attempts, delayMs) {\n  let lastErr;\n  for (let i = 0; i < attempts; i++) {\n    try { return await fn(); }\n    catch (err) { lastErr = err; await sleep(delayMs * (i + 1)); }\n  }\n  throw lastErr;\n}",
-                ("retry", "attempts", "delay", "last", "throws"),
-            ),
-            (
-                "sum_error_handler",
-                "Summarize in ONE sentence, max 30 words. Mention if errors are swallowed.\n\nfunction processRecords(records) {\n  let ok = 0, fail = 0;\n  for (const r of records) {\n    try {\n      validate(r);\n      db.insert(r);\n      ok++;\n    } catch (e) {\n      fail++;\n    }\n  }\n  return { ok, fail };\n}",
-                ("records", "validate", "insert", "ok", "fail", "swallow"),
-            ),
-            (
-                "sum_stateful_class",
-                "Summarize in ONE sentence, max 30 words. NO preamble.\n\nclass RateLimiter {\n  constructor(maxPerWindow, windowMs) {\n    this.max = maxPerWindow;\n    this.window = windowMs;\n    this.timestamps = [];\n  }\n  allow() {\n    const now = Date.now();\n    this.timestamps = this.timestamps.filter(t => now - t < this.window);\n    if (this.timestamps.length >= this.max) return false;\n    this.timestamps.push(now);\n    return true;\n  }\n}",
-                ("rate", "limit", "window", "timestamps", "allow", "max"),
-            ),
-            (
-                "sum_recursive",
-                "Summarize in ONE sentence, max 30 words. NO preamble.\n\nfunction flatten(arr) {\n  const out = [];\n  for (const item of arr) {\n    if (Array.isArray(item)) out.push(...flatten(item));\n    else out.push(item);\n  }\n  return out;\n}",
-                ("flatten", "recursive", "array", "nested", "push"),
-            ),
-        ],
-    },
-    "smart_trim": {
-        "budget_words": 170,
-        "items": [
-            (
-                "trim_wsgi_pytest",
-                "Compress to handoff bullet list. Keep task, current step, decisions, next action, blockers. 4-8 bullets, no preamble.\n\n[Earlier] User asked about Python venv setup on WSL2. Assistant recommended uv and created .venv. [Earlier] Imports broke because PYTHONPATH pointed at global site-packages. Fixed by removing override. [Now] pytest collected 0 items. Investigating tests/ dir and conftest.py placement. [Now] ruff says no module, same environment root cause. [Decision] Stay on uv, no pip. [Next] Add root conftest.py, reinstall dev deps, run pytest and ruff. [Blocked] None.",
-                (
-                    "uv",
-                    "pytest collected 0",
-                    "conftest",
-                    "ruff",
-                    "next",
-                    "blocked none",
-                    "pythonpath",
-                ),
-            ),
-            (
-                "trim_ci_snapshots",
-                "Make a handoff summary. Keep decisions and next action.\n\n[Earlier] CI took 27min: install=4, test=8, build=12, deploy=3. Chose nx affected because repo already uses nx. [Earlier] nx reduced CI to 18min, still too slow. [Now] vitest migration done; snapshots still slow. Found 14 nested snapshots taking 2.1s each. happy-dom is 30 percent faster than jsdom. [Decision] Delete non-visual snapshots, keep only SVG/PNG render snapshots. [Next] PR branch drop-snapshots-v1 and target <10min CI. [Blocked] None.",
-                ("ci", "27min", "nx", "vitest", "snapshots", "drop-snapshots-v1", "blocked none"),
-            ),
-            (
-                "trim_azure_zip",
-                "Condense this session into a handoff. 5-9 bullets.\n\n[Earlier] Azure Function cold start baseline 4s, target <500ms. Decided premium EP1 plus always-on. [Earlier] Local func start was 1.2s without warmup. [Now] User said deploy it. Need zip package and az functionapp deploy. [Risk] local.settings.json has storage connection string and must not be zipped. [Decision] Use --build-native-deps for cryptography wheels. [Next] Build pkg.zip excluding .venv, __pycache__, Tests, .git, local.settings.json; then deploy. [Blocked] az login is already done.",
-                (
-                    "azure function",
-                    "premium ep1",
-                    "always-on",
-                    "local.settings.json",
-                    "build-native-deps",
-                    "pkg.zip",
-                    "az login",
-                ),
-            ),
-            (
-                "trim_contradiction",
-                "Compress to handoff. Flag any contradictions.\n\n[Earlier] Decided to use SQLite for the local cache. Performance was fine. [Earlier] User said we need multi-process access. SQLite doesn't handle that well. [Now] Switched decision to PostgreSQL. [Now] Realized the deployment target has no PostgreSQL available. [Decision] Reverted to SQLite with WAL mode. [Next] Test WAL under concurrent writes. [Blocked] Need to verify WAL works on the target OS.",
-                (
-                    "sqlite",
-                    "multi-process",
-                    "postgresql",
-                    "wal",
-                    "contradict",
-                    "reverted",
-                    "concurrent",
-                ),
-            ),
-            (
-                "trim_red_herring",
-                "Make a handoff summary. Note dead ends briefly.\n\n[Earlier] API returning 500. Spent 2 hours investigating database connection pool. Pool was fine. [Earlier] Checked nginx config. Also fine. [Now] Found the real issue: the rate limiter middleware was not awaiting an async call, causing unhandled promise rejection. [Decision] Replace rate limiter with p-limit. [Next] PR with the fix + a regression test. [Blocked] None. [Dead end] DB pool investigation was a red herring.",
-                (
-                    "500",
-                    "rate limiter",
-                    "async",
-                    "p-limit",
-                    "red herring",
-                    "dead end",
-                    "regression",
-                ),
-            ),
-            (
-                "trim_multi_blocker",
-                "Condense into 6-10 bullets.\n\n[Earlier] Auth flow broken after migration. Blocker: JWT secret rotation not deployed. [Earlier] Deployed secret rotation. New blocker: token refresh endpoint returns 401 for tokens issued before rotation. [Now] Added grace period for old tokens. New blocker: grace period bypasses revocation check. [Decision] Grace period only applies to non-revoked tokens. [Risk] Clock skew between auth servers could allow brief window of invalid tokens. [Next] Add NTP sync check to health endpoint. [Blocked] Waiting on infra team for NTP config.",
-                (
-                    "jwt",
-                    "secret rotation",
-                    "401",
-                    "grace period",
-                    "revocation",
-                    "clock skew",
-                    "ntp",
-                    "infra",
-                ),
-            ),
-        ],
-    },
-    "web_synth": {
-        "budget_words": 210,
-        "items": [
-            (
-                "synth_problem_json",
-                "Synthesize a 3-paragraph summary with citations [1], [2], [3]. No preamble.\n\n[1] RFC 9457 defines Problem Details for HTTP APIs with type, title, status, detail, instance fields. [2] Microsoft REST API Guidelines recommend problem+json for 4xx/5xx and correlation id in instance. [3] Spring Boot 3.2+ exposes ProblemDetail through ResponseEntityExceptionHandler and RestControllerAdvice.",
-                (
-                    "problem details",
-                    "type",
-                    "title",
-                    "status",
-                    "correlation",
-                    "spring boot",
-                    "problemdetail",
-                ),
-            ),
-            (
-                "synth_conflict_bench",
-                "Synthesize with citations. If sources disagree, state the disagreement.\n\n[1] Vendor announcement says Model A reached 64.3 on SWE-bench Verified in Oct 2024. [2] March 2025 blog says Model B reached 62.3 on the same benchmark. [3] Independent December 2025 report lists Model B at 70.3 on the same benchmark.",
-                ("64.3", "62.3", "70.3", "same benchmark", "model b", "independent"),
-            ),
-            (
-                "synth_security_policy",
-                "Write a 2-3 paragraph synthesis with citations [1][2][3].\n\n[1] OWASP recommends validating redirect targets against an allow-list. [2] A product incident report says unvalidated next= parameters caused account takeover via phishing. [3] The engineering policy requires rejecting absolute external URLs and logging blocked redirect attempts.",
-                ("owasp", "allow-list", "next=", "account takeover", "external urls", "logging"),
-            ),
-            (
-                "synth_4_sources_overlap",
-                "Synthesize 4 sources into 3 paragraphs. Handle overlap and contradiction. Cite all sources.\n\n[1] A 2024 study found that connection pooling reduces p99 latency by 40% in PostgreSQL. [2] The pgBouncer docs recommend pool sizes of 2-4 per CPU core. [3] A 2025 blog post says connection pooling caused stale-connection errors under high write load. [4] Another 2024 study confirms pooling benefits but warns about prepared statement cache invalidation.",
-                (
-                    "connection pooling",
-                    "p99",
-                    "pgbouncer",
-                    "stale",
-                    "prepared statement",
-                    "cpu core",
-                    "latency",
-                ),
-            ),
-            (
-                "synth_no_consensus",
-                "Synthesize with citations. Sources disagree — present all positions, do NOT force consensus.\n\n[1] Microservices advocate says monoliths are unmaintainable beyond 10 engineers. [2] A case study shows Shopify runs a modular monolith serving 80M+ merchants. [3] A 2025 survey says 60% of teams that adopted microservices regret the complexity. [4] Netflix blog says microservices are essential for their scale.",
-                (
-                    "microservices",
-                    "monolith",
-                    "shopify",
-                    "netflix",
-                    "complexity",
-                    "scale",
-                    "modular",
-                ),
-            ),
-            (
-                "synth_tradeoff",
-                "Synthesize a technical tradeoff analysis. Cite sources, state your recommendation.\n\n[1] gRPC benchmarks show 10x throughput over REST for internal services. [2] REST adoption is 85% according to a 2025 developer survey, gRPC at 15%. [3] A migration report says moving from REST to gRPC took 6 months and broke 3rd-party integrations. [4] A polyglot team report says gRPC tooling gaps in Python/JS caused 2-week delays per service.",
-                (
-                    "grpc",
-                    "rest",
-                    "throughput",
-                    "adoption",
-                    "migration",
-                    "tooling",
-                    "polyglot",
-                ),
-            ),
-        ],
-    },
-    "code_gen": {
-        "budget_words": 120,
-        "items": [
-            (
-                "code_validate_email",
-                "Write a Python function `validate_email(s: str) -> bool` using ONLY stdlib re. Handle None, empty, whitespace. Return False on invalid. No docstring, no comments, just the function.",
-                ("validate_email", "none", "strip", "re.", "return false", "bool"),
-                {"function": "validate_email", "args": ("s",), "allow_imports": True},
-            ),
-            (
-                "code_unique_order",
-                "Write Python function `unique_preserve_order(items: list[str | None]) -> list[str]`. Skip None and ''. Keep first-seen order. No imports. Just the function.",
-                ("unique_preserve_order", "seen", "none", "append", "return", "items"),
-                {"function": "unique_preserve_order", "args": ("items",), "allow_imports": False},
-            ),
-            (
-                "code_chunk_lines",
-                "Write Python function `chunk_lines(text: str, max_chars: int) -> list[str]` that returns chunks <= max_chars. Split on newline first, then spaces for long lines. No external deps. Just the function.",
-                ("chunk_lines", "max_chars", "split", "append", "return", "line"),
-                {"function": "chunk_lines", "args": ("text", "max_chars"), "allow_imports": False},
-            ),
-            (
-                "code_parse_bool",
-                "Write Python function `parse_bool(value) -> bool | None`. Return True for yes/true/1/on, False for no/false/0/off, None for unknown or None. No imports. Just the function.",
-                ("parse_bool", "true", "false", "none", "lower", "return"),
-                {"function": "parse_bool", "args": ("value",), "allow_imports": False},
-            ),
-        ],
-    },
-}
-
-
 def iter_cases(task: str) -> list[dict[str, Any]]:
     """Return normalized cases for a canonical task."""
     cases: list[dict[str, Any]] = []
@@ -557,11 +349,36 @@ def iter_cases(task: str) -> list[dict[str, Any]]:
     return cases
 
 
-HARD_PROMPTS: dict[str, dict[str, Any]] = {
-    task: {
-        "budget": max(int(cfg["budget_words"] * 1.35), cfg["budget_words"] + 20),
-        "v_hard": "\n\n---\n\n".join(case["prompt"] for case in iter_cases(task)),
-        "cases": iter_cases(task),
-    }
-    for task, cfg in PROMPTS.items()
-}
+def iter_hard_cases(task: str) -> list[dict[str, Any]]:
+    """Return normalized hard cases for tie-break."""
+    cases: list[dict[str, Any]] = []
+    cfg = HARD_PROMPTS[task]
+    for item in cfg["items"]:
+        case_id, prompt, anchors = item[:3]
+        extra = dict(item[3]) if len(item) > 3 else {}
+        case = {
+            "id": case_id,
+            "prompt": prompt,
+            "anchors": anchors,
+            "budget_words": cfg["budget"],
+            **extra,
+        }
+        if task == "web_synth":
+            case.setdefault("source_count", 5)
+            case.setdefault(
+                "requires_disagreement", "contradict" in case_id or "no_consensus" in case_id
+            )
+            case.setdefault(
+                "disagreement_terms",
+                (
+                    "disagree",
+                    "discrepancy",
+                    "conflict",
+                    "different",
+                    "contradict",
+                    "warns",
+                    "regret",
+                ),
+            )
+        cases.append(case)
+    return cases

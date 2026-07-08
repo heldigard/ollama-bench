@@ -5,6 +5,7 @@ task-specific scoring as `deep`, with no single-score saturation cap.
 
 # vs-soft-allow  — end-to-end pipeline (prompts → run → score → rank → MD).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -13,39 +14,32 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from ollama_bench.features.canonical_tasks import HARD_PROMPTS as _HARD_PROMPTS
-from ollama_bench.features.canonical_tasks import score_task_response
+from ollama_bench.features.canonical_tasks import iter_hard_cases, score_task_response
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
 from ollama_bench.shared.scorer import strip_reasoning
 
-PROMPTS: dict[str, dict] = {
-    task: {
-        **cfg,
-        "scorer": (lambda out, _task=task, _cfg=cfg: sum(
-            score_task_response(_task, {"out": out, "tps": 0, "done": "stop"}, case)["score"]
-            for case in _cfg["cases"]
-        ) / max(len(_cfg["cases"]), 1)),
-    }
-    for task, cfg in _HARD_PROMPTS.items()
-}
+_TASKS = ("improve", "codeq_sum", "smart_trim", "web_synth", "code_gen")
 
 
 def run_model(model: str, opts: CallOpts) -> dict:
     """Run a single model across all hard tasks. Returns {model: {task: score}}."""
     out: dict = {}
-    for task, cfg in PROMPTS.items():
+    for task in _TASKS:
+        cases = iter_hard_cases(task)
         task_items: list[dict] = []
-        for case in cfg["cases"]:
+        for case in cases:
             res = call(model, case["prompt"], opts=opts)
             if "out" in res:
                 res = {**res, "out": strip_reasoning(res["out"])}
-            scored = score_task_response(task, res, {**case, "budget_words": cfg["budget"]})
-            task_items.append({
-                "case": case["id"],
-                "score": scored["score"],
-                "metrics": scored["metrics"],
-            })
+            scored = score_task_response(task, res, case)
+            task_items.append(
+                {
+                    "case": case["id"],
+                    "score": scored["score"],
+                    "metrics": scored["metrics"],
+                }
+            )
         out[task] = {
             "score": round(sum(i["score"] for i in task_items) / max(len(task_items), 1), 2),
             "items": task_items,
@@ -76,7 +70,11 @@ def cmd_tie_break(args: argparse.Namespace) -> int:
     if not candidates:
         print("ERROR: --winners required (space-separated model names)", file=sys.stderr)
         return 2
-    print(f"# Tie-break bench: {len(candidates)} winners × {len(PROMPTS)} hard tasks", file=sys.stderr)
+    total_cases = sum(len(iter_hard_cases(t)) for t in _TASKS)
+    print(
+        f"# Tie-break bench: {len(candidates)} winners × {total_cases} hard prompts",
+        file=sys.stderr,
+    )
     opts = CallOpts(num_predict=300, num_ctx=4096)
 
     results: dict = {}
@@ -91,7 +89,7 @@ def cmd_tie_break(args: argparse.Namespace) -> int:
             results.update(r)
             print(f"  [{i:2d}/{len(candidates)}] {m[:55]}  done", file=sys.stderr, flush=True)
 
-    per_task = _aggregate(results, list(PROMPTS.keys()))
+    per_task = _aggregate(results, list(_TASKS))
     out_path = Path(args.output) if args.output else result_path("tiebreak_ranking", ext="md")
     detail_path = out_path.with_name(f"{out_path.stem}_details").with_suffix(".jsonl")
     with out_path.open("w") as f:
@@ -118,13 +116,19 @@ def cmd_tie_break(args: argparse.Namespace) -> int:
                 if not isinstance(payload, dict):
                     continue
                 for item in payload.get("items", []):
-                    f.write(json.dumps({
-                        "model": model,
-                        "task": task,
-                        "case": item.get("case"),
-                        "score": item.get("score"),
-                        "metrics": item.get("metrics", {}),
-                    }, sort_keys=True) + "\n")
+                    f.write(
+                        json.dumps(
+                            {
+                                "model": model,
+                                "task": task,
+                                "case": item.get("case"),
+                                "score": item.get("score"),
+                                "metrics": item.get("metrics", {}),
+                            },
+                            sort_keys=True,
+                        )
+                        + "\n"
+                    )
     print(f"\nWrote {out_path}\nWrote {detail_path}", file=sys.stderr)
     return 0
 
@@ -134,7 +138,12 @@ def add_parser(sub, parent: argparse.ArgumentParser) -> None:
     p = sub.add_parser(
         "tie-break", parents=[parent], help="Re-bench tied candidates with harder prompts."
     )
-    p.add_argument("-w", "--winners", nargs="+", required=True,
-                   help="Model names to re-bench (space-separated).")
+    p.add_argument(
+        "-w",
+        "--winners",
+        nargs="+",
+        required=True,
+        help="Model names to re-bench (space-separated).",
+    )
     p.add_argument("-o", "--output", help="Output MD path (default: cache dir).")
     p.set_defaults(cmd=cmd_tie_break)

@@ -15,8 +15,7 @@ one but not the other is usually a copy-paste miss).
 
 from __future__ import annotations
 
-from ollama_bench.features.deep.command import PROMPTS as DEEP_PROMPTS
-from ollama_bench.features.tie_break.command import PROMPTS as TIE_BREAK_PROMPTS
+from ollama_bench.features.canonical_tasks import HARD_PROMPTS, PROMPTS, iter_hard_cases
 from ollama_bench.shared.config import TASKS
 
 CANONICAL_TASKS = {"improve", "codeq_sum", "smart_trim", "web_synth", "code_gen"}
@@ -39,7 +38,7 @@ def test_config_tasks_have_budget_words():
 
 def test_deep_prompts_have_budget_words():
     """Each deep PROMPTS entry MUST have a sane budget_words."""
-    for task, cfg in DEEP_PROMPTS.items():
+    for task, cfg in PROMPTS.items():
         assert "budget_words" in cfg, f"deep/{task}: missing budget_words"
         budget = cfg["budget_words"]
         assert isinstance(budget, int) and budget > 0, (
@@ -48,10 +47,8 @@ def test_deep_prompts_have_budget_words():
 
 
 def test_tie_break_prompts_have_budget():
-    """Each tie_break PROMPTS entry MUST have a sane budget (tie-break uses
-    done='length' + budget*2 truncation check; budget=0 → no headroom signal).
-    """
-    for task, cfg in TIE_BREAK_PROMPTS.items():
+    """Each tie_break HARD_PROMPTS entry MUST have a sane budget."""
+    for task, cfg in HARD_PROMPTS.items():
         assert "budget" in cfg, f"tie_break/{task}: missing budget"
         budget = cfg["budget"]
         assert isinstance(budget, int) and budget > 0, (
@@ -65,33 +62,23 @@ def test_tie_break_prompts_have_budget():
 
 
 def test_deep_and_tie_break_cover_same_canonical_tasks():
-    """deep PROMPTS + tie_break PROMPTS MUST both cover the canonical 5 tasks.
-
-    A task in deep but missing from tie_break = the saturating tier never gets
-    discrimination for that task. A task in tie_break but not deep = tie-break
-    re-benches something never first-pass benched (useless).
-    """
-    deep_keys = set(DEEP_PROMPTS.keys())
-    tie_break_keys = set(TIE_BREAK_PROMPTS.keys())
+    """deep PROMPTS + tie_break HARD_PROMPTS MUST both cover the canonical 5 tasks."""
+    deep_keys = set(PROMPTS.keys())
+    tie_break_keys = set(HARD_PROMPTS.keys())
     missing_from_deep = CANONICAL_TASKS - deep_keys
     missing_from_tie_break = CANONICAL_TASKS - tie_break_keys
     assert not missing_from_deep, (
         f"deep PROMPTS missing canonical tasks: {sorted(missing_from_deep)}"
     )
     assert not missing_from_tie_break, (
-        f"tie_break PROMPTS missing canonical tasks: {sorted(missing_from_tie_break)}"
+        f"tie_break HARD_PROMPTS missing canonical tasks: {sorted(missing_from_tie_break)}"
     )
 
 
 def test_config_tasks_match_deep_tasks():
-    """shared/config.py TASKS keys MUST equal deep PROMPTS keys.
-
-    config.py is documentary (mirrors harness wiring) but MUST stay aligned
-    with the bench runner's task set. Drift = a task gets benched but never
-    wired into the harness, or vice versa.
-    """
+    """shared/config.py TASKS keys MUST equal deep PROMPTS keys."""
     config_keys = set(TASKS.keys())
-    deep_keys = set(DEEP_PROMPTS.keys())
+    deep_keys = set(PROMPTS.keys())
     assert config_keys == deep_keys, (
         f"config TASKS ≠ deep PROMPTS keys.\n"
         f"  only in config: {sorted(config_keys - deep_keys)}\n"
@@ -106,17 +93,30 @@ def test_config_tasks_match_deep_tasks():
 
 
 def test_tie_break_budget_at_least_deep_budget():
-    """Tie-break uses HARDER prompts → budget should be >= deep budget.
-
-    If someone shrinks tie_break budget below deep, the truncation penalty
-    fires unfairly on the harder task. Soft check (>= not strict >) so a tie
-    is allowed when prompts happen to be similar length.
-    """
+    """Tie-break uses HARDER prompts → budget should be >= deep budget."""
     for task in CANONICAL_TASKS:
-        deep_b = DEEP_PROMPTS[task]["budget_words"]
-        tb_b = TIE_BREAK_PROMPTS[task]["budget"]
+        deep_b = PROMPTS[task]["budget_words"]
+        tb_b = HARD_PROMPTS[task]["budget"]
         assert tb_b >= deep_b, (
             f"{task}: tie_break budget ({tb_b}) < deep budget ({deep_b}). "
             "Hard prompts need >= headroom; either bump tie_break budget or "
             "shrink the prompt."
         )
+
+
+# ---------------------------------------------------------------------------
+# Hard prompts must produce normalized cases via iter_hard_cases
+# ---------------------------------------------------------------------------
+
+
+def test_iter_hard_cases_returns_valid_cases():
+    """iter_hard_cases must produce cases with required keys for each task."""
+    for task in CANONICAL_TASKS:
+        cases = iter_hard_cases(task)
+        assert len(cases) >= 2, f"{task}: hard cases should have >= 2 items, got {len(cases)}"
+        for case in cases:
+            assert "id" in case, f"{task}: hard case missing 'id'"
+            assert "prompt" in case, f"{task}: hard case missing 'prompt'"
+            assert "anchors" in case, f"{task}: hard case missing 'anchors'"
+            assert "budget_words" in case, f"{task}: hard case missing 'budget_words'"
+            assert case["budget_words"] > 0, f"{task}: hard case budget_words must be > 0"
