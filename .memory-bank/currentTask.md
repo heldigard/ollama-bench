@@ -1,15 +1,17 @@
 # Current Task
-> 2026-07-08: New model bench complete. Consumer rewires pending.
+> 2026-07-08 (PM): GPU-safe bench suite + full pipeline running. Consumer rewires still pending.
 
 ## Completed (this session)
-- Deep bench (14 models, --strip): results_current_models_strip_deep_20260708.tsv
-- Specialized benches: tool_call, pdf_ocr, pdf_extract, bug_finding
-- RANKING.md updated with new winners
-- config.py updated (TASKS + SPECIALIZED_TASKS)
-- Memory bank updated (local-ollama-lineup, harness-wiring)
-- All 185 tests passing
+- Fixed CRITICAL resume data-loss bug (deep JSONL now append-only; pinned by regression test).
+- Removed parallel ThreadPoolExecutor from bug_finding/tool_call/pdf_extract (overheat root cause) → shared `paced()`.
+- All benches: `--cooldown`/`--temp-limit`; smoke gained `--resume` + incremental.
+- Pipeline: `scripts/run_pipeline.sh` + `scripts/tie_winners.py`. Launched detached.
+- 194/194 tests pass; ruff + shellcheck clean.
 
-## Pending consumer rewires
+## Running now
+- deep 14/30 → orchestrator (PID 45450) auto-runs bug-finding/tool-call/pdf-extract/pdf-ocr → tie-break.
+
+## Pending consumer rewires (from prior bench, still open)
 - ~/prompt-improve: improve chain → OmniCoder primary
 - ~/smart-trim: smart_trim → Openclaw primary
 - ~/web-research: web_synth → DeltaCoder primary

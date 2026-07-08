@@ -1,58 +1,38 @@
 # Active Context
-- 2026-07-08: Bench methodology improved. GPU-safe incremental benching implemented.
+> 2026-07-08: GPU-safe bench suite + full pipeline. All benches sequential via shared paced().
 
 ## Current Objective
-- **Task**: Re-run bench with improved prompts on all models (paused for today)
-- **Phase**: Bench running in background (PID 50753), will complete overnight
-- **Next**: Check results tomorrow, update RANKING.md, re-run specialized benches
+- **Task**: Run the full bench sequence (deep → specialized → tie-break) GPU-safe.
+- **Phase**: Running detached (nohup). deep 14/30 → orchestrator waits, then runs specialized + tie-break.
+- **Next**: When pipeline finishes, read `~/.cache/ollama-bench/results/*.md`, update RANKING.md if winners changed, rewire config.py primary/fallback if needed.
 
-## What Was Done Today
+## What Landed This Session
 
-### Bench Improvements (committed + pushed)
-- Split canonical_tasks.py → prompts.py (data) + canonical_tasks.py (scoring)
-- Added 15 new edge-case prompts (improve 7, codeq_sum 7, smart_trim 6, web_synth 6, code_gen 7)
-- Redesigned HARD_PROMPTS: genuine hard scenarios instead of concatenated cases
-- Improved all 5 task scorers: gradated scoring, conflict-flagging, source utilization
-- Added 4 harder tool_call cases + 2 harder bug_finding diffs
-- 187/187 tests pass
+### Critical bug fix — resume no longer drops scored models
+- `deep` details JSONL is now **append-only** (flushed per model) — was end-only, so a kill left no JSONL → resume reconstructed empty → final TSV rewrite DROPPED every benched model. Fixed + pinned by `test_resume_aggregate_preserves_completed_model`.
 
-### GPU-Safe Incremental Benching (committed + pushed)
-- `deep` command: --resume, --cooldown, --temp-limit flags
-- Sequential execution (no more ThreadPoolExecutor)
-- Per-model incremental TSV save (never lose progress)
-- GPU temperature monitoring via nvidia-smi
-- `tie_break` command: same cooldown/temp-limit support
+### Parallel-pool OVERHEATING root cause removed from ALL benches
+- bug_finding/tool_call/pdf_extract used `ThreadPoolExecutor(max_workers=4)` (= yesterday's 80°C+ cause). Replaced with `shared/gpu.py::paced()` (sequential + temp-gate + cooldown). pdf_ocr + tie_break also paced/deduped.
+- Every bench now has `--cooldown`/`--temp-limit`; smoke has `--resume` + incremental save too.
 
-### New Models Pulled
-- hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M (6.5 GB) — Fable 5 distillation
-- hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M (6.3 GB) — heretic fine-tune
-- hf.co/mradermacher/Gemma-4-12B-StyleTune-i1-GGUF:Q4_K_M (7.9 GB) — StyleTune 12B
+### Pipeline orchestrator
+- `scripts/run_pipeline.sh` (wait-deep → bug-finding/tool-call/pdf-extract/pdf-ocr → tie-break; idempotent, GPU-safe, nohup).
+- `scripts/tie_winners.py` (models within 0.5 of per-task top → tie-break winners).
 
-### Bench Status
-- Smoke: 31/31 models pass
-- Deep bench running in background (13 models × 33 prompts, 60s cooldown)
-- Results incrementally saved to ~/.cache/ollama-bench/results/
-- Progress log: ~/.cache/ollama-bench/results/bench_v2_progress.log
-
-## Lessons Learned (CRITICAL — read before next session)
-
-1. **NEVER run all models at once** — maxes out GPU, takes hours, gets killed. Always sequential with cooldown.
-2. **Save after EACH model** — old approach wrote all results at the end, losing everything on kill/crash. New approach appends to TSV after each model.
-3. **--resume flag is essential** — if bench gets interrupted, just re-run with --resume to skip completed models.
-4. **60s cooldown between models** — keeps GPU at ~60-65°C instead of 80°C+. Configurable via --cooldown.
-5. **Background with nohup** — bench survives session disconnect. Check progress via the log file.
-6. **Don't re-run what's done** — always check existing results before starting a bench run.
-
-## Tomorrow's Checklist
-1. Check bench_v2_progress.log — all 13 models done?
-2. If done: read deep_bench.tsv, update RANKING.md
-3. Run specialized benches (tool_call, bug_finding, pdf_extract) with same cooldown approach
-4. Update config.py if winners changed
-5. Update consumer repos if needed
-6. Commit + push all changes
+## Run Status (live)
+- deep: 14/30, GPU ~52°C peak (cool). Incremental TSV+JSONL verified on real exec.
+- Smoke: 31/31 (29 ok + 1 strippable = 30 deep candidates; 1 OCR hard-fail).
+- Orchestrator PID 45450 → Stage-0 wait → auto-runs rest when deep done.
 
 ## Preserved Negative Constraints
-- DO NOT pull Q5/Q6/Q8 variants of existing Q4 winners
-- DO NOT install models >10GB (RTX 5080 16GB constraint)
-- DO NOT discard strippable models solely for thinking leaks
-- DO NOT run benches without --cooldown (GPU safety)
+- DO NOT re-introduce parallel pools (ThreadPoolExecutor) — GPU overheat root cause.
+- DO NOT run benches without `--cooldown`/`--temp-limit` (GPU safety).
+- DO NOT pull Q5/Q6/Q8 of existing Q4 winners; DO NOT install >10GB models (RTX 5080 16GB).
+- DO NOT discard strippable models solely for thinking leaks.
+- Fresh (non-resume) deep runs clear stale TSV/JSONL — intentional (prevents append-stacking).
+
+## Key Paths
+- Results: `~/.cache/ollama-bench/results/` (deep_bench_strip.{tsv,md,_details.jsonl}, smoke_all.tsv, *.md per bench)
+- Logs: `~/.cache/ollama-bench/logs/{deep,pipeline}_*.log`
+- Resume deep: `nohup ollama-bench deep --resume --cooldown 60 --temp-limit 75 &`
+- Resume pipeline: `nohup bash scripts/run_pipeline.sh &`
