@@ -67,3 +67,53 @@ POST-COMPACT RULES (next 3 turns):
 3. Use grep/find to locate, read ONLY needed lines (max 50)
 4. DO NOT re-read rules files — they are already loaded
 5. Work from this summary, not from scratch
+
+## 2026-07-08T13:18:37
+Method: ollama-Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced
+Session: unknown
+
+## Current Objective (from current-objective.json)
+**Task**: revisa nuevamente que no haya quedado ruido, que todas las configuraciones hayan quedado bien, que los memory bank esten actualizados y sin ruido, y que se hayan hecho todos los commits y push
+**Phase**: Review
+**Next**: Think -> Plan -> Build -> Review -> Test -> Validate -> Ship -> Reflect
+**Files**: /home/eldi/ollama-bench/RANKING.md, /home/eldi/ollama-bench/.memory-bank/topics/local-ollama-lineup.md
+
+## Preserved Negative Constraints
+- DO NOT re-introduce parallel pools (ThreadPoolExecutor) — GPU overheat root cause.
+- DO NOT run benches without `--cooldown`/`--temp-limit` (GPU safety).
+- DO NOT pull Q5/Q6/Q8 of existing Q4 winners; DO NOT install >10GB models (RTX 5080 16GB).
+- DO NOT discard strippable models solely for thinking leaks.
+
+**Task**: Audit and clean the ecosystem by removing `qwen3.5:4b` noise, updating configurations, and synchronizing memory banks across 7 repositories.
+
+**Acceptance**: All active configs/harnesses use `cryptidbleh/gemma4-claude-opus-4.6` instead of `qwen3.5:4b`; all repos are clean (`dirty=0`, `ahead=0`); memory bank reflects the current 22-model lineup.
+
+**Verified**:
+- `cheap-llm`: DEFAULT_LOCAL_PRIMARY updated to `cryptidbleh`.
+- `prompt-improve`: fallback chain and config comments updated.
+- `web-research`: `_OLLAMA_DEFAULT_MODEL` updated.
+- `agent-memory`: `DEFAULT_GEN_MODEL` updated.
+- `ollama-bench`: `browser_bench` and 9 harness scripts rewired.
+- `cli-orchestration`: model_bench updated.
+- `RANKING.md`: Deleted models annotated with `*(deleted)*`; header/highlights corrected.
+- `local-ollama-lineup.md`: Stale round-5 roster replaced with actual 22-model lineup; header updated to "round-7".
+
+**Current**: Final verification of repository cleanliness and memory bank budget status (all under 80%).
+
+**Errors**: `<tool_use_error>File has been modified since read...` (Resolved by re-reading `RANKING.md`).
+
+**Decisions**:
+- **Replace `qwen3.5:4b` with `cryptidbleh/gemma4-claude-opus-4.6`**: Superior quality (+1.12 avg) and speed (+19% T1) at the same VRAM cost (3.4GB).
+- **Preserve Historical Refs**: Kept dated logs in `cheap_llm.py:64-65` and `diff-review.py:51` to maintain audit trail while cleaning active configs.
+
+**Next**: Proceed with next benchmark cycle or new fine-tune evaluation.
+
+**Files**:
+- `/home/eldi/ollama-bench/RANKING.md`
+- `/home/eldi/ollama-bench/.memory-bank/topics/local-ollama-lineup.md`
+- `~/prompt-improve/src/prompt_improve/shared/config.py`
+- `~/web-research/src/web_research/features/synth` (engine)
+- `~/cheap-llm/cheap_llm.py`
+- `~/agent-memory` (DEFAULT_GEN_MODEL)
+- `~/.claude/scripts/` (4 harness scripts)
+- `~/

@@ -1,0 +1,313 @@
+- generic [ref=f12e2]:
+  - banner [ref=f12e4]:
+    - generic [ref=f12e5]:
+      - generic [ref=f12e6]:
+        - link "Hugging Face's logo Hugging Face" [ref=f12e7] [cursor=pointer]:
+          - /url: /
+          - img "Hugging Face's logo" [ref=f12e8]
+          - generic [ref=f12e9]: Hugging Face
+        - generic [ref=f12e10]:
+          - textbox "Search models, datasets, users..." [ref=f12e11]
+          - img [ref=f12e12]
+      - navigation "Main" [ref=f12e14]:
+        - list [ref=f12e15]:
+          - listitem [ref=f12e16]:
+            - link "Models" [ref=f12e17] [cursor=pointer]:
+              - /url: /models
+              - img [ref=f12e18]
+              - text: Models
+          - listitem [ref=f12e22]:
+            - link "Datasets" [ref=f12e23] [cursor=pointer]:
+              - /url: /datasets
+              - img [ref=f12e24]
+              - text: Datasets
+          - listitem [ref=f12e29]:
+            - link "Spaces" [ref=f12e30] [cursor=pointer]:
+              - /url: /spaces
+              - img [ref=f12e31]
+              - text: Spaces
+          - listitem [ref=f12e35]:
+            - link "Buckets new" [ref=f12e36] [cursor=pointer]:
+              - /url: /storage
+              - img [ref=f12e37]
+              - text: Buckets
+              - generic [ref=f12e41]: new
+          - listitem [ref=f12e42]:
+            - link "Docs" [ref=f12e43] [cursor=pointer]:
+              - /url: /docs
+              - img [ref=f12e44]
+              - text: Docs
+          - listitem [ref=f12e48]:
+            - link "Pricing" [ref=f12e49] [cursor=pointer]:
+              - /url: /pricing
+          - listitem [ref=f12e50]:
+            - generic [ref=f12e51]:
+              - button [ref=f12e52] [cursor=pointer]:
+                - img [ref=f12e53]
+              - navigation [ref=f12e58]:
+                - list [ref=f12e59]:
+                  - listitem [ref=f12e60]:
+                    - generic [ref=f12e61]: Website
+                    - list [ref=f12e62]:
+                      - listitem [ref=f12e63]:
+                        - link "Tasks" [ref=f12e64] [cursor=pointer]:
+                          - /url: /tasks
+                          - img [ref=f12e65]
+                          - generic: Tasks
+                      - listitem [ref=f12e68]:
+                        - link "HuggingChat" [ref=f12e69] [cursor=pointer]:
+                          - /url: /chat
+                          - img [ref=f12e70]
+                          - generic: HuggingChat
+                      - listitem [ref=f12e73]:
+                        - link "Collections" [ref=f12e74] [cursor=pointer]:
+                          - /url: /collections
+                          - img [ref=f12e75]
+                          - generic: Collections
+                      - listitem [ref=f12e79]:
+                        - link "Languages" [ref=f12e80] [cursor=pointer]:
+                          - /url: /languages
+                          - img [ref=f12e81]
+                          - generic: Languages
+                      - listitem [ref=f12e83]:
+                        - link "Organizations" [ref=f12e84] [cursor=pointer]:
+                          - /url: /organizations
+                          - img [ref=f12e85]
+                          - generic: Organizations
+                  - listitem [ref=f12e90]:
+                    - generic [ref=f12e91]: Community
+                    - list [ref=f12e92]:
+                      - listitem [ref=f12e93]:
+                        - link "Blog" [ref=f12e94] [cursor=pointer]:
+                          - /url: /blog
+                          - img [ref=f12e95]
+                          - generic: Blog
+                      - listitem [ref=f12e97]:
+                        - link "Posts" [ref=f12e98] [cursor=pointer]:
+                          - /url: /posts
+                          - img [ref=f12e99]
+                          - generic: Posts
+                      - listitem [ref=f12e101]:
+                        - link "Daily Papers" [ref=f12e102] [cursor=pointer]:
+                          - /url: /papers
+                          - img [ref=f12e103]
+                          - generic: Daily Papers
+                      - listitem [ref=f12e106]:
+                        - link "Hardware" [ref=f12e107] [cursor=pointer]:
+                          - /url: /hardware
+                          - img [ref=f12e108]
+                          - generic: Hardware
+                      - listitem [ref=f12e111]:
+                        - link "Learn" [ref=f12e112] [cursor=pointer]:
+                          - /url: /learn
+                          - img [ref=f12e113]
+                          - generic: Learn
+                      - listitem [ref=f12e119]:
+                        - link "Discord" [ref=f12e120] [cursor=pointer]:
+                          - /url: /join/discord
+                          - img [ref=f12e121]
+                          - generic: Discord
+                      - listitem [ref=f12e123]:
+                        - link "Forum" [ref=f12e124] [cursor=pointer]:
+                          - /url: https://discuss.huggingface.co/
+                          - img [ref=f12e125]
+                          - generic: Forum
+                      - listitem [ref=f12e127]:
+                        - link "GitHub" [ref=f12e128] [cursor=pointer]:
+                          - /url: https://github.com/huggingface
+                          - img [ref=f12e129]
+                          - generic: GitHub
+                  - listitem [ref=f12e131]:
+                    - generic [ref=f12e132]: Solutions
+                    - list [ref=f12e133]:
+                      - listitem [ref=f12e134]:
+                        - link "Team & Enterprise" [ref=f12e135] [cursor=pointer]:
+                          - /url: /enterprise
+                          - img [ref=f12e136]
+                          - generic: Team & Enterprise
+                      - listitem [ref=f12e138]:
+                        - link "Hugging Face PRO" [ref=f12e139] [cursor=pointer]:
+                          - /url: /pro
+                          - img [ref=f12e140]
+                          - generic: Hugging Face PRO
+                      - listitem [ref=f12e142]:
+                        - link "Enterprise Support" [ref=f12e143] [cursor=pointer]:
+                          - /url: /support
+                          - img [ref=f12e144]
+                          - generic: Enterprise Support
+                      - listitem [ref=f12e147]:
+                        - link "Inference Providers" [ref=f12e148] [cursor=pointer]:
+                          - /url: /inference/models
+                          - img [ref=f12e149]
+                          - generic: Inference Providers
+                      - listitem [ref=f12e152]:
+                        - link "Inference Endpoints" [ref=f12e153] [cursor=pointer]:
+                          - /url: /inference-endpoints
+                          - img [ref=f12e154]
+                          - generic: Inference Endpoints
+                      - listitem [ref=f12e157]:
+                        - link "Storage Buckets" [ref=f12e158] [cursor=pointer]:
+                          - /url: /storage
+                          - img [ref=f12e159]
+                          - generic: Storage Buckets
+          - listitem [ref=f12e163]:
+            - separator [ref=f12e164]
+          - listitem [ref=f12e165]:
+            - link "Log In" [ref=f12e166] [cursor=pointer]:
+              - /url: /login
+          - listitem [ref=f12e167]:
+            - link "Sign Up" [ref=f12e168] [cursor=pointer]:
+              - /url: /join
+  - main [ref=f12e169]:
+    - generic [ref=f12e172]:
+      - heading "yuxinlu1 / gemma-4-12B-coder-fable5-composer2.5-v1-GGUF like 2.65k" [level=1] [ref=f12e173]:
+        - generic [ref=f12e174]:
+          - link [ref=f12e178] [cursor=pointer]:
+            - /url: /yuxinlu1
+          - link "yuxinlu1" [ref=f12e182] [cursor=pointer]:
+            - /url: /yuxinlu1
+          - generic [ref=f12e183]: /
+        - generic [ref=f12e184]:
+          - link "gemma-4-12B-coder-fable5-composer2.5-v1-GGUF" [ref=f12e185] [cursor=pointer]:
+            - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF
+          - button "Copy model name to clipboard" [ref=f12e186] [cursor=pointer]:
+            - img [ref=f12e187]
+        - generic [ref=f12e191]:
+          - button "like" [ref=f12e194] [cursor=pointer]:
+            - img [ref=f12e195]
+            - generic [ref=f12e197]: like
+          - button "2.65k" [ref=f12e198] [cursor=pointer]
+      - generic [ref=f12e199]:
+        - link "Text Generation" [ref=f12e200] [cursor=pointer]:
+          - /url: /models?pipeline_tag=text-generation
+          - generic [ref=f12e201]:
+            - img [ref=f12e203]
+            - generic [ref=f12e207]: Text Generation
+        - link "GGUF" [ref=f12e208] [cursor=pointer]:
+          - /url: /models?library=gguf
+          - generic [ref=f12e209]:
+            - img [ref=f12e210]
+            - generic [ref=f12e212]: GGUF
+        - link "gemma4" [ref=f12e213] [cursor=pointer]:
+          - /url: /models?other=gemma4
+          - generic [ref=f12e215]: gemma4
+        - link "coding" [ref=f12e216] [cursor=pointer]:
+          - /url: /models?other=coding
+          - generic [ref=f12e218]: coding
+        - link "code" [ref=f12e219] [cursor=pointer]:
+          - /url: /models?other=code
+          - generic [ref=f12e221]: code
+        - link "reasoning" [ref=f12e222] [cursor=pointer]:
+          - /url: /models?other=reasoning
+          - generic [ref=f12e224]: reasoning
+        - link "thinking" [ref=f12e225] [cursor=pointer]:
+          - /url: /models?other=thinking
+          - generic [ref=f12e227]: thinking
+        - link "llama.cpp" [ref=f12e228] [cursor=pointer]:
+          - /url: /models?other=llama.cpp
+          - generic [ref=f12e230]: llama.cpp
+        - link "local-llm" [ref=f12e231] [cursor=pointer]:
+          - /url: /models?other=local-llm
+          - generic [ref=f12e233]: local-llm
+        - link "conversational" [ref=f12e234] [cursor=pointer]:
+          - /url: /models?other=conversational
+          - generic [ref=f12e236]: conversational
+        - 'button "License: apache-2.0" [ref=f12e238] [cursor=pointer]':
+          - generic [ref=f12e240]:
+            - img [ref=f12e241]
+            - generic [ref=f12e243]: "License:"
+            - generic [ref=f12e244]: apache-2.0
+      - generic [ref=f12e246]:
+        - generic [ref=f12e247]:
+          - link "Model card" [ref=f12e248] [cursor=pointer]:
+            - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF
+            - img [ref=f12e249]
+            - text: Model card
+          - link "Files and versions xet" [ref=f12e253] [cursor=pointer]:
+            - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF/tree/main
+            - img [ref=f12e254]
+            - generic [ref=f12e257]: Files and versions
+            - generic [ref=f12e260]:
+              - img [ref=f12e261]
+              - generic [ref=f12e264]: xet
+          - link "Community 50" [ref=f12e265] [cursor=pointer]:
+            - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF/discussions
+            - img [ref=f12e266]
+            - text: Community
+            - generic [ref=f12e269]: "50"
+        - generic [ref=f12e270]:
+          - button [ref=f12e273] [cursor=pointer]:
+            - img [ref=f12e274]
+          - generic [ref=f12e278]:
+            - button "Deploy" [ref=f12e280] [cursor=pointer]:
+              - img [ref=f12e281]
+              - text: Deploy
+              - img [ref=f12e284]
+            - dialog
+          - button "Copy to bucket new" [ref=f12e286] [cursor=pointer]:
+            - img [ref=f12e287]
+            - text: Copy to bucket
+            - generic [ref=f12e289]: new
+          - generic [ref=f12e290]:
+            - button "Use this model" [ref=f12e291] [cursor=pointer]:
+              - img [ref=f12e292]
+              - text: Use this model
+              - img [ref=f12e294]
+            - navigation [ref=f12e296]:
+              - heading "Instructions to use yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF with libraries, inference providers, notebooks, and local apps. Follow these links to get started." [level=3] [ref=f12e297]
+              - list [ref=f12e298]:
+                - listitem [ref=f12e299]: Libraries
+                - listitem [ref=f12e300]:
+                  - link "llama-cpp-python" [ref=f12e301] [cursor=pointer]:
+                    - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF?library=llama-cpp-python
+                    - img [ref=f12e302]
+                    - generic: llama-cpp-python
+                  - paragraph [ref=f12e306]: "How to use yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF with llama-cpp-python:"
+                  - generic [ref=f12e307]: "# !pip install llama-cpp-python from llama_cpp import Llama llm = Llama.from_pretrained( repo_id=\"yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF\", filename=\"gemma4-coding-Q2_K.gguf\", )"
+                  - generic [ref=f12e308]: "llm.create_chat_completion( messages = [ { \"role\": \"user\", \"content\": \"What is the capital of France?\" } ] )"
+                - listitem [ref=f12e309]: Notebooks
+                - listitem [ref=f12e310]:
+                  - link "Google Colab" [ref=f12e311] [cursor=pointer]:
+                    - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF/colab
+                    - img [ref=f12e312]
+                    - generic: Google Colab
+                - listitem [ref=f12e318]:
+                  - link "Kaggle" [ref=f12e319] [cursor=pointer]:
+                    - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF/kaggle
+                    - img [ref=f12e320]
+                    - generic: Kaggle
+                - listitem [ref=f12e323]:
+                  - generic [ref=f12e324]: Local Apps
+                  - link "Settings" [ref=f12e325] [cursor=pointer]:
+                    - /url: /settings/local-apps
+                    - img [ref=f12e326]
+                    - generic [ref=f12e328]: Settings
+                - listitem [ref=f12e329]:
+                  - link "llama.cpp" [ref=f12e330] [cursor=pointer]:
+                    - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF?local-app=llama.cpp
+                    - img [ref=f12e331]
+                    - generic: llama.cpp
+                  - paragraph [ref=f12e333]: "How to use yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF with llama.cpp:"
+                  - heading "Install (macOS, Linux)" [level=5] [ref=f12e334]
+                  - generic [ref=f12e335]: "curl -LsSf https://llama.app/install.sh | sh # Start a local OpenAI-compatible server with a web UI: llama serve -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M # Run inference directly in the terminal: llama cli -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M"
+                  - heading "Install from WinGet (Windows)" [level=5] [ref=f12e336]
+                  - generic [ref=f12e337]: "winget install llama.cpp # Start a local OpenAI-compatible server with a web UI: llama serve -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M # Run inference directly in the terminal: llama cli -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M"
+                  - heading "Use pre-built binary" [level=5] [ref=f12e338]
+                  - generic [ref=f12e339]: "# Download pre-built binary from: # https://github.com/ggerganov/llama.cpp/releases # Start a local OpenAI-compatible server with a web UI: ./llama-server -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M # Run inference directly in the terminal: ./llama-cli -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M"
+                  - heading "Build from source code" [level=5] [ref=f12e340]
+                  - generic [ref=f12e341]: "git clone https://github.com/ggerganov/llama.cpp.git cd llama.cpp cmake -B build cmake --build build -j --target llama-server llama-cli # Start a local OpenAI-compatible server with a web UI: ./build/bin/llama-server -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M # Run inference directly in the terminal: ./build/bin/llama-cli -hf yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M"
+                  - heading "Use Docker" [level=5] [ref=f12e342]
+                  - generic [ref=f12e343]: docker model run hf.co/yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF:Q4_K_M
+                - listitem [ref=f12e344]:
+                  - link "LM Studio" [ref=f12e345] [cursor=pointer]:
+                    - /url: lmstudio://open_from_hf?model=yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF
+                    - img [ref=f12e346]
+                    - generic: LM Studio
+                - listitem [ref=f12e352]:
+                  - link "Jan" [ref=f12e353] [cursor=pointer]:
+                    - /url: jan://models/huggingface/yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF
+                    - img [ref=f12e354]
+                    - generic: Jan
+                - listitem [ref=f12e359]:
+                  - link [ref=f12e360] [cursor=pointer]:
+                    - /url: /yuxinlu1/gemma-4-12B-coder-fable5-composer2.5-v1-GGUF?local-app=vllm

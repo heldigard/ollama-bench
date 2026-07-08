@@ -1,10 +1,20 @@
-# Ranking History — full test registry (snapshot 2026-07-04, Ollama 0.31.1)
+# Ranking History — full test registry (snapshot 2026-07-04 + round-8 rejects, Ollama 0.31.1)
 
 > Every model ever loaded into this bench cycle. **[KEPT]** = installed; **[DEL]** = tested then removed.
 > Check here BEFORE pulling a model — if it's [DEL], the verdict stands unless a NEW fine-tune (not a requant) drops.
 
-> Total tested: 72 · Kept: 22 · Eliminated: 50
+> Total tested: 74 · Kept: 22 · Eliminated: 52
 
+## round-8 (2026-07-08 PM) — new candidate rejects (smoke→deep→tool_call)
+
+Both pulled, full-benched, LOST every role vs round-7 champions. Deleted. Do NOT re-pull unless a new fine-tune drops.
+
+| model | base | improve | codeq_sum | smart_trim | web_synth | code_gen | tool_call | verdict |
+|---|---|---|---|---|---|---|---|---|
+| `hf.co/shuhulx/Qwopus3.5-4B-Coder-Fable5-v1-GGUF:Q4_K_M` | Qwen3.5-4B-Coder | 5.14 | 8.86 | 10.54 | 9.67 | 12.26 | 9.79 | **[DEL]** Fable5 twist on Qwopus3.5-4B base = WORSE than reigning SetneufPT/Qwopus3.5-4B-MTP (tool_call 10.10) on its signature structured role. No role won. |
+| `hf.co/tvall43/Qwen3.6-14B-A3B-FableVibes-GGUF:Q4_K_M` | **Qwen3.6-14B-A3B MoE (3B active)** | 6.44 | 9.71 | 10.81 | 11.18 | 12.19 | 9.93 | **[DEL]** 14B-A3B MoE = strong generalist (mid-pack everywhere) but NO specialist-killer. MoE-latency thesis (3B-active ≈ 4B speed) FAILED — tps 6.9 vs 4B's 10.7 (14B memory bandwidth dominates). code_gen 12.19 vs lift 12.13 = noise. |
+
+**Round-8 learning:** the Qwen3.6-14B-A3B MoE architecture is worth RE-TESTING if a coder/agentic-tuned variant drops (this FableVibes finetune is a reasoning distill, not a coder tune) — but for now the dense Qwen3.5-9B / gemma-4-12B specialists still win every role at lower VRAM. Fable5-distill finetunes of bases we already hold (Qwopus3.5-4B, gemma-4-12B) do NOT beat the original tunes here.
 
 ## improve — top-10 (with status)
 

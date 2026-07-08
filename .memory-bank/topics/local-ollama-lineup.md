@@ -8,6 +8,12 @@
 > Round-7 rewired 7/9 PRIMARY winners + replaced qwen3.5:4b with cryptidbleh/gemma4-claude-opus-4.6
 > (better on every metric); 13 models deleted (12 losers + qwen3.5:4b). See [deep-winners-20260708-pm](deep-winners-20260708-pm.md).
 > think-strip mode. DeepSeek-V4-Flash is strippable but ranks last everywhere.
+>
+> **Round-8 (2026-07-08 PM, same day):** tested 2 NEW HF candidates — `shuhulx/Qwopus3.5-4B-Coder-Fable5-v1`
+> (Fable5 twist on Qwopus3.5-4B base) and `tvall43/Qwen3.6-14B-A3B-FableVibes` (14B-A3B MoE, 3B active).
+> BOTH LOST every role vs round-7 champions → deleted. Lineup unchanged at 22. MoE-latency thesis failed
+> (14B mem-bandwidth → tps 6.9, no match for 4B's 10.7). See RANKING_HISTORY.md §round-8. Don't re-pull
+> unless a CODER-tuned 14B-A3B variant drops (FableVibes is a reasoning distill, not a coder tune).
 
 ## Per-task top-2 (wired into harness) — 2026-07-08 PM (round-7, combined deep+tiebreak)
 

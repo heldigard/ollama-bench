@@ -1,0 +1,762 @@
+- generic [ref=e2]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - link "Hugging Face's logo Hugging Face" [ref=e7] [cursor=pointer]:
+          - /url: /
+          - img "Hugging Face's logo" [ref=e8]
+          - generic [ref=e9]: Hugging Face
+        - generic [ref=e10]:
+          - textbox "Search models, datasets, users..." [ref=e11]
+          - img [ref=e12]
+      - navigation "Main" [ref=e14]:
+        - list [ref=e15]:
+          - listitem [ref=e16]:
+            - link "Models" [ref=e17] [cursor=pointer]:
+              - /url: /models
+              - img [ref=e18]
+              - text: Models
+          - listitem [ref=e22]:
+            - link "Datasets" [ref=e23] [cursor=pointer]:
+              - /url: /datasets
+              - img [ref=e24]
+              - text: Datasets
+          - listitem [ref=e29]:
+            - link "Spaces" [ref=e30] [cursor=pointer]:
+              - /url: /spaces
+              - img [ref=e31]
+              - text: Spaces
+          - listitem [ref=e35]:
+            - link "Buckets new" [ref=e36] [cursor=pointer]:
+              - /url: /storage
+              - img [ref=e37]
+              - text: Buckets
+              - generic [ref=e41]: new
+          - listitem [ref=e42]:
+            - link "Docs" [ref=e43] [cursor=pointer]:
+              - /url: /docs
+              - img [ref=e44]
+              - text: Docs
+          - listitem [ref=e48]:
+            - link "Pricing" [ref=e49] [cursor=pointer]:
+              - /url: /pricing
+          - listitem [ref=e50]:
+            - generic [ref=e51]:
+              - button [ref=e52] [cursor=pointer]:
+                - img [ref=e53]
+              - navigation [ref=e58]:
+                - list [ref=e59]:
+                  - listitem [ref=e60]:
+                    - generic [ref=e61]: Website
+                    - list [ref=e62]:
+                      - listitem [ref=e63]:
+                        - link "Tasks" [ref=e64] [cursor=pointer]:
+                          - /url: /tasks
+                          - img [ref=e65]
+                          - generic: Tasks
+                      - listitem [ref=e68]:
+                        - link "HuggingChat" [ref=e69] [cursor=pointer]:
+                          - /url: /chat
+                          - img [ref=e70]
+                          - generic: HuggingChat
+                      - listitem [ref=e73]:
+                        - link "Collections" [ref=e74] [cursor=pointer]:
+                          - /url: /collections
+                          - img [ref=e75]
+                          - generic: Collections
+                      - listitem [ref=e79]:
+                        - link "Languages" [ref=e80] [cursor=pointer]:
+                          - /url: /languages
+                          - img [ref=e81]
+                          - generic: Languages
+                      - listitem [ref=e83]:
+                        - link "Organizations" [ref=e84] [cursor=pointer]:
+                          - /url: /organizations
+                          - img [ref=e85]
+                          - generic: Organizations
+                  - listitem [ref=e90]:
+                    - generic [ref=e91]: Community
+                    - list [ref=e92]:
+                      - listitem [ref=e93]:
+                        - link "Blog" [ref=e94] [cursor=pointer]:
+                          - /url: /blog
+                          - img [ref=e95]
+                          - generic: Blog
+                      - listitem [ref=e97]:
+                        - link "Posts" [ref=e98] [cursor=pointer]:
+                          - /url: /posts
+                          - img [ref=e99]
+                          - generic: Posts
+                      - listitem [ref=e101]:
+                        - link "Daily Papers" [ref=e102] [cursor=pointer]:
+                          - /url: /papers
+                          - img [ref=e103]
+                          - generic: Daily Papers
+                      - listitem [ref=e106]:
+                        - link "Hardware" [ref=e107] [cursor=pointer]:
+                          - /url: /hardware
+                          - img [ref=e108]
+                          - generic: Hardware
+                      - listitem [ref=e111]:
+                        - link "Learn" [ref=e112] [cursor=pointer]:
+                          - /url: /learn
+                          - img [ref=e113]
+                          - generic: Learn
+                      - listitem [ref=e119]:
+                        - link "Discord" [ref=e120] [cursor=pointer]:
+                          - /url: /join/discord
+                          - img [ref=e121]
+                          - generic: Discord
+                      - listitem [ref=e123]:
+                        - link "Forum" [ref=e124] [cursor=pointer]:
+                          - /url: https://discuss.huggingface.co/
+                          - img [ref=e125]
+                          - generic: Forum
+                      - listitem [ref=e127]:
+                        - link "GitHub" [ref=e128] [cursor=pointer]:
+                          - /url: https://github.com/huggingface
+                          - img [ref=e129]
+                          - generic: GitHub
+                  - listitem [ref=e131]:
+                    - generic [ref=e132]: Solutions
+                    - list [ref=e133]:
+                      - listitem [ref=e134]:
+                        - link "Team & Enterprise" [ref=e135] [cursor=pointer]:
+                          - /url: /enterprise
+                          - img [ref=e136]
+                          - generic: Team & Enterprise
+                      - listitem [ref=e138]:
+                        - link "Hugging Face PRO" [ref=e139] [cursor=pointer]:
+                          - /url: /pro
+                          - img [ref=e140]
+                          - generic: Hugging Face PRO
+                      - listitem [ref=e142]:
+                        - link "Enterprise Support" [ref=e143] [cursor=pointer]:
+                          - /url: /support
+                          - img [ref=e144]
+                          - generic: Enterprise Support
+                      - listitem [ref=e147]:
+                        - link "Inference Providers" [ref=e148] [cursor=pointer]:
+                          - /url: /inference/models
+                          - img [ref=e149]
+                          - generic: Inference Providers
+                      - listitem [ref=e152]:
+                        - link "Inference Endpoints" [ref=e153] [cursor=pointer]:
+                          - /url: /inference-endpoints
+                          - img [ref=e154]
+                          - generic: Inference Endpoints
+                      - listitem [ref=e157]:
+                        - link "Storage Buckets" [ref=e158] [cursor=pointer]:
+                          - /url: /storage
+                          - img [ref=e159]
+                          - generic: Storage Buckets
+          - listitem [ref=e163]:
+            - separator [ref=e164]
+          - listitem [ref=e165]:
+            - link "Log In" [ref=e166] [cursor=pointer]:
+              - /url: /login
+          - listitem [ref=e167]:
+            - link "Sign Up" [ref=e168] [cursor=pointer]:
+              - /url: /join
+  - main [ref=e169]:
+    - generic [ref=e171]:
+      - heading "The AI community building the future." [level=1] [ref=e172]
+      - paragraph [ref=e173]: The platform where the machine learning community collaborates on models, datasets, and applications.
+      - generic [ref=e174]:
+        - link "Explore AI Apps" [ref=e176] [cursor=pointer]:
+          - /url: /spaces
+        - generic [ref=e177]: or
+        - link "Browse 2M+ models" [ref=e178] [cursor=pointer]:
+          - /url: /models
+      - img "Hugging Face models"
+    - generic [ref=e180]:
+      - generic [ref=e181]: Trending on this week
+      - generic [ref=e184]:
+        - generic [ref=e186]:
+          - heading "Models" [level=2] [ref=e187]:
+            - img [ref=e188]
+            - text: Models
+          - generic [ref=e192]:
+            - article [ref=e193]:
+              - link "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF Updated 10 days ago • 1.68M • 1.83k" [ref=e194] [cursor=pointer]:
+                - /url: /empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF
+                - generic [ref=e195]:
+                  - generic "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF" [ref=e196]:
+                    - heading "empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF" [level=4] [ref=e197]
+                  - generic [ref=e198]:
+                    - generic [ref=e199]:
+                      - text: Updated
+                      - time [ref=e200]: 10 days ago
+                    - generic [ref=e201]: •
+                    - img [ref=e202]
+                    - text: 1.68M
+                    - generic [ref=e204]: •
+                    - img [ref=e205]
+                    - text: 1.83k
+            - article [ref=e207]:
+              - link "tencent/Hy3 Updated 2 days ago • 121 • 551" [ref=e208] [cursor=pointer]:
+                - /url: /tencent/Hy3
+                - generic [ref=e209]:
+                  - generic "tencent/Hy3" [ref=e210]:
+                    - heading "tencent/Hy3" [level=4] [ref=e211]
+                  - generic [ref=e212]:
+                    - generic [ref=e213]:
+                      - text: Updated
+                      - time [ref=e214]: 2 days ago
+                    - generic [ref=e215]: •
+                    - img [ref=e216]
+                    - text: "121"
+                    - generic [ref=e218]: •
+                    - img [ref=e219]
+                    - text: "551"
+            - article [ref=e221]:
+              - link "zai-org/GLM-5.2 Updated 6 days ago • 282k • 3.65k" [ref=e222] [cursor=pointer]:
+                - /url: /zai-org/GLM-5.2
+                - generic [ref=e223]:
+                  - generic "zai-org/GLM-5.2" [ref=e224]:
+                    - heading "zai-org/GLM-5.2" [level=4] [ref=e225]
+                  - generic [ref=e226]:
+                    - generic [ref=e227]:
+                      - text: Updated
+                      - time [ref=e228]: 6 days ago
+                    - generic [ref=e229]: •
+                    - img [ref=e230]
+                    - text: 282k
+                    - generic [ref=e232]: •
+                    - img [ref=e233]
+                    - text: 3.65k
+            - article [ref=e235]:
+              - link "baidu/Unlimited-OCR Updated 6 days ago • 1.08M • 1.86k" [ref=e236] [cursor=pointer]:
+                - /url: /baidu/Unlimited-OCR
+                - generic [ref=e237]:
+                  - generic "baidu/Unlimited-OCR" [ref=e238]:
+                    - heading "baidu/Unlimited-OCR" [level=4] [ref=e239]
+                  - generic [ref=e240]:
+                    - generic [ref=e241]:
+                      - text: Updated
+                      - time [ref=e242]: 6 days ago
+                    - generic [ref=e243]: •
+                    - img [ref=e244]
+                    - text: 1.08M
+                    - generic [ref=e246]: •
+                    - img [ref=e247]
+                    - text: 1.86k
+            - article [ref=e249]:
+              - link "InternScience/Agents-A1 Updated 5 days ago • 14.7k • 395" [ref=e250] [cursor=pointer]:
+                - /url: /InternScience/Agents-A1
+                - generic [ref=e251]:
+                  - generic "InternScience/Agents-A1" [ref=e252]:
+                    - heading "InternScience/Agents-A1" [level=4] [ref=e253]
+                  - generic [ref=e254]:
+                    - generic [ref=e255]:
+                      - text: Updated
+                      - time [ref=e256]: 5 days ago
+                    - generic [ref=e257]: •
+                    - img [ref=e258]
+                    - text: 14.7k
+                    - generic [ref=e260]: •
+                    - img [ref=e261]
+                    - text: "395"
+          - link "Browse 2M+ models" [ref=e263] [cursor=pointer]:
+            - /url: /models
+        - generic [ref=e264]:
+          - heading "Spaces" [level=2] [ref=e265]:
+            - img [ref=e266]
+            - text: Spaces
+          - generic [ref=e272]:
+            - article [ref=e273]:
+              - link [ref=e274] [cursor=pointer]:
+                - /url: /spaces/smolagents/hf-realtime-voice
+                - main [ref=e276]:
+                  - generic [ref=e277]:
+                    - generic [ref=e278]:
+                      - generic [ref=e279]:
+                        - heading "HF Realtime Voice" [level=4] [ref=e280]
+                        - generic [ref=e281]: 🎙
+                      - generic [ref=e282]:
+                        - img [ref=e284]
+                        - generic [ref=e287]:
+                          - img [ref=e288]
+                          - generic [ref=e290]: "296"
+                    - paragraph [ref=e291]: Voice chat over WebSocket against a HF speech-to-speech
+            - article [ref=e292]:
+              - link [ref=e293] [cursor=pointer]:
+                - /url: /spaces/Sneak-Moose/Pro-Realism-Edit-Studio
+                - main [ref=e295]:
+                  - generic [ref=e296]:
+                    - generic [ref=e297]:
+                      - generic [ref=e298]:
+                        - heading "Pro Realism Edit Studio" [level=4] [ref=e299]
+                        - generic [ref=e300]: 🎨
+                      - generic [ref=e302]:
+                        - img [ref=e303]
+                        - generic [ref=e305]: "449"
+                    - paragraph [ref=e306]: Powerful image editing - supports one or two input images.
+            - article [ref=e307]:
+              - link [ref=e308] [cursor=pointer]:
+                - /url: /spaces/kulkas2pintu/wan555
+                - main [ref=e310]:
+                  - generic [ref=e311]:
+                    - generic [ref=e312]:
+                      - generic [ref=e313]:
+                        - heading "Wan2.2 14B Fast Preview" [level=4] [ref=e314]
+                        - generic [ref=e315]: 🐌
+                      - generic [ref=e317]:
+                        - img [ref=e318]
+                        - generic [ref=e320]: "375"
+                    - paragraph [ref=e321]: generate a video from an image with a text prompt
+            - article [ref=e322]:
+              - link [ref=e323] [cursor=pointer]:
+                - /url: /spaces/baidu/Unlimited-OCR
+                - main [ref=e325]:
+                  - generic [ref=e326]:
+                    - generic [ref=e327]:
+                      - generic [ref=e328]:
+                        - heading "Unlimited OCR" [level=4] [ref=e329]
+                        - generic [ref=e330]: 🏆
+                      - generic [ref=e331]:
+                        - img [ref=e333]
+                        - generic [ref=e336]:
+                          - img [ref=e337]
+                          - generic [ref=e339]: "194"
+                    - paragraph [ref=e340]: Extract text from images and PDFs instantly
+            - article [ref=e341]:
+              - link [ref=e342] [cursor=pointer]:
+                - /url: /spaces/krea/Krea-2
+                - main [ref=e344]:
+                  - generic [ref=e345]:
+                    - generic [ref=e346]:
+                      - generic [ref=e347]:
+                        - heading "Krea 2" [level=4] [ref=e348]
+                        - generic [ref=e349]: 🎨
+                      - generic [ref=e350]:
+                        - img [ref=e352]
+                        - generic [ref=e355]:
+                          - img [ref=e356]
+                          - generic [ref=e358]: "140"
+                    - paragraph [ref=e359]: Krea 2 text-to-image (Raw + Turbo)
+          - link "Browse 1M+ applications" [ref=e360] [cursor=pointer]:
+            - /url: /spaces
+        - generic [ref=e361]:
+          - heading "Datasets" [level=2] [ref=e362]:
+            - img [ref=e363]
+            - text: Datasets
+          - generic [ref=e368]:
+            - article [ref=e369]:
+              - link "markov-ai/gaming-500-hours Updated 8 days ago • 15.1k • 100" [ref=e370] [cursor=pointer]:
+                - /url: /datasets/markov-ai/gaming-500-hours
+                - generic [ref=e371]:
+                  - generic "markov-ai/gaming-500-hours" [ref=e372]:
+                    - heading "markov-ai/gaming-500-hours" [level=4] [ref=e373]
+                  - generic [ref=e374]:
+                    - generic [ref=e375]:
+                      - text: Updated
+                      - time [ref=e376]: 8 days ago
+                    - generic [ref=e377]: •
+                    - img [ref=e378]
+                    - text: 15.1k
+                    - generic [ref=e380]: •
+                    - img [ref=e381]
+                    - text: "100"
+            - article [ref=e383]:
+              - link "Glint-Research/Fable-5-traces Updated 9 days ago • 64.2k • 570" [ref=e384] [cursor=pointer]:
+                - /url: /datasets/Glint-Research/Fable-5-traces
+                - generic [ref=e385]:
+                  - generic "Glint-Research/Fable-5-traces" [ref=e386]:
+                    - heading "Glint-Research/Fable-5-traces" [level=4] [ref=e387]
+                  - generic [ref=e388]:
+                    - generic [ref=e389]:
+                      - text: Updated
+                      - time [ref=e390]: 9 days ago
+                    - generic [ref=e391]: •
+                    - img [ref=e392]
+                    - text: 64.2k
+                    - generic [ref=e394]: •
+                    - img [ref=e395]
+                    - text: "570"
+            - article [ref=e397]:
+              - link "ByteDance-Seed/EdgeBench Updated 1 day ago • 3.03k • 45" [ref=e398] [cursor=pointer]:
+                - /url: /datasets/ByteDance-Seed/EdgeBench
+                - generic [ref=e399]:
+                  - generic "ByteDance-Seed/EdgeBench" [ref=e400]:
+                    - heading "ByteDance-Seed/EdgeBench" [level=4] [ref=e401]
+                  - generic [ref=e402]:
+                    - generic [ref=e403]:
+                      - text: Updated
+                      - time [ref=e404]: 1 day ago
+                    - generic [ref=e405]: •
+                    - img [ref=e406]
+                    - text: 3.03k
+                    - generic [ref=e408]: •
+                    - img [ref=e409]
+                    - text: "45"
+            - article [ref=e411]:
+              - link "LiquidAI/ifstruct-v1.0 Updated 1 day ago • 285 • 64" [ref=e412] [cursor=pointer]:
+                - /url: /datasets/LiquidAI/ifstruct-v1.0
+                - generic [ref=e413]:
+                  - generic "LiquidAI/ifstruct-v1.0" [ref=e414]:
+                    - heading "LiquidAI/ifstruct-v1.0" [level=4] [ref=e415]
+                  - generic [ref=e416]:
+                    - generic [ref=e417]:
+                      - text: Updated
+                      - time [ref=e418]: 1 day ago
+                    - generic [ref=e419]: •
+                    - img [ref=e420]
+                    - text: "285"
+                    - generic [ref=e422]: •
+                    - img [ref=e423]
+                    - text: "64"
+            - article [ref=e425]:
+              - link "LiquidAI/antidoom-mix-v1.0 Updated 1 day ago • 86 • 35" [ref=e426] [cursor=pointer]:
+                - /url: /datasets/LiquidAI/antidoom-mix-v1.0
+                - generic [ref=e427]:
+                  - generic "LiquidAI/antidoom-mix-v1.0" [ref=e428]:
+                    - heading "LiquidAI/antidoom-mix-v1.0" [level=4] [ref=e429]
+                  - generic [ref=e430]:
+                    - generic [ref=e431]:
+                      - text: Updated
+                      - time [ref=e432]: 1 day ago
+                    - generic [ref=e433]: •
+                    - img [ref=e434]
+                    - text: "86"
+                    - generic [ref=e436]: •
+                    - img [ref=e437]
+                    - text: "35"
+          - link "Browse 500k+ datasets" [ref=e439] [cursor=pointer]:
+            - /url: /datasets
+    - generic [ref=e440]:
+      - generic [ref=e441]:
+        - img [ref=e442]
+        - heading "The Home of Machine Learning" [level=2] [ref=e448]
+        - paragraph [ref=e450]: Create, discover and collaborate on ML better.
+      - generic [ref=e451]:
+        - generic [ref=e452]:
+          - generic [ref=e453]:
+            - heading "The collaboration platform" [level=3] [ref=e454]
+            - paragraph [ref=e455]: Host and collaborate on unlimited public models, datasets and applications.
+          - img "Hub activity feed" [ref=e456]
+        - generic [ref=e457]:
+          - generic [ref=e458]:
+            - heading "Move faster" [level=3] [ref=e459]
+            - paragraph [ref=e460]: With the HF Open source stack.
+          - img "Code snippets from HF libraries" [ref=e461]
+        - generic [ref=e462]:
+          - generic [ref=e463]:
+            - heading "Explore all modalities" [level=3] [ref=e464]
+            - paragraph [ref=e465]: Text, image, video, audio or even 3D.
+          - img "Hugging face tasks" [ref=e466]
+        - generic [ref=e467]:
+          - generic [ref=e468]:
+            - generic [ref=e469]:
+              - heading "Build your portfolio" [level=3] [ref=e470]
+              - paragraph [ref=e471]: Share your work with the world and build your ML profile.
+            - link "Sign Up" [ref=e472] [cursor=pointer]:
+              - /url: /join
+          - img "Younes Belkada Hugging Face profile" [ref=e473]
+      - generic [ref=e474]:
+        - heading "Accelerate your ML" [level=2] [ref=e477]
+        - paragraph [ref=e479]: We provide paid Compute and Enterprise solutions.
+      - generic [ref=e480]:
+        - generic [ref=e481]:
+          - generic [ref=e482]:
+            - heading "Team & Enterprise" [level=3] [ref=e483]
+            - paragraph [ref=e484]: Give your team the most advanced platform to build AI with enterprise-grade security, access controls and dedicated support.
+            - generic [ref=e485]:
+              - link "Getting started" [ref=e486] [cursor=pointer]:
+                - /url: /enterprise
+              - paragraph [ref=e487]: Starting at $20/user/month
+          - generic [ref=e488]:
+            - generic [ref=e489]:
+              - link "Single Sign-On" [ref=e490] [cursor=pointer]:
+                - /url: /enterprise
+              - link "Regions" [ref=e491] [cursor=pointer]:
+                - /url: /enterprise
+              - link "Priority Support" [ref=e492] [cursor=pointer]:
+                - /url: /enterprise
+              - link "Audit Logs" [ref=e493] [cursor=pointer]:
+                - /url: /enterprise
+              - link "Resource Groups" [ref=e494] [cursor=pointer]:
+                - /url: /enterprise
+              - link "Private Datasets Viewer" [ref=e495] [cursor=pointer]:
+                - /url: /enterprise
+            - generic:
+              - generic:
+                - img
+            - img
+            - img
+            - img
+            - img
+            - img
+        - generic [ref=e496]:
+          - generic [ref=e497]:
+            - heading "Inference Providers" [level=3] [ref=e498]
+            - paragraph [ref=e499]: Access 45,000+ models from leading AI providers through a single, unified API with no service fees.
+            - link "Explore Models" [ref=e501] [cursor=pointer]:
+              - /url: /inference/models
+          - generic [ref=e502]:
+            - img "Hugging face compute offering"
+        - generic [ref=e503]:
+          - generic [ref=e504]:
+            - heading "Compute" [level=3] [ref=e505]
+            - paragraph [ref=e506]:
+              - text: Deploy on optimized
+              - link "Inference Endpoints" [ref=e507] [cursor=pointer]:
+                - /url: /pricing#endpoints
+              - text: or update your
+              - link "Spaces applications" [ref=e508] [cursor=pointer]:
+                - /url: /pricing#spaces
+              - text: to a GPU in a few clicks.
+            - generic [ref=e509]:
+              - link "View pricing" [ref=e510] [cursor=pointer]:
+                - /url: /pricing
+              - paragraph [ref=e511]: Starting at $0.60/hour for GPU
+          - generic [ref=e512]:
+            - img "Hugging face compute offering"
+        - generic [ref=e514]:
+          - heading "More than 50,000 organizations are using Hugging Face" [level=2] [ref=e517]
+          - generic [ref=e519]:
+            - article [ref=e520]:
+              - link "Ai2's profile picture Ai2 Enterprise non-profit • 968 models • 6.24k followers" [ref=e521] [cursor=pointer]:
+                - /url: /allenai
+                - img "Ai2's profile picture" [ref=e522]
+                - generic [ref=e523]:
+                  - generic [ref=e524]:
+                    - heading "Ai2" [level=4] [ref=e525]
+                    - generic [ref=e526]: Enterprise
+                  - generic [ref=e527]: non-profit • 968 models • 6.24k followers
+            - article [ref=e528]:
+              - link "AI at Meta's profile picture AI at Meta Enterprise company • 2.35k models • 13.6k followers" [ref=e529] [cursor=pointer]:
+                - /url: /facebook
+                - img "AI at Meta's profile picture" [ref=e530]
+                - generic [ref=e531]:
+                  - generic [ref=e532]:
+                    - heading "AI at Meta" [level=4] [ref=e533]
+                    - generic [ref=e534]: Enterprise
+                  - generic [ref=e535]: company • 2.35k models • 13.6k followers
+            - article [ref=e536]:
+              - link "Amazon's profile picture Amazon Enterprise company • 36 models • 4.14k followers" [ref=e537] [cursor=pointer]:
+                - /url: /amazon
+                - img "Amazon's profile picture" [ref=e538]
+                - generic [ref=e539]:
+                  - generic [ref=e540]:
+                    - heading "Amazon" [level=4] [ref=e541]
+                    - generic [ref=e542]: Enterprise
+                  - generic [ref=e543]: company • 36 models • 4.14k followers
+            - article [ref=e544]:
+              - link "Google's profile picture Google Enterprise company • 1.13k models • 61.1k followers" [ref=e545] [cursor=pointer]:
+                - /url: /google
+                - img "Google's profile picture" [ref=e546]
+                - generic [ref=e547]:
+                  - generic [ref=e548]:
+                    - heading "Google" [level=4] [ref=e549]
+                    - generic [ref=e550]: Enterprise
+                  - generic [ref=e551]: company • 1.13k models • 61.1k followers
+            - article [ref=e552]:
+              - link "Intel's profile picture Intel company • 255 models • 4.07k followers" [ref=e553] [cursor=pointer]:
+                - /url: /Intel
+                - img "Intel's profile picture" [ref=e554]
+                - generic [ref=e555]:
+                  - heading "Intel" [level=4] [ref=e557]
+                  - generic [ref=e558]: company • 255 models • 4.07k followers
+            - article [ref=e559]:
+              - link "Microsoft's profile picture Microsoft Enterprise company • 523 models • 20.7k followers" [ref=e560] [cursor=pointer]:
+                - /url: /microsoft
+                - img "Microsoft's profile picture" [ref=e561]
+                - generic [ref=e562]:
+                  - generic [ref=e563]:
+                    - heading "Microsoft" [level=4] [ref=e564]
+                    - generic [ref=e565]: Enterprise
+                  - generic [ref=e566]: company • 523 models • 20.7k followers
+            - article [ref=e567]:
+              - link "Grammarly's profile picture Grammarly Team company • 11 models • 226 followers" [ref=e568] [cursor=pointer]:
+                - /url: /grammarly
+                - img "Grammarly's profile picture" [ref=e569]
+                - generic [ref=e570]:
+                  - generic [ref=e571]:
+                    - heading "Grammarly" [level=4] [ref=e572]
+                    - generic [ref=e573]: Team
+                  - generic [ref=e574]: company • 11 models • 226 followers
+            - article [ref=e575]:
+              - link "Writer's profile picture Writer Enterprise company • 38 models • 397 followers" [ref=e576] [cursor=pointer]:
+                - /url: /Writer
+                - img "Writer's profile picture" [ref=e577]
+                - generic [ref=e578]:
+                  - generic [ref=e579]:
+                    - heading "Writer" [level=4] [ref=e580]
+                    - generic [ref=e581]: Enterprise
+                  - generic [ref=e582]: company • 38 models • 397 followers
+      - generic [ref=e584]:
+        - img [ref=e585]
+        - heading "Our Open Source" [level=2] [ref=e590]
+        - paragraph [ref=e592]: We are building the foundation of ML tooling with the community.
+      - generic [ref=e593]:
+        - link "Transformers 162,379 State-of-the-art AI models for PyTorch" [ref=e595] [cursor=pointer]:
+          - /url: /docs/transformers
+          - heading "Transformers" [level=4] [ref=e596]: Transformers
+          - generic [ref=e598]:
+            - img [ref=e599]
+            - generic [ref=e601]: 162,379
+          - paragraph [ref=e602]: State-of-the-art AI models for PyTorch
+        - link "Diffusers 34,019 State-of-the-art Diffusion models in PyTorch" [ref=e603] [cursor=pointer]:
+          - /url: /docs/diffusers
+          - heading "Diffusers" [level=4] [ref=e604]: Diffusers
+          - generic [ref=e606]:
+            - img [ref=e607]
+            - generic [ref=e609]: 34,019
+          - paragraph [ref=e610]: State-of-the-art Diffusion models in PyTorch
+        - link "Safetensors 3,799 Safe way to store/distribute neural network weights" [ref=e611] [cursor=pointer]:
+          - /url: /docs/safetensors
+          - heading "Safetensors" [level=4] [ref=e612]: Safetensors
+          - generic [ref=e614]:
+            - img [ref=e615]
+            - generic [ref=e617]: 3,799
+          - paragraph [ref=e618]: Safe way to store/distribute neural network weights
+        - link "Hub Python Library 3,738 Python client to interact with the Hugging Face Hub" [ref=e619] [cursor=pointer]:
+          - /url: /docs/huggingface_hub
+          - heading "Hub Python Library" [level=4] [ref=e620]: Hub Python Library
+          - generic [ref=e622]:
+            - img [ref=e623]
+            - generic [ref=e625]: 3,738
+          - paragraph [ref=e626]: Python client to interact with the Hugging Face Hub
+        - link "Tokenizers 10,870 Fast tokenizers optimized for research & production" [ref=e627] [cursor=pointer]:
+          - /url: /docs/tokenizers
+          - heading "Tokenizers" [level=4] [ref=e628]: Tokenizers
+          - generic [ref=e630]:
+            - img [ref=e631]
+            - generic [ref=e633]: 10,870
+          - paragraph [ref=e634]: Fast tokenizers optimized for research & production
+        - link "TRL 18,795 Train transformers LMs with reinforcement learning" [ref=e635] [cursor=pointer]:
+          - /url: /docs/trl
+          - heading "TRL" [level=4] [ref=e636]: TRL
+          - generic [ref=e638]:
+            - img [ref=e639]
+            - generic [ref=e641]: 18,795
+          - paragraph [ref=e642]: Train transformers LMs with reinforcement learning
+        - link "Transformers.js 16,170 State-of-the-art ML running directly in your browser" [ref=e643] [cursor=pointer]:
+          - /url: /docs/transformers.js
+          - heading "Transformers.js" [level=4] [ref=e644]: Transformers.js
+          - generic [ref=e646]:
+            - img [ref=e647]
+            - generic [ref=e649]: 16,170
+          - paragraph [ref=e650]: State-of-the-art ML running directly in your browser
+        - link "smolagents 28,248 Smol library to build great agents in Python" [ref=e651] [cursor=pointer]:
+          - /url: /docs/smolagents
+          - heading "smolagents" [level=4] [ref=e652]: smolagents
+          - generic [ref=e654]:
+            - img [ref=e655]
+            - generic [ref=e657]: 28,248
+          - paragraph [ref=e658]: Smol library to build great agents in Python
+        - link "PEFT 21,372 Parameter-efficient finetuning for large language models" [ref=e659] [cursor=pointer]:
+          - /url: /docs/peft
+          - heading "PEFT" [level=4] [ref=e660]: PEFT
+          - generic [ref=e662]:
+            - img [ref=e663]
+            - generic [ref=e665]: 21,372
+          - paragraph [ref=e666]: Parameter-efficient finetuning for large language models
+        - link "Datasets 21,691 Access & share datasets for any ML tasks" [ref=e667] [cursor=pointer]:
+          - /url: /docs/datasets
+          - heading "Datasets" [level=4] [ref=e668]: Datasets
+          - generic [ref=e670]:
+            - img [ref=e671]
+            - generic [ref=e673]: 21,691
+          - paragraph [ref=e674]: Access & share datasets for any ML tasks
+        - link "Text Generation Inference 10,867 Serve language models with TGI optimized toolkit" [ref=e675] [cursor=pointer]:
+          - /url: /docs/text-generation-inference
+          - heading "Text Generation Inference" [level=4] [ref=e676]: Text Generation Inference
+          - generic [ref=e678]:
+            - img [ref=e679]
+            - generic [ref=e681]: 10,867
+          - paragraph [ref=e682]: Serve language models with TGI optimized toolkit
+        - link "Accelerate 9,762 Train PyTorch models with multi-GPU, TPU, mixed precision" [ref=e683] [cursor=pointer]:
+          - /url: /docs/accelerate
+          - heading "Accelerate" [level=4] [ref=e684]: Accelerate
+          - generic [ref=e686]:
+            - img [ref=e687]
+            - generic [ref=e689]: 9,762
+          - paragraph [ref=e690]: Train PyTorch models with multi-GPU, TPU, mixed precision
+    - generic [ref=e691]:
+      - img "Pile of Hugging Face logos"
+  - contentinfo [ref=e692]:
+    - generic [ref=e694]:
+      - button "System theme" [ref=e698] [cursor=pointer]:
+        - img [ref=e699]
+        - text: System theme
+      - generic [ref=e704]:
+        - generic [ref=e705]: Website
+        - list [ref=e706]:
+          - listitem [ref=e707]:
+            - link "Models" [ref=e708] [cursor=pointer]:
+              - /url: /models
+          - listitem [ref=e709]:
+            - link "Datasets" [ref=e710] [cursor=pointer]:
+              - /url: /datasets
+          - listitem [ref=e711]:
+            - link "Spaces" [ref=e712] [cursor=pointer]:
+              - /url: /spaces
+          - listitem [ref=e713]:
+            - link "Changelog" [ref=e714] [cursor=pointer]:
+              - /url: /changelog
+              - generic [ref=e715]: Changelog
+          - listitem [ref=e716]:
+            - link "Inference Endpoints" [ref=e717] [cursor=pointer]:
+              - /url: https://endpoints.huggingface.co
+          - listitem [ref=e718]:
+            - link "HuggingChat" [ref=e719] [cursor=pointer]:
+              - /url: /chat
+      - generic [ref=e720]:
+        - generic [ref=e721]: Company
+        - list [ref=e722]:
+          - listitem [ref=e723]:
+            - link "About" [ref=e724] [cursor=pointer]:
+              - /url: /huggingface
+          - listitem [ref=e725]:
+            - link "Brand assets" [ref=e726] [cursor=pointer]:
+              - /url: /brand
+          - listitem [ref=e727]:
+            - link "Terms of service" [ref=e728] [cursor=pointer]:
+              - /url: /terms-of-service
+          - listitem [ref=e729]:
+            - link "Privacy" [ref=e730] [cursor=pointer]:
+              - /url: /privacy
+          - listitem [ref=e731]:
+            - link "Careers" [ref=e732] [cursor=pointer]:
+              - /url: https://apply.workable.com/huggingface/
+          - listitem [ref=e733]:
+            - link "Press" [ref=e734] [cursor=pointer]:
+              - /url: mailto:press@huggingface.co
+      - generic [ref=e735]:
+        - generic [ref=e736]: Resources
+        - list [ref=e737]:
+          - listitem [ref=e738]:
+            - link "Learn" [ref=e739] [cursor=pointer]:
+              - /url: /learn
+          - listitem [ref=e740]:
+            - link "Documentation" [ref=e741] [cursor=pointer]:
+              - /url: /docs
+          - listitem [ref=e742]:
+            - link "Blog" [ref=e743] [cursor=pointer]:
+              - /url: /blog
+          - listitem [ref=e744]:
+            - link "Forum" [ref=e745] [cursor=pointer]:
+              - /url: https://discuss.huggingface.co
+          - listitem [ref=e746]:
+            - link "Service Status" [ref=e747] [cursor=pointer]:
+              - /url: https://status.huggingface.co/
+          - listitem [ref=e748]:
+            - link "Speed test" [ref=e749] [cursor=pointer]:
+              - /url: https://fast.hf.co
+      - generic [ref=e750]:
+        - generic [ref=e751]: Social
+        - list [ref=e752]:
+          - listitem [ref=e753]:
+            - link "GitHub" [ref=e754] [cursor=pointer]:
+              - /url: https://github.com/huggingface
+          - listitem [ref=e755]:
+            - link "Twitter" [ref=e756] [cursor=pointer]:
+              - /url: https://twitter.com/huggingface
+          - listitem [ref=e757]:
+            - link "LinkedIn" [ref=e758] [cursor=pointer]:
+              - /url: https://www.linkedin.com/company/huggingface/
+          - listitem [ref=e759]:
+            - link "Discord" [ref=e760] [cursor=pointer]:
+              - /url: /join/discord

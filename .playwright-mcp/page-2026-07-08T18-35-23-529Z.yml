@@ -1,0 +1,193 @@
+- generic [ref=f6e2]:
+  - banner [ref=f6e4]:
+    - generic [ref=f6e5]:
+      - generic [ref=f6e6]:
+        - link "Hugging Face's logo Hugging Face" [ref=f6e7] [cursor=pointer]:
+          - /url: /
+          - img "Hugging Face's logo" [ref=f6e8]
+          - generic [ref=f6e9]: Hugging Face
+        - generic [ref=f6e10]:
+          - textbox "Search models, datasets, users..." [ref=f6e11]
+          - img [ref=f6e12]
+      - navigation "Main" [ref=f6e14]:
+        - list [ref=f6e15]:
+          - listitem [ref=f6e16]:
+            - link "Models" [ref=f6e17] [cursor=pointer]:
+              - /url: /models
+              - img [ref=f6e18]
+              - text: Models
+          - listitem [ref=f6e22]:
+            - link "Datasets" [ref=f6e23] [cursor=pointer]:
+              - /url: /datasets
+              - img [ref=f6e24]
+              - text: Datasets
+          - listitem [ref=f6e29]:
+            - link "Spaces" [ref=f6e30] [cursor=pointer]:
+              - /url: /spaces
+              - img [ref=f6e31]
+              - text: Spaces
+          - listitem [ref=f6e35]:
+            - link "Buckets new" [ref=f6e36] [cursor=pointer]:
+              - /url: /storage
+              - img [ref=f6e37]
+              - text: Buckets
+              - generic [ref=f6e41]: new
+          - listitem [ref=f6e42]:
+            - link "Docs" [ref=f6e43] [cursor=pointer]:
+              - /url: /docs
+              - img [ref=f6e44]
+              - text: Docs
+          - listitem [ref=f6e48]:
+            - link "Pricing" [ref=f6e49] [cursor=pointer]:
+              - /url: /pricing
+          - listitem [ref=f6e50]:
+            - generic [ref=f6e51]:
+              - button [ref=f6e52] [cursor=pointer]:
+                - img [ref=f6e53]
+              - navigation [ref=f6e58]:
+                - list [ref=f6e59]:
+                  - listitem [ref=f6e60]:
+                    - generic [ref=f6e61]: Website
+                    - list [ref=f6e62]:
+                      - listitem [ref=f6e63]:
+                        - link "Tasks" [ref=f6e64] [cursor=pointer]:
+                          - /url: /tasks
+                          - img [ref=f6e65]
+                          - generic: Tasks
+                      - listitem [ref=f6e68]:
+                        - link "HuggingChat" [ref=f6e69] [cursor=pointer]:
+                          - /url: /chat
+                          - img [ref=f6e70]
+                          - generic: HuggingChat
+                      - listitem [ref=f6e73]:
+                        - link "Collections" [ref=f6e74] [cursor=pointer]:
+                          - /url: /collections
+                          - img [ref=f6e75]
+                          - generic: Collections
+                      - listitem [ref=f6e79]:
+                        - link "Languages" [ref=f6e80] [cursor=pointer]:
+                          - /url: /languages
+                          - img [ref=f6e81]
+                          - generic: Languages
+                      - listitem [ref=f6e83]:
+                        - link "Organizations" [ref=f6e84] [cursor=pointer]:
+                          - /url: /organizations
+                          - img [ref=f6e85]
+                          - generic: Organizations
+                  - listitem [ref=f6e90]:
+                    - generic [ref=f6e91]: Community
+                    - list [ref=f6e92]:
+                      - listitem [ref=f6e93]:
+                        - link "Blog" [ref=f6e94] [cursor=pointer]:
+                          - /url: /blog
+                          - img [ref=f6e95]
+                          - generic: Blog
+                      - listitem [ref=f6e97]:
+                        - link "Posts" [ref=f6e98] [cursor=pointer]:
+                          - /url: /posts
+                          - img [ref=f6e99]
+                          - generic: Posts
+                      - listitem [ref=f6e101]:
+                        - link "Daily Papers" [ref=f6e102] [cursor=pointer]:
+                          - /url: /papers
+                          - img [ref=f6e103]
+                          - generic: Daily Papers
+                      - listitem [ref=f6e106]:
+                        - link "Hardware" [ref=f6e107] [cursor=pointer]:
+                          - /url: /hardware
+                          - img [ref=f6e108]
+                          - generic: Hardware
+                      - listitem [ref=f6e111]:
+                        - link "Learn" [ref=f6e112] [cursor=pointer]:
+                          - /url: /learn
+                          - img [ref=f6e113]
+                          - generic: Learn
+                      - listitem [ref=f6e119]:
+                        - link "Discord" [ref=f6e120] [cursor=pointer]:
+                          - /url: /join/discord
+                          - img [ref=f6e121]
+                          - generic: Discord
+                      - listitem [ref=f6e123]:
+                        - link "Forum" [ref=f6e124] [cursor=pointer]:
+                          - /url: https://discuss.huggingface.co/
+                          - img [ref=f6e125]
+                          - generic: Forum
+                      - listitem [ref=f6e127]:
+                        - link "GitHub" [ref=f6e128] [cursor=pointer]:
+                          - /url: https://github.com/huggingface
+                          - img [ref=f6e129]
+                          - generic: GitHub
+                  - listitem [ref=f6e131]:
+                    - generic [ref=f6e132]: Solutions
+                    - list [ref=f6e133]:
+                      - listitem [ref=f6e134]:
+                        - link "Team & Enterprise" [ref=f6e135] [cursor=pointer]:
+                          - /url: /enterprise
+                          - img [ref=f6e136]
+                          - generic: Team & Enterprise
+                      - listitem [ref=f6e138]:
+                        - link "Hugging Face PRO" [ref=f6e139] [cursor=pointer]:
+                          - /url: /pro
+                          - img [ref=f6e140]
+                          - generic: Hugging Face PRO
+                      - listitem [ref=f6e142]:
+                        - link "Enterprise Support" [ref=f6e143] [cursor=pointer]:
+                          - /url: /support
+                          - img [ref=f6e144]
+                          - generic: Enterprise Support
+                      - listitem [ref=f6e147]:
+                        - link "Inference Providers" [ref=f6e148] [cursor=pointer]:
+                          - /url: /inference/models
+                          - img [ref=f6e149]
+                          - generic: Inference Providers
+                      - listitem [ref=f6e152]:
+                        - link "Inference Endpoints" [ref=f6e153] [cursor=pointer]:
+                          - /url: /inference-endpoints
+                          - img [ref=f6e154]
+                          - generic: Inference Endpoints
+                      - listitem [ref=f6e157]:
+                        - link "Storage Buckets" [ref=f6e158] [cursor=pointer]:
+                          - /url: /storage
+                          - img [ref=f6e159]
+                          - generic: Storage Buckets
+          - listitem [ref=f6e163]:
+            - separator [ref=f6e164]
+          - listitem [ref=f6e165]:
+            - link "Log In" [ref=f6e166] [cursor=pointer]:
+              - /url: /login
+          - listitem [ref=f6e167]:
+            - link "Sign Up" [ref=f6e168] [cursor=pointer]:
+              - /url: /join
+  - main [ref=f6e169]:
+    - generic [ref=f6e172]:
+      - heading "HauhauCS / Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive like 2.57k" [level=1] [ref=f6e173]:
+        - generic [ref=f6e174]:
+          - link [ref=f6e178] [cursor=pointer]:
+            - /url: /HauhauCS
+          - link "HauhauCS" [ref=f6e182] [cursor=pointer]:
+            - /url: /HauhauCS
+          - generic [ref=f6e183]: /
+        - generic [ref=f6e184]:
+          - link "Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive" [ref=f6e185] [cursor=pointer]:
+            - /url: /HauhauCS/Qwen3.6-35B-A3B-Uncensored-HauhauCS-Aggressive
+          - button "Copy model name to clipboard" [ref=f6e186] [cursor=pointer]:
+            - img [ref=f6e187]
+        - generic [ref=f6e191]:
+          - button "like" [ref=f6e194] [cursor=pointer]:
+            - img [ref=f6e195]
+            - generic [ref=f6e197]: like
+          - button "2.57k" [ref=f6e198] [cursor=pointer]
+      - generic [ref=f6e199]:
+        - link "Image-Text-to-Text" [ref=f6e200] [cursor=pointer]:
+          - /url: /models?pipeline_tag=image-text-to-text
+          - generic [ref=f6e201]:
+            - img [ref=f6e203]
+            - generic [ref=f6e207]: Image-Text-to-Text
+        - link "GGUF" [ref=f6e208] [cursor=pointer]:
+          - /url: /models?library=gguf
+          - generic [ref=f6e209]:
+            - img [ref=f6e210]
+            - generic [ref=f6e212]: GGUF
+        - link [ref=f6e213] [cursor=pointer]:
+          - /url: /models?language=en
+          - img [ref=f6e215]
