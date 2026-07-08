@@ -29,3 +29,6 @@ docs/history/REPORT.md
 REPORT.md
 # spurious uv lockfile (project uses hatchling + pip, not uv)
 uv.lock
+
+# ctags index (regenerable by codeq tags)
+.tags

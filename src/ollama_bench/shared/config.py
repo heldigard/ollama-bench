@@ -32,8 +32,8 @@ TASKS: dict[str, dict] = {
     "improve": {
         "description": "prompt-improver hook — vague input → structured spec",
         "budget_words": 150,
-        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
-        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "fallback_model": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
     },
     "codeq_sum": {
         "description": "codeq summary — 1-line orientation of a function body",
@@ -44,27 +44,27 @@ TASKS: dict[str, dict] = {
     "smart_trim": {
         "description": "PreCompact hook — transcript → handoff",
         "budget_words": 170,
-        "primary_model_default": "fredrezones55/Qwopus3.5:9b",
+        "primary_model_default": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
         "fallback_model": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
     },
     "web_synth": {
         "description": "web research — multi-source → 3-paragraph summary",
         "budget_words": 210,
-        "primary_model_default": "aratan/gemma-4-E4B-it-heretic:Q6_K",
-        "fallback_model": "cryptidbleh/gemma4-claude-opus-4.6:latest",
+        "primary_model_default": "hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M",
+        "fallback_model": "aratan/gemma-4-E4B-it-heretic:Q6_K",
     },
     "code_gen": {
         "description": "code generation — small function with type hints",
         "budget_words": 120,
-        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
-        "fallback_model": "cryptidbleh/gemma4-claude-opus-4.6:latest",
+        "primary_model_default": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
+        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
     },
 }
 
 SPECIALIZED_TASKS: dict[str, dict[str, str]] = {
     "bug_finding": {
-        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
-        "fallback_model": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
+        "primary_model_default": "hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M",
+        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
     },
     "tool_call": {
         "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
@@ -80,7 +80,7 @@ SPECIALIZED_TASKS: dict[str, dict[str, str]] = {
     },
     "pdf_ocr": {
         "primary_model_default": "hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M",
-        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+        "fallback_model": "hf.co/prithivMLmods/lift-GGUF:Q4_K_M",
         "prompt": "ocr [img]",
     },
 }
