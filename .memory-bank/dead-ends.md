@@ -48,3 +48,12 @@ Added the missing piece:
 - **`~/.local/bin/ollama-watchdog`** (new) — healthcheck + auto-restart for HUNG server (process alive, HTTP unresponsive — systemd's `Restart=always` does NOT catch this). Pings `/api/version`; on failure, `sudo -n systemctl restart ollama` + 15 s recovery probe. Cron `*/5 * * * *`.
 - Log dir: `~/.cache/ollama-watchdog/cron.log`.
 - Sudo NOPASSWD confirmed: `eldi: (ALL : ALL) NOPASSWD: ALL` per `sudo -nl`.
+
+## 2026-07-08 — Running all models in parallel/max GPU for bench
+
+- Tried: `ollama-bench deep --strip` with all 31 models + ThreadPoolExecutor (4 workers).
+- Failed: GPU maxed out at 80°C+, process took hours, got killed by timeout/hook multiple times. Each restart lost ALL progress (results written only at the end).
+- Tried: running in background with nohup but still parallel.
+- Failed: same GPU saturation, same timeout issues.
+- **Worked instead**: Sequential execution, one model at a time, 60s cooldown between models. Per-model incremental TSV save (--resume flag). nvidia-smi temp monitoring. GPU stays at 60-65°C. Progress survives kills/restarts.
+- **Lesson**: NEVER run GPU-intensive bench in parallel. Always sequential + cooldown + incremental save. The --resume flag is essential for long-running benches.
