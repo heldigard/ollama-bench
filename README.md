@@ -91,17 +91,18 @@ smoke (leak gate) ──┐
                                                                    (ground-truth, 0-N direct)
 ```
 
-## Current lineup (2026-07-05 round-4, 21 models)
+## Current lineup (2026-07-08 refactor, Ollama 0.31.1)
 
 | task | #1 (PRIMARY) | #2 (fallback) |
 |---|---|---|
-| improve | `hf.co/kai-os/Grug-12B-GGUF:Q4_K_M` | `pegasus912/gemma-4-12b-heretic-ud-q4-k-xl` |
-| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP` |
-| smart_trim | `SetneufPT/Qwopus3.5-4B-Coder-MTP` | `fredrezones55/Qwopus3.5:9b` |
-| web_synth | `batiai/gemma4-e4b:q4` | `batiai/gemma4-12b:iq3` |
-| code_gen | `fredrezones55/Qwopus3.5:9b` | `HauhauCS Gemma4-12B-QAT-Uncensored-Balanced` |
-| bug_finding | `huihui_ai/qwen3.5-9b-Opus-q4_K` | `cryptidbleh/gemma4-claude-sonnet-4.6` |
-| tool_call | `huihui_ai/qwen3.5-9b-Opus-q4_K` | `slyfox/qwen3.5-9b-opus-functiongemma` |
+| improve | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| codeq_sum | `jaahas/crow:9b` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| smart_trim | `fredrezones55/Qwopus3.5:9b` | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
+| web_synth | `aratan/gemma-4-E4B-it-heretic:Q6_K` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| code_gen | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
+| tool_call | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+| pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
 
 Full lineup + history: `.memory-bank/topics/local-ollama-lineup.md` · `RANKING.md` · `RANKING_HISTORY.md`.
 

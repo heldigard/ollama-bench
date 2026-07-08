@@ -21,6 +21,7 @@ from ollama_bench.features.lfm_variant.command import add_parser as add_lfm
 from ollama_bench.features.list.command import add_parser as add_list
 from ollama_bench.features.multi_domain.command import add_parser as add_multi_domain
 from ollama_bench.features.pdf_extract.command import add_parser as add_pdf_extract
+from ollama_bench.features.pdf_ocr.command import add_parser as add_pdf_ocr
 from ollama_bench.features.report.command import add_parser as add_report
 from ollama_bench.features.smoke.command import add_parser as add_smoke
 from ollama_bench.features.tie_break.command import add_parser as add_tie_break
@@ -42,6 +43,7 @@ _SLICES = [
         "Vision-grounded browser bench (OCR/classify/diff/tool/speed) — ported from cli-orchestration",
     ),
     ("pdf-extract", add_pdf_extract, "Schema field-extraction bench (abstention)"),
+    ("pdf-ocr", add_pdf_ocr, "Rendered PDF OCR bench (vision/OCR models)"),
     ("lfm-variant", add_lfm, "codeq summary tie-break for LFM family"),
     ("multi-domain", add_multi_domain, "Legacy 4-domain bench"),
     ("judge", add_judge, "LLM-as-judge helpers"),

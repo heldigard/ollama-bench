@@ -61,6 +61,41 @@ TASKS: dict[str, dict] = {
     },
 }
 
+SPECIALIZED_TASKS: dict[str, dict[str, str]] = {
+    "bug_finding": {
+        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "fallback_model": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
+    },
+    "tool_call": {
+        "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
+        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+    },
+    "browser_tool": {
+        "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
+        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+    },
+    "pdf_extract": {
+        "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
+        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+    },
+    "pdf_ocr": {
+        "primary_model_default": "hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M",
+        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+        "prompt": "ocr [img]",
+    },
+}
+
+__all__ = [
+    "LOGS_DIR",
+    "NUM_PREDICT_DEFAULT",
+    "OLLAMA_0_23_INCOMPAT_MODELS",
+    "OLLAMA_URL",
+    "RESULTS_DIR",
+    "SPECIALIZED_TASKS",
+    "TASKS",
+    "TIMEOUT_DEFAULT",
+]
+
 # Models that were incompatible with Ollama 0.23.2 but WORK on 0.31.1+.
 # Kept empty as the canonical record; the incompat was the old Ollama version,
 # not the models. See topics/ollama-0.23.2-gemma4-q4_0-incompat.md for history.

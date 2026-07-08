@@ -119,6 +119,21 @@ the best browser/tool dispatch model.
 Discrimination improved with noisy/abstention cases: 15 unique scores; max tie
 group 3.
 
+## pdf_ocr
+
+| # | score | avg recall | model |
+|---|---:|---:|---|
+| 1 | **12.00** | **1.00** | `hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M` |
+| 2 | 11.08 | 1.00 | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+| 3 | 11.05 | 1.00 | `fredrezones55/Qwopus3.5:9b` |
+| 4 | 10.77 | 1.00 | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
+| 5 | 10.52 | 0.89 | `qwen3.5:4b` |
+
+This is a separate rendered-PDF OCR category, not the same task as
+`pdf_extract`. Unlimited OCR requires vision input via `/api/chat` and the
+literal prompt `ocr [img]`; generic extraction prompts returned empty output in
+live testing.
+
 ## embedding_retrieval
 
 | # | MRR | recall@5 | model |
@@ -145,6 +160,15 @@ Runtime clients updated in this pass:
 - `cheap-llm/cheap_llm.py`
 - `cli-orchestration/browser/_subagent_call.py`
 
+Model-specific runtime handling:
+
+- Reasoning/tag leaks are stripped at clients before scoring/consumption when
+  recoverable; models are not discarded solely for strippable CoT wrappers.
+- Unlimited OCR is not a normal text completion model. Use `ocr [img]` with
+  rendered PDF page images through `/api/chat`.
+- `cheap-llm` keeps `qwen3.5:4b` for free-text compatibility and routes
+  schema/JSON local T1 calls to functiongemma when no explicit model is passed.
+
 ## Per-task PRIMARY + FALLBACK
 
 | task | PRIMARY | FALLBACK |
@@ -158,4 +182,5 @@ Runtime clients updated in this pass:
 | tool_call | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
 | browser_tool | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
 | pdf_extract | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+| pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
 | embedding | `embeddinggemma:latest` | `bge-m3:latest` |
