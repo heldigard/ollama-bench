@@ -1,12 +1,12 @@
 # Local Ollama Model Lineup (RTX 5080, 16GB) — RE-BENCH 2026-07-08 (Ollama 0.31.1)
 
 > **Purpose:** Single source of truth for LOCAL Ollama winners + per-role map.
-> Five re-bench cycles: 2026-07-04 (16 winners) → round-3 (Grug upset) →
-> round-5 (e4b collapse → SetneufPT/crow) → round-6 (2026-07-08 new models
-> + strip mode). 26 LLM winners + 3 embeddings = 29 models (~100 GB).
+> Re-bench cycles: 2026-07-04 (16 winners) → round-3/5 → round-6 (strip mode) →
+> **round-7 (2026-07-08 PM): full pipeline (smoke→deep→tie-break→specialized),
+> combined ranking, lineup trimmed to top-5 union. 19 LLM + 3 embeddings = 22 models.**
 >
-> Round-6 introduced 7 new models (Negentropy 4B/9B, Openclaw, DeltaCoder,
-> yuxinlu1 Gemma4, DeepSeek-V4-Flash, lift) and re-benched with `--strip`
+> Round-7 rewired 7/9 PRIMARY winners + replaced qwen3.5:4b with cryptidbleh/gemma4-claude-opus-4.6
+> (better on every metric); 13 models deleted (12 losers + qwen3.5:4b). See [deep-winners-20260708-pm](deep-winners-20260708-pm.md).
 > think-strip mode. DeepSeek-V4-Flash is strippable but ranks last everywhere.
 
 ## Per-task top-2 (wired into harness) — 2026-07-08 PM (round-7, combined deep+tiebreak)
@@ -46,42 +46,36 @@ Models that leak thinking but produce usable output after `strip_reasoning()`:
 
 Policy: `strippable=1` recorded at smoke; deep includes those models and scores cleaned output. Not discarded solely for recoverable CoT wrappers.
 
-## All installed LLM winners (26 models)
+## Currently installed lineup (22 models — post 2026-07-08 PM trim)
 
 ```
-# NEW 2026-07-08
-hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M  (smart_trim #1, code_gen #1, improve #3, web_synth #4)
-hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M       (web_synth #1, bug_finding #1, smart_trim #5)
-hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M       (improve #2, code_gen #5, pdf_ocr #4)
-hf.co/Jackrong/Negentropy-claude-opus-4.7-4B-GGUF:Q4_K_M       (codeq_sum #4, code_gen #4 — compact 3GB)
-hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M  (improve #7, codeq_sum #6 — mid-pack)
-hf.co/prithivMLmods/lift-GGUF:Q4_K_M                            (pdf_ocr #3 — OCR specialist)
-hf.co/Jackrong/Qwen3.5-9B-DeepSeek-V4-Flash-GGUF:Q4_K_M        (strippable, last everywhere — NOT recommended)
+# Canonical winners (round-7 combined)
+zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2:latest  (improve #1, bug_finding #1)
+batiai/gemma4-e4b:q4                                                  (codeq_sum #1)
+hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M    (smart_trim #1)
+hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M                      (web_synth #1)
+hf.co/prithivMLmods/lift-GGUF:Q4_K_M                                  (code_gen #1, pdf_ocr #2)
+SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest               (tool_call/browser_tool/pdf_extract #1)
+hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M                          (pdf_ocr #1 — vision OCR)
 
-# CARRIED from round-5
-zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2  (improve #1, code_gen #1, bug_finding #2)
-jaahas/crow:9b                                                   (codeq_sum #1)
-SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU                 (codeq_sum #2, code_gen #5)
-hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M  (tool_call/browser/pdf_extract #1)
-huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K           (bug_finding/tool_call fallback)
-fredrezones55/Qwopus3.5:9b                                       (smart_trim #4, web_synth #5)
-aratan/gemma-4-E4B-it-heretic:Q6_K                               (web_synth #1 tie, code_gen mid)
-hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M (web_synth #3, code_gen #3)
-hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M                    (pdf_ocr #1 — purpose-built OCR)
-qwen3.5:4b                                                       (universal default anchor)
-Librellama/gemma4:e2b-Uncensored                                  (multi-task mid-tier)
-batiai/gemma4-12b:iq3                                            (web_synth #2 old)
-batiai/gemma4-e2b:q4                                             (code_gen tied)
-batiai/gemma4-e4b:q4                                             (demoted r5)
-cryptidbleh/gemma4-claude-opus-4.6                               (codeq_sum #5, web_synth #6)
-cryptidbleh/gemma4-claude-sonnet-4.6                             (bug_finding #2 old)
-free01/gemma4:e4b                                                (codeq_sum #4 old, web_synth #3)
-hf.co/SC117/gemma-4-12B-it-heretic-QAT-UD-Q4_K_XL               (smart_trim #4 old)
-hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl          (improve #2 old)
-hf.co/kai-os/Grug-12B-GGUF:Q4_K_M                               (improve #1 old)
-xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0          (bug_finding #5 old)
-nomic-embed-text + embeddinggemma + bge-m3                        (embeddings)
+# Top-5 depth (fallbacks / role fillers)
+hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M             (improve #2)
+hf.co/Jackrong/Negentropy-claude-opus-4.7-4B-GGUF:Q4_K_M             (compact 3GB; tool_call depth)
+hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL               (smart_trim #2)
+hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest        (bug_finding depth)
+hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M        (tool_call #2)
+hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M         (pdf_extract #2)
+xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0              (bug_finding #2, web_synth #2)
+huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K                (code_gen #3)
+jaahas/crow:9b                                                        (codeq_sum #2)
+Librellama/gemma4:e2b-Uncensored                                      (multi-task mid)
+batiai/gemma4-e2b:q4                                                  (smart_trim #3)
+cryptidbleh/gemma4-claude-opus-4.6:latest                             (universal infra default; web_synth #2)
+
+# Embeddings
+embeddinggemma:latest  (default embed)   bge-m3:latest  (multilingual)   nomic-embed-text:latest
 ```
+> 12 losers + qwen3.5:4b deleted this round (qwen3.5:4b replaced by cryptidbleh). See "Removed models" below.
 
 ## Removed models (historical)
 

@@ -4,6 +4,7 @@
 > bug_finding/tool_call/pdf_extract (×30) → pdf_ocr (×2). Canonical #1 = COMBINED
 > rank (deep+tiebreak)/2. Lineup trimmed to top-5 union (losers deleted).
 > config.py primaries/fallbacks + cross-CLI consumers rewired from this run.
+> Rows marked *(deleted)* were benched then trimmed from the installed lineup; PRIMARY/FALLBACK below are all installed.
 
 ## improve
 
@@ -73,7 +74,7 @@ Discrimination: 30 models scored; combined deep+tiebreak rank.
 | 2 | 14.99 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | 3 | 14.70 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
 | 4 | 14.60 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
-| 5 | 14.49 | `hf.co/mradermacher/Gemma-4-12B-StyleTune-i1-GGUF:Q4_K_M` |
+| 5 | 14.49 | `hf.co/mradermacher/Gemma-4-12B-StyleTune-i1-GGUF:Q4_K_M` *(deleted)* |
 
 ## tool_call
 
@@ -81,8 +82,8 @@ Discrimination: 30 models scored; combined deep+tiebreak rank.
 |---|---|---|
 | **1** | 10.10 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
 | 2 | 10.09 | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
-| 3 | 9.95 | `hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M` |
-| 4 | 9.95 | `hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M` |
+| 3 | 9.95 | `hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M` *(deleted)* |
+| 4 | 9.95 | `hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M` *(deleted)* |
 | 5 | 9.95 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-4B-GGUF:Q4_K_M` |
 
 ## pdf_extract
@@ -91,9 +92,9 @@ Discrimination: 30 models scored; combined deep+tiebreak rank.
 |---|---|---|
 | **1** | 12.07 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
 | 2 | 12.06 | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
-| 3 | 12.06 | `qwen3.5:4b` |
+| 3 | 12.06 | `qwen3.5:4b` *(deleted)* |
 | 4 | 12.05 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| 5 | 12.03 | `hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M` |
+| 5 | 12.03 | `hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M` *(deleted)* |
 
 ## pdf_ocr
 
@@ -134,10 +135,10 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 - **SetneufPT/Qwopus3.5**: tool_call + pdf_extract + browser_tool #1. Structured-output champion.
 - **HauhauCS-Balanced**: smart_trim #1 (12.30/13.53). **TeichAI/Fable-5-v1**: web_synth combined #1.
 - **prithiv/lift**: code_gen #1 + pdf_ocr fallback. **DeltaCoder + Openclaw** (prior champs) fell out of top-5.
-- 7/9 PRIMARY changed; improve + pdf_ocr held. 11 loser models deleted; qwen3.5:4b kept (cheap-llm/prompt-improve infra).
+- 7/9 PRIMARY changed; improve + pdf_ocr held. 12 loser models deleted; qwen3.5:4b replaced by cryptidbleh/gemma4-claude-opus-4.6 (better on every metric: 9.97 vs 8.85 avg, faster).
 
 ## Runtime notes
 
 - Smoke records `strippable=1`; `deep --strip` includes them, scoring cleaned output.
 - Unlimited-OCR is vision-only (`/api/chat` + `ocr [img]`); general models score -100 on pdf_ocr.
-- qwen3.5:4b retained as lightweight infra (cheap-llm T1 free-text + prompt-improve small fallback).
+- `cryptidbleh/gemma4-claude-opus-4.6` is the lightweight infra default (cheap-llm T1 free-text + prompt-improve small fallback). It replaced qwen3.5:4b (deleted — cryptidbleh scored higher + faster at the same 3.4GB).
