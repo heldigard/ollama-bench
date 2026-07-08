@@ -44,6 +44,11 @@ REASONING_RE = re.compile(r"<reasoning>.*?(</reasoning>|$)", re.DOTALL)
 REFLECTION_RE = re.compile(r"<reflection>.*?(</reflection>|$)", re.DOTALL)
 # `<output>...</output>` wrappers: UNWRAP (keep inner content), don't drop.
 OUTPUT_WRAP_RE = re.compile(r"<output>(.*?)</output>", re.DOTALL | re.IGNORECASE)
+CHANNEL_RE = re.compile(r"<\|channel\|>.*?(<\|channel\|>|$)", re.DOTALL | re.IGNORECASE)
+VISIBLE_REASONING_RE = re.compile(
+    r"^\s*(thinking process|let me think)[: ].*?(final answer|answer|output)\s*:\s*",
+    re.DOTALL | re.IGNORECASE,
+)
 
 # Leak tags that can be SALVAGED by stripping (thinking traces). A model whose
 # ONLY leaks are strippable is still benchable on the cleaned answer. Refusal
@@ -94,8 +99,17 @@ def strip_reasoning(text: str) -> str:
     out = THINK_RE.sub("", text)
     out = REASONING_RE.sub("", out)
     out = REFLECTION_RE.sub("", out)
+    out = CHANNEL_RE.sub("", out)
     # Unwrap <output>...</output> (may be multiple). Keep inner text.
     out = OUTPUT_WRAP_RE.sub(r"\1", out)
+    visible = VISIBLE_REASONING_RE.search(out)
+    if visible:
+        out = out[visible.end():]
+    else:
+        low = out.lstrip().lower()
+        if low.startswith(("thinking process:", "let me think:")):
+            parts = re.split(r"\n\s*\n", out.strip(), maxsplit=1)
+            out = parts[1] if len(parts) == 2 else ""
     return out.strip()
 
 
@@ -106,6 +120,37 @@ def leaks_are_strippable(leaks: list[str]) -> bool:
     A refusal leak means the answer itself is useless — not salvageable.
     """
     return bool(leaks) and all(tag in STRIPPABLE_TAGS for tag in leaks)
+
+
+def leak_policy(out: str) -> str:
+    """Classify output handling: clean, strip_required, or unsafe."""
+    leaks = detect_leaks(out)
+    if not leaks:
+        return "clean"
+    if leaks_are_strippable(leaks) and strip_reasoning(out).strip():
+        return "strip_required"
+    return "unsafe"
+
+
+def prepare_scored_response(res: dict, strip_strippable: bool = True) -> tuple[dict, dict]:
+    """Return a score-ready response copy plus leak-handling metadata.
+
+    Strippable reasoning traces are cleaned when `strip_strippable` is true.
+    Non-strippable leaks remain in the output so task scorers can penalize them.
+    """
+    if "err" in res:
+        return res, {"policy": "error", "raw_leaks": ""}
+    out = str(res.get("out", "") or "")
+    raw_leaks = detect_leaks(out)
+    policy = leak_policy(out)
+    if strip_strippable and policy == "strip_required":
+        cleaned = strip_reasoning(out)
+        return {**res, "out": cleaned}, {
+            "policy": policy,
+            "raw_leaks": ",".join(raw_leaks),
+            "stripped_chars": max(len(out) - len(cleaned), 0),
+        }
+    return res, {"policy": policy, "raw_leaks": ",".join(raw_leaks)}
 
 
 def structural_score(

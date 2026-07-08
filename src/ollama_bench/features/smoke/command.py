@@ -63,7 +63,8 @@ def _write_tsv(rows, out_path):
 def _is_embedding_model(name: str) -> bool:
     """Heuristic: embedding models can't /api/generate (they return HTTP 400).
     Skip them in smoke (they have no generative output to leak-check)."""
-    return "embed" in name.lower()
+    low = name.lower()
+    return "embed" in low or low.startswith("bge-") or "/bge-" in low
 
 
 def cmd_smoke(args):

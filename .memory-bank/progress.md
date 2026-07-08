@@ -189,3 +189,4 @@ User asked: identify improvements / enhancements / fixes across the project now 
 - `pytest tests/test_layout.py tests/test_list.py` ✓ 9/9 (incl. new candidates slice)
 - `ollama-bench candidates --help` ✓ shows positional models + --tasks + --keep-on-pull-fail
 - `ollama-bench candidates` (no args) ✓ errors with "at least one model required"
+- 2026-07-08T00:49:43Z | status:completed | Cross-CLI maintenance audit: benchmark scoring work is active; keep memory tied to durable scoring/canonical-task decisions, not transient run logs.

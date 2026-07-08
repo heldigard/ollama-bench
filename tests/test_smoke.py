@@ -83,6 +83,7 @@ def test_is_embedding_model():
     assert _is_embedding_model("nomic-embed-text:latest")
     assert _is_embedding_model("embeddinggemma:latest")
     assert _is_embedding_model("qwen3-embedding:4b")
+    assert _is_embedding_model("bge-m3:latest")
     assert not _is_embedding_model("qwen3.5:4b")
     assert not _is_embedding_model("MobiusDevelopment/gemma-4-12B")
 

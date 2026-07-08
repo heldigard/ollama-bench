@@ -1,4 +1,15 @@
 # Current Task
+<!-- task-guidance:start -->
+## Active Implementation Guide
+- Source: codex-update-plan
+- Plan: `docs/plans/benchmark-refactor-2026-07-08.md`
+- Objective: Benchmark Refactor Plan - 2026-07-08
+- Checklist: use the CLI native tracker (`TaskCreate/TaskUpdate` in Claude, `update_plan` in Codex); keep it current after each step.
+- Step 1: `deep` no longer ranks models mostly by leak/speed/concision saturation.
+- Step 2: Canonical tasks keep the same public keys: `improve`, `codeq_sum`,
+- Step 3: Each canonical task has multiple varied cases and task-specific scoring.
+<!-- task-guidance:end -->
+
 > Project stable — no active multi-session work
 
 The 7-phase build + re-bench cycle is complete. The package is live at

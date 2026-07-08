@@ -1,8 +1,8 @@
-"""deep — 5-task × N model bench.
+"""deep — canonical task bench across N models.
 
 Canonical harness tasks: improve, codeq_sum, smart_trim, web_synth, code_gen.
-First-pass scoring (saturates at 7.0 for fast+clean responses — use tie_break
-to discriminate when many models saturate).
+Scoring is task-specific and emits per-case metric details to avoid the older
+speed/leak/concision saturation problem.
 
 # vs-soft-allow  — end-to-end pipeline (prompts → run → score → rank → write).
 # Splitting would force callers to know which helper to invoke.
@@ -12,111 +12,28 @@ from __future__ import annotations
 
 import argparse
 import csv
+import json
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from statistics import mean
 
+from ollama_bench.features.canonical_tasks import PROMPTS, iter_cases, score_task_response
 from ollama_bench.shared.config import NUM_PREDICT_DEFAULT
 from ollama_bench.shared.ollama import CallOpts, call, get_model_names
 from ollama_bench.shared.paths import result_path
-from ollama_bench.shared.scorer import first_pass_score, strip_reasoning
-
-PROMPTS: dict[str, dict] = {
-    "improve": {
-        "budget_words": 120,
-        "items": [
-            ("improve_v1", "haz que el dashboard cargue mas rapido, esta lentisimo"),
-            ("improve_v2", "fix the auth bug, users cant login"),
-        ],
-    },
-    "codeq_sum": {
-        "budget_words": 30,
-        "items": [
-            (
-                "sum_v1",
-                "Summarize this function in ONE sentence, max 30 words. NO preamble, no code blocks.\n\n"
-                "async function sendChatMessage(trimmed: string) {\n"
-                "  if (!trimmed || sending.value) return;\n"
-                "  draft.value = '';\n"
-                "  try {\n"
-                "    await api.post('/chat', { text: trimmed });\n"
-                "  } catch (e) {\n"
-                "    error.value = e.message;\n"
-                "  }\n"
-                "}",
-            ),
-            (
-                "sum_v2",
-                "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
-                "function chunkText(text, maxTokens) {\n"
-                "  const sentences = text.split(/(?<=[.!?])\\s+/);\n"
-                "  const out = [];\n"
-                "  let buf = '';\n"
-                "  for (const s of sentences) {\n"
-                "    if ((buf + s).split(/\\s+/).length > maxTokens) {\n"
-                "      out.push(buf.trim());\n"
-                "      buf = s;\n"
-                "    } else buf += ' ' + s;\n"
-                "  }\n"
-                "  if (buf) out.push(buf.trim());\n"
-                "  return out;\n"
-                "}",
-            ),
-        ],
-    },
-    "smart_trim": {
-        "budget_words": 150,
-        "items": [
-            (
-                "trim_v1",
-                """Compress to handoff bullet list. Keep: task, current step, decisions, next action, blockers. 4-8 bullets, no preamble.
-
-[Earlier] User asked about Python venv setup on WSL2. Assistant explained uv vs pip, recommended uv. Created .venv via 'uv venv'.
-[Earlier] Discussion about why their existing imports broke. Root cause: site-packages vs .venv/lib conflict. Fixed by removing PYTHONPATH override.
-[Now] User: 'pytest no encuentra los tests'. Output: 'collected 0 items'. Investigating tests/ dir missing __init__.py, or conftest.py not at root.
-[Now] User: 'tambien falla ruff, dice no module'. Same root cause - ruff needs the .venv on path.
-[Decision] Stay on uv, drop pip completely. Add conftest.py at project root, reinstall dev deps in .venv.
-[Blocked] None.""",
-            ),
-        ],
-    },
-    "web_synth": {
-        "budget_words": 180,
-        "items": [
-            (
-                "synth_v1",
-                """Synthesize a 3-paragraph summary (no preamble) of the following sources. Cite as [1], [2], etc.
-
-[1] RFC 9457 (2023) "Problem Details for HTTP APIs" defines a standard format for error responses (application/problem+json) with type, title, status, detail, instance fields.
-[2] Microsoft REST API Guidelines (2024) recommend using problem+json for 4xx/5xx responses; include a correlation id in 'instance' for tracing.
-[3] Spring Boot 3.2+ has built-in ProblemDetail support via ResponseEntityExceptionHandler and @RestControllerAdvice.""",
-            ),
-        ],
-    },
-    "code_gen": {
-        "budget_words": 90,
-        "items": [
-            (
-                "code_v1",
-                "Write a Python function `validate_email(s: str) -> bool` using ONLY stdlib (re). Handle None/empty/whitespace. Return False on invalid. No imports beyond re. No docstring, no comments, just the function.",
-            ),
-            (
-                "code_v2",
-                "Write a Python function `chunk_lines(text: str, max_chars: int) -> list[str]` that splits text into chunks of <= max_chars, splitting on '\\n' first, then on ' ' if a line is too long. No external deps. Just the function, no comments.",
-            ),
-        ],
-    },
-}
+from ollama_bench.shared.scorer import strip_reasoning
 
 WORKERS = 4
 
 
-def _smoke_ok_candidates(strip: bool = False) -> list[str]:
+def _smoke_ok_candidates(strip: bool = True) -> list[str]:
     """Read smoke TSV and return benchable models.
 
-    Default: status=ok only. With strip=True, ALSO include models flagged
-    strippable=1 (thinking-trace leaks salvageable via strip_reasoning).
+    Default includes status=ok plus strippable=1 models, because reasoning
+    traces can be cleaned and should be tracked as a handling requirement
+    instead of hard-disqualifying the model. With strip=False, returns clean
+    status=ok only for strict legacy comparisons.
     Falls back to all installed if no TSV.
     """
     smoke_tsv = result_path("smoke_all")
@@ -141,13 +58,16 @@ def run_model(model: str, tasks: list[str], opts: CallOpts, strip: bool = False)
     """
     out: dict = {task: [] for task in tasks}
     for task in tasks:
-        cfg = PROMPTS[task]
-        budget = cfg["budget_words"]
-        for pid, prompt in cfg["items"]:
-            res = call(model, prompt, opts=opts)
+        for case in iter_cases(task):
+            res = call(model, case["prompt"], opts=opts)
             if strip and "out" in res:
                 res = {**res, "out": strip_reasoning(res["out"])}
-            out[task].append({"pid": pid, "sc": first_pass_score(task, res, budget)})
+            scored = score_task_response(task, res, case, strip_strippable=strip)
+            out[task].append({
+                "pid": case["id"],
+                "sc": scored["score"],
+                "metrics": scored["metrics"],
+            })
     return {model: out}
 
 
@@ -167,7 +87,26 @@ def _aggregate(results: dict, tasks: list[str]) -> dict[str, list]:
     return per_task
 
 
-def _write_outputs(per_task: dict[str, list], tasks: list[str], base: Path) -> None:
+def _write_detail_jsonl(results: dict, base: Path) -> Path:
+    """Write per-case metric details without raw model outputs."""
+    path = base.with_name(f"{base.stem}_details").with_suffix(".jsonl")
+    with path.open("w") as f:
+        for model, task_map in sorted(results.items()):
+            if not isinstance(task_map, dict) or "err" in task_map:
+                continue
+            for task, items in task_map.items():
+                for item in items:
+                    f.write(json.dumps({
+                        "model": model,
+                        "task": task,
+                        "case": item.get("pid"),
+                        "score": item.get("sc"),
+                        "metrics": item.get("metrics", {}),
+                    }, sort_keys=True) + "\n")
+    return path
+
+
+def _write_outputs(per_task: dict[str, list], tasks: list[str], base: Path, results: dict | None = None) -> None:
     """Write TSV + MD summary."""
     tsv_path = base.with_suffix(".tsv")
     with tsv_path.open("w", newline="") as f:
@@ -180,15 +119,27 @@ def _write_outputs(per_task: dict[str, list], tasks: list[str], base: Path) -> N
     with md_path.open("w") as f:
         f.write("# Deep-bench — top-5 per task\n\n")
         for t, ranked in per_task.items():
-            f.write(f"\n## {t}\n\n| # | Score | Model |\n|---|---|---|\n")
+            score_counts: dict[float, int] = {}
+            for _model, score in ranked:
+                score_counts[score] = score_counts.get(score, 0) + 1
+            max_tie = max(score_counts.values(), default=0)
+            f.write(
+                f"\n## {t}\n\n"
+                f"Discrimination: {len(score_counts)} unique scores; max tie group {max_tie}.\n\n"
+                "| # | Score | Model |\n|---|---|---|\n"
+            )
             for i, (m, s) in enumerate(ranked[:5], 1):
                 f.write(f"| {i} | {s} | `{m}` |\n")
     print(f"Wrote {tsv_path}\nWrote {md_path}", file=sys.stderr)
+    if results is not None:
+        detail_path = _write_detail_jsonl(results, base)
+        print(f"Wrote {detail_path}", file=sys.stderr)
 
 
 def cmd_deep(args: argparse.Namespace) -> int:
     """`ollama-bench deep` entry point."""
-    strip = bool(getattr(args, "strip", False))
+    strict_clean = bool(getattr(args, "strict_clean", False))
+    strip = bool(getattr(args, "strip", False)) or not strict_clean
     candidates = args.candidates if args.candidates else _smoke_ok_candidates(strip=strip)
     if not candidates or (not args.candidates and not result_path("smoke_all").exists()):
         candidates = get_model_names()
@@ -197,7 +148,7 @@ def cmd_deep(args: argparse.Namespace) -> int:
             file=sys.stderr,
         )
     tasks = args.tasks if args.tasks else list(PROMPTS.keys())
-    total_prompts = sum(len(PROMPTS[t]["items"]) for t in tasks)
+    total_prompts = sum(len(iter_cases(t)) for t in tasks)
     mode = "strip" if strip else "clean"
     print(
         f"# Deep-bench ({mode}): {len(candidates)} candidates × {total_prompts} prompts",
@@ -224,7 +175,7 @@ def cmd_deep(args: argparse.Namespace) -> int:
     per_task = _aggregate(results, tasks)
     suffix = "_strip" if strip else ""
     base = Path(args.output) if args.output else result_path(f"deep_bench{suffix}")
-    _write_outputs(per_task, tasks, base)
+    _write_outputs(per_task, tasks, base, results)
     return 0
 
 
@@ -245,8 +196,12 @@ def add_parser(sub, parent: argparse.ArgumentParser) -> None:
     p.add_argument(
         "--strip",
         action="store_true",
-        help="Strip reasoning traces (<think>/<reasoning>/<output>) before scoring. "
-        "Lets thinking-leak models be judged on their cleaned answer. "
-        "Includes smoke-flagged strippable models in the candidate set.",
+        help="Compatibility flag: strip reasoning traces before scoring. This is now "
+        "the default unless --strict-clean is used.",
+    )
+    p.add_argument(
+        "--strict-clean",
+        action="store_true",
+        help="Legacy mode: exclude smoke-flagged strippable models and score raw output.",
     )
     p.set_defaults(cmd=cmd_deep)

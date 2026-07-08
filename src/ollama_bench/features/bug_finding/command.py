@@ -14,8 +14,9 @@ from pathlib import Path
 
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
+from ollama_bench.shared.scorer import prepare_scored_response
 
-# Each entry: (id, prompt, expected_bug_keywords).
+# Each entry: id, prompt, expected keywords, and optional expected_groups.
 # Bugs planted: B1 mutable default, B2 off-by-one, B3 None-deref, B4 bare except,
 # B5 race (no lock), B6 SQL injection (string format).
 PROMPTS: list[dict] = [
@@ -26,6 +27,14 @@ PROMPTS: list[dict] = [
             "mutable default", "off-by-one", "none", "attributeerror",
             "bare except", "swallow", "race", "lock", "sql injection",
             "format", "execute",
+        ),
+        "expected_groups": (
+            ("mutable default", "shared across calls"),
+            ("off-by-one", "skips first"),
+            ("none", "attributeerror"),
+            ("bare except", "swallow"),
+            ("race", "lock"),
+            ("sql injection", "format", "execute"),
         ),
         "prompt": """Review this diff. List ALL bugs you find. Be specific (line + why).
 
@@ -60,6 +69,13 @@ For each bug, output a line like: `BUG: <one-line description>`. Then `COUNT: <n
             "none", "typeerror", "keyerror", "index", "division", "zero",
             "modulo", "negative", "infinity",
         ),
+        "expected_groups": (
+            ("division", "zero", "zerodivision"),
+            ("keyerror", "missing key"),
+            ("n+1", "stride", "skips"),
+            ("lo = lo or", "falsy", "zero"),
+            ("hi==lo", "hi == lo", "division"),
+        ),
         "prompt": """Review this diff. List ALL bugs. Be specific.
 
 ```diff
@@ -79,33 +95,107 @@ For each bug, output a line like: `BUG: <one-line description>`. Then `COUNT: <n
 
 For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
     },
+    {
+        "id": "diff_v3",
+        "n_bugs": 6,
+        "expected": (
+            "path traversal", "zip slip", "timeout", "infinite", "resource leak",
+            "close", "decode", "unicode", "overwrite", "atomic", "permission",
+        ),
+        "expected_groups": (
+            ("path traversal", "zip slip", "../"),
+            ("timeout", "hang", "infinite"),
+            ("resource leak", "close", "with open"),
+            ("decode", "unicode", "encoding"),
+            ("overwrite", "atomic", "partial write"),
+            ("permission", "chmod", "mode"),
+        ),
+        "prompt": """Review this diff. List ALL bugs. Be specific.
+
+```diff
+--- a/archive.py
++++ b/archive.py
+@@ def unpack(zf, dest):
++    for name in zf.namelist():
++        target = os.path.join(dest, name)       # B1: path traversal / zip slip
++        data = zf.read(name)                    # B2: no size/timeout guard
++        f = open(target, "w")                   # B3: leaked file handle on error
++        f.write(data.decode())                  # B4: implicit encoding may fail
++        os.chmod(target, 0o777)                 # B5: unsafe permissions
++    return True                                 # B6: partial extraction not atomic
+```
+
+For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
+    },
+    {
+        "id": "diff_v4",
+        "n_bugs": 5,
+        "expected": (
+            "timezone", "naive", "retry", "backoff", "idempotency", "duplicate",
+            "secret", "token", "log", "status", "429",
+        ),
+        "expected_groups": (
+            ("timezone", "naive", "utc"),
+            ("retry", "backoff", "429"),
+            ("idempotency", "duplicate"),
+            ("secret", "token", "log"),
+            ("status", "http", "raise"),
+        ),
+        "prompt": """Review this diff. List ALL bugs. Be specific.
+
+```diff
+--- a/payments.py
++++ b/payments.py
+@@ def charge(client, user, amount, token):
++    expires = datetime.now() + timedelta(minutes=5)  # B1: naive local time
++    print("charging", user.id, token)                # B2: logs secret token
++    r = client.post("/charge", json={"u": user.id, "a": amount})
++    if r.status_code == 429:
++        return charge(client, user, amount, token)   # B3: recursive retry no backoff/limit
++    client.post("/receipt", json={"u": user.id})     # B4: non-idempotent duplicate side effect
++    return r.json()["id"]                            # B5: ignores non-2xx/missing id
+```
+
+For each bug: `BUG: <one-line description>`. Then `COUNT: <n>`.""",
+    },
 ]
 
 
-def _count_hits(out: str, expected: tuple[str, ...]) -> int:
-    """Count how many distinct expected-bug keywords appear in output."""
+def _count_hits(out: str, expected: tuple) -> int:
+    """Count distinct expected bugs.
+
+    `expected` may be a flat tuple of keywords or grouped synonym tuples. Grouped
+    scoring prevents one bug from being counted multiple times just because the
+    model used several synonyms.
+    """
     L = out.lower()
-    return sum(1 for kw in expected if kw.lower() in L)
+    if expected and isinstance(expected[0], tuple):
+        return sum(1 for group in expected if any(str(kw).lower() in L for kw in group))
+    return sum(1 for kw in expected if str(kw).lower() in L)
 
 
-def _score(res: dict, n_bugs: int, expected: tuple[str, ...]) -> float:
-    """Score = 2 * hits - 0.5 * leaks_penalty + tps_bonus. Range -10 to ~14."""
+def _score(res: dict, n_bugs: int, expected: tuple) -> float:
+    """Score = grouped recall + count calibration - leak penalty + tps bonus."""
     if "err" in res:
         return -100.0
+    res, policy = prepare_scored_response(res)
     out = res["out"]
     L = out.lower()
     s = 0.0
-    if "<think>" in L or "thinking process" in L:
-        s -= 5
+    if policy["policy"] == "unsafe" and ("<think>" in L or "thinking process" in L):
+        s -= 10
     if "as an ai" in L or "i cannot" in L:
         s -= 5
     if not out.strip():
         s -= 10
     hits = _count_hits(out, expected)
-    s += 2.0 * hits  # 2 points per bug found
-    # Bonus if model produced a COUNT line
-    if "count:" in L:
-        s += 1.0
+    recall = hits / max(n_bugs, 1)
+    s += 12.0 * recall
+    # Bonus for a calibrated COUNT line close to the planted bug count.
+    m = __import__("re").search(r"count:\s*(\d+)", L)
+    if m:
+        reported = int(m.group(1))
+        s += max(0.0, 2.0 - abs(reported - n_bugs) * 0.5)
     s += min(res.get("tps", 0) / 15.0, 2.0)
     return round(s, 2)
 
@@ -114,7 +204,8 @@ def run_model(model: str, opts: CallOpts) -> dict:
     out: list = []
     for p in PROMPTS:
         res = call(model, p["prompt"], opts=opts)
-        out.append({"id": p["id"], "sc": _score(res, p["n_bugs"], p["expected"])})
+        expected = p.get("expected_groups", p["expected"])
+        out.append({"id": p["id"], "sc": _score(res, p["n_bugs"], expected)})
     return {model: out}
 
 
@@ -152,7 +243,10 @@ def cmd_bug_finding(args: argparse.Namespace) -> int:
     out_path = Path(args.output) if args.output else result_path("bug_finding", ext="md")
     with out_path.open("w") as f:
         f.write("# Bug-Finding Bench — diff-review task\n\n")
-        f.write(f"Scoring: 2 * (bugs found) - leak_penalty + tps_bonus. {len(PROMPTS)} diffs per model.\n\n")
+        f.write(
+            "Scoring: grouped bug recall + COUNT calibration - leak_penalty + "
+            f"tps_bonus. {len(PROMPTS)} diffs per model.\n\n"
+        )
         f.write("| # | Score | Model |\n|---|---|---|\n")
         for i, (m, sc) in enumerate(ranked, 1):
             f.write(f"| {i} | {sc:.2f} | `{m}` |\n")

@@ -24,6 +24,7 @@ from pathlib import Path
 
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
+from ollama_bench.shared.scorer import prepare_scored_response
 
 # Each case: id, doc (markdown), fields (schema field list), expected (field ->
 # lowercase substring that MUST appear in a correct value, or None to require
@@ -118,6 +119,63 @@ CASES: list[dict] = [
             "(no phone or VAT id on record)\n"
         ),
     },
+    {
+        "id": "bank_statement_noise",
+        "fields": ["account_holder", "closing_balance", "currency", "statement_period", "swift_code"],
+        "expected": {
+            "account_holder": "maria chen",
+            "closing_balance": "8,441.20",
+            "currency": "eur",
+            "statement_period": "2026-06",
+            "swift_code": None,
+        },
+        "doc": (
+            "# Monthly Statement\n\n"
+            "Account Holder: Maria Chen\n"
+            "Period: 2026-06\n"
+            "Opening Balance: EUR 7,900.00\n"
+            "Closing Balance: EUR 8,441.20\n"
+            "Note: SWIFT/BIC is not printed on this statement.\n"
+        ),
+    },
+    {
+        "id": "contract_terms",
+        "fields": ["client", "effective_date", "termination_notice_days", "governing_law", "auto_renewal"],
+        "expected": {
+            "client": "blue finch labs",
+            "effective_date": "july 1, 2026",
+            "termination_notice_days": "30",
+            "governing_law": "new york",
+            "auto_renewal": "true",
+        },
+        "doc": (
+            "## Services Agreement\n\n"
+            "Client: Blue Finch Labs\n"
+            "Effective Date: July 1, 2026\n"
+            "This agreement renews automatically for successive one-year terms unless either party provides 30 days written notice.\n"
+            "Governing Law: New York\n"
+        ),
+    },
+    {
+        "id": "medical_lab",
+        "fields": ["patient", "test", "result", "unit", "reference_range", "doctor"],
+        "expected": {
+            "patient": "alex rivera",
+            "test": "hemoglobin",
+            "result": "13.8",
+            "unit": "g/dl",
+            "reference_range": "13.0-17.0",
+            "doctor": None,
+        },
+        "doc": (
+            "# Lab Result\n\n"
+            "Patient: Alex Rivera\n"
+            "| Test | Result | Unit | Reference Range |\n"
+            "|---|---:|---|---|\n"
+            "| Hemoglobin | 13.8 | g/dL | 13.0-17.0 |\n"
+            "Ordering doctor: not provided in source export.\n"
+        ),
+    },
 ]
 
 _JSON_BLOCK_RE = re.compile(r"\{.*\}", re.DOTALL)
@@ -157,10 +215,11 @@ def _score(res: dict, case: dict) -> float:
     """
     if "err" in res:
         return -100.0
+    res, policy = prepare_scored_response(res)
     out = res["out"]
     L = out.lower()
     s = 0.0
-    if "<think>" in L or "thinking process" in L:
+    if policy["policy"] == "unsafe" and ("<think>" in L or "thinking process" in L):
         s -= 5
     if "as an ai" in L or "i cannot" in L:
         s -= 5

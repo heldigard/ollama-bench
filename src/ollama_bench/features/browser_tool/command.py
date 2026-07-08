@@ -24,6 +24,7 @@ from pathlib import Path
 
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
+from ollama_bench.shared.scorer import prepare_scored_response
 
 # Canonical action verbs agent_browser accepts (mirrors its KNOWN_ACTIONS).
 KNOWN_ACTIONS = frozenset(
@@ -131,6 +132,55 @@ CASES: list[dict] = [
             "- e12: button 'Reply'\n"
         ),
     },
+    {
+        "id": "click_exact_duplicate_labels",
+        "expected_action": "click",
+        "expected_ref": "e14",
+        "goal": "Open the Settings link in the Account section, not the footer.",
+        "snapshot": (
+            "a11y snapshot:\n"
+            "- e13: region 'Footer'\n"
+            "- e12: link 'Settings'\n"
+            "- e9: region 'Account'\n"
+            "- e14: link 'Settings'\n"
+        ),
+    },
+    {
+        "id": "wait_no_ref",
+        "expected_action": "wait",
+        "expected_ref": None,
+        "goal": "Wait for the upload to finish.",
+        "snapshot": (
+            "a11y snapshot:\n"
+            "- e1: heading 'Upload'\n"
+            "- e2: progressbar 'Uploading file'\n"
+            "- e3: button 'Cancel'\n"
+        ),
+    },
+    {
+        "id": "fill_specific_field",
+        "expected_action": "fill",
+        "expected_ref": "e18",
+        "goal": "Enter billing ZIP code 10001.",
+        "snapshot": (
+            "a11y snapshot:\n"
+            "- e17: textbox 'Shipping ZIP'\n"
+            "- e18: textbox 'Billing ZIP'\n"
+            "- e19: button 'Save address'\n"
+        ),
+    },
+    {
+        "id": "select_language",
+        "expected_action": "select",
+        "expected_ref": "e22",
+        "goal": "Change the language selector to Spanish.",
+        "snapshot": (
+            "a11y snapshot:\n"
+            "- e20: combobox 'Timezone' options: UTC, America/Bogota\n"
+            "- e22: combobox 'Language' options: English, Spanish, French\n"
+            "- e23: button 'Apply'\n"
+        ),
+    },
 ]
 
 _REF_RE = re.compile(r"\be(\d+)\b")
@@ -165,10 +215,11 @@ def _score(res: dict, case: dict) -> float:
     """
     if "err" in res:
         return -100.0
+    res, policy = prepare_scored_response(res)
     out = res["out"]
     L = out.lower()
     s = 0.0
-    if "<think>" in L or "thinking process" in L:
+    if policy["policy"] == "unsafe" and ("<think>" in L or "thinking process" in L):
         s -= 5
     if "as an ai" in L or "i cannot" in L:
         s -= 5

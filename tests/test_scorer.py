@@ -5,7 +5,9 @@ from __future__ import annotations
 from ollama_bench.shared.scorer import (
     detect_leaks,
     first_pass_score,
+    leak_policy,
     leaks_are_strippable,
+    prepare_scored_response,
     quality_score,
     strip_reasoning,
     strip_think,
@@ -84,6 +86,15 @@ def test_strip_reasoning_unwraps_output_only():
     assert strip_reasoning("<output>keep me</output>") == "keep me"
 
 
+def test_strip_reasoning_visible_prefix_with_final_answer():
+    raw = "Thinking Process: inspect options.\nFinal Answer: BUG: mutable default"
+    assert strip_reasoning(raw) == "BUG: mutable default"
+
+
+def test_strip_reasoning_visible_prefix_without_answer_drops_trace():
+    assert strip_reasoning("Let me think: only private reasoning") == ""
+
+
 def test_strip_reasoning_idempotent_on_clean():
     clean = "A normal summary with no tags at all."
     assert strip_reasoning(clean) == clean
@@ -101,6 +112,19 @@ def test_leaks_are_strippable_false_for_refusal():
 
 def test_leaks_are_strippable_false_for_empty():
     assert leaks_are_strippable([]) is False
+
+
+def test_leak_policy_classifies_strip_required_only_when_recoverable():
+    assert leak_policy("<think>plan</think>final") == "strip_required"
+    assert leak_policy("Thinking Process: private only") == "unsafe"
+    assert leak_policy("As an AI, I cannot") == "unsafe"
+    assert leak_policy("plain answer") == "clean"
+
+
+def test_prepare_scored_response_strips_recoverable_trace():
+    res, meta = prepare_scored_response({"out": "<think>x</think>final", "tps": 1})
+    assert res["out"] == "final"
+    assert meta["policy"] == "strip_required"
 
 
 def test_structural_score_sections():

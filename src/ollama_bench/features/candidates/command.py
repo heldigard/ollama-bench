@@ -2,8 +2,8 @@
 
 Encapsulates the workflow done manually across rounds 3-4:
 1. ollama pull <models...>
-2. ollama-bench smoke -m <models>          # leak gate
-3. ollama-bench deep -c <survivors>          # first-pass score
+2. ollama-bench smoke -m <models>          # leak classification
+3. ollama-bench deep -c <survivors>        # task score; strippable leaks cleaned
 4. write a single MD report with recommendations vs incumbents
 
 Replaces ~15 min of manual orchestration per round with one command. Reuses
@@ -55,17 +55,21 @@ def _ollama_pull(model: str, timeout: int = 600) -> tuple[bool, str]:
     return rc == 0, out.strip().splitlines()[-3:][0] if out else "(no output)"
 
 
-def _smoke(models: list[str], out_tsv: Path) -> dict[str, tuple[str, int]]:
-    """Run smoke gate via subprocess. Return {model: (status, etoks)}."""
+def _smoke(models: list[str], out_tsv: Path) -> dict[str, tuple[str, str, int]]:
+    """Run smoke gate via subprocess. Return {model: (status, strippable, etoks)}."""
     cmd = ["ollama-bench", "smoke", "-m", *models, "-o", str(out_tsv)]
     rc, out = _run(cmd, timeout=300)
     if rc != 0 or not out_tsv.exists():
         return {}
-    rows: dict[str, tuple[str, int]] = {}
+    rows: dict[str, tuple[str, str, int]] = {}
     with out_tsv.open() as f:
         reader = csv.DictReader(f, delimiter="\t")
         for row in reader:
-            rows[row["name"]] = (row["status"], int(row.get("etoks", "0") or 0))
+            rows[row["name"]] = (
+                row["status"],
+                row.get("strippable", "0"),
+                int(row.get("etoks", "0") or 0),
+            )
     return rows
 
 
@@ -84,9 +88,10 @@ def _deep(models: list[str], tasks: list[str], out_tsv: Path) -> list[dict]:
 
 def _render_report(
     candidates: list[str],
-    smoke_results: dict[str, tuple[str, int]],
+    smoke_results: dict[str, tuple[str, str, int]],
     deep_rows: list[dict],
     survivors: list[str],
+    strip_required: list[str],
     dropped: list[str],
     pull_log: dict[str, str],
     run_id: str,
@@ -98,6 +103,7 @@ def _render_report(
         "",
         f"**Candidates tested**: {len(candidates)}",
         f"**Survived smoke**: {len(survivors)}",
+        f"**Survived with strip-required handling**: {len(strip_required)}",
         f"**Dropped at smoke**: {len(dropped)}",
         "",
         "## 1. Pull log",
@@ -110,19 +116,20 @@ def _render_report(
         lines.append(f"| `{m}` | {status} |")
     lines.append("")
 
-    lines.extend(["## 2. Smoke gate", "", "| model | status | etoks |", "|---|---|---|"])
+    lines.extend(["## 2. Smoke classification", "", "| model | status | handling | etoks |", "|---|---|---|---|"])
     for m in candidates:
         if m in smoke_results:
-            status, etoks = smoke_results[m]
-            lines.append(f"| `{m}` | {status} | {etoks} |")
+            status, strippable, etoks = smoke_results[m]
+            handling = "strip-required" if strippable == "1" else ("clean" if status == "ok" else "drop")
+            lines.append(f"| `{m}` | {status} | {handling} | {etoks} |")
         else:
-            lines.append(f"| `{m}` | (no result) | — |")
+            lines.append(f"| `{m}` | (no result) | drop | — |")
     lines.append("")
 
     if survivors:
         lines.extend(
             [
-                f"## 3. Deep bench ({len(tasks)} tasks, survivors only)",
+            f"## 3. Deep bench ({len(tasks)} tasks, clean + strip-required survivors)",
                 "",
                 "| task | model | score |",
                 "|---|---|---|",
@@ -140,7 +147,8 @@ def _render_report(
             "",
             "- **Re-bench saturated** (deep = 7.00): re-run `ollama-bench tie-break -w <survivor> <incumbent>` for hard-prompt discrimination.",
             "- **Compare vs incumbent**: see `RANKING.md` for current top-5 per task.",
-            "- **Drop at smoke**: don't re-pull — see `topics/candidates-round-{3,4}-2026-07-05.md` for predicted-leak models.",
+            "- **Strip-required is benchable**: use cleaned output plus a runtime output filter in consuming tools.",
+            "- **Drop at smoke**: only for non-strippable leaks, empty outputs, or load failures.",
             "",
             "## 5. Next steps",
             "",
@@ -183,8 +191,14 @@ def cmd_candidates(args: argparse.Namespace) -> int:
     # 2. Smoke gate (all models)
     print(f"[2/3] Smoke gating {len(args.models)} models...", file=sys.stderr)
     smoke_results = _smoke(args.models, smoke_tsv)
-    survivors = [m for m in args.models if m in smoke_results and smoke_results[m][0] == "ok"]
-    dropped = [m for m in args.models if m in smoke_results and smoke_results[m][0] != "ok"]
+    survivors = [
+        m
+        for m in args.models
+        if m in smoke_results
+        and (smoke_results[m][0] == "ok" or smoke_results[m][1] == "1")
+    ]
+    strip_required = [m for m in survivors if smoke_results[m][1] == "1"]
+    dropped = [m for m in args.models if m in smoke_results and m not in survivors]
 
     # 3. Deep bench (survivors only)
     deep_rows: list[dict] = []
@@ -201,6 +215,7 @@ def cmd_candidates(args: argparse.Namespace) -> int:
         smoke_results=smoke_results,
         deep_rows=deep_rows,
         survivors=survivors,
+        strip_required=strip_required,
         dropped=dropped,
         pull_log=pull_log,
         run_id=run_id,

@@ -22,6 +22,7 @@ from pathlib import Path
 
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
+from ollama_bench.shared.scorer import prepare_scored_response
 
 # Each case: (id, prompt, expected_substrings). expected = lowercase substrings
 # that MUST appear in a correct output (tool name + the key argument values).
@@ -87,6 +88,54 @@ Available tools:
 
 Request: Convert 100 dollars to euros.""",
     },
+    {
+        "id": "ambiguous_open_vs_search",
+        "expected": ("open_url", "docs.python.org"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- search_web(query): search the public web
+- open_url(url): open a specific URL
+- get_weather(location): weather
+
+Request: Open https://docs.python.org/3/library/json.html""",
+    },
+    {
+        "id": "calendar",
+        "expected": ("create_calendar_event", "demo", "2026-07-10", "15:00"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- create_calendar_event(title, date, time): create a calendar event
+- send_email(to, subject, body): send email
+- set_timer(minutes): countdown
+
+Request: Schedule a demo on 2026-07-10 at 15:00.""",
+    },
+    {
+        "id": "email",
+        "expected": ("send_email", "sam@example.com", "invoice"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- send_email(to, subject, body): send an email
+- create_ticket(title, priority): create a support ticket
+- search_web(query): web search
+
+Request: Email Sam at sam@example.com with subject Invoice follow-up.""",
+    },
+    {
+        "id": "ticket_priority",
+        "expected": ("create_ticket", "checkout", "high"),
+        "prompt": """You are a tool-calling assistant. Respond with ONLY a JSON object: {"tool": "<name>", "args": {<args>}}. No prose, no code fence.
+
+Available tools:
+- create_ticket(title, priority): create a support ticket
+- calculate(a, b, op): arithmetic
+- get_time(timezone): current time
+
+Request: Create a high priority ticket for checkout failures.""",
+    },
 ]
 
 # Extract the first balanced {...} block (models may wrap in prose/code fence).
@@ -115,10 +164,11 @@ def _score(res: dict, expected: tuple[str, ...]) -> float:
     """
     if "err" in res:
         return -100.0
+    res, policy = prepare_scored_response(res)
     out = res["out"]
     L = out.lower()
     s = 0.0
-    if "<think>" in L or "thinking process" in L:
+    if policy["policy"] == "unsafe" and ("<think>" in L or "thinking process" in L):
         s -= 5
     if "as an ai" in L or "i cannot" in L:
         s -= 5
