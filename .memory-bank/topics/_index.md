@@ -21,3 +21,4 @@
 - [ollama-0.23.2-gemma4-q4_0-incompat](ollama-0.23.2-gemma4-q4_0-incompat.md) — resolved (Ollama 0.31.1 fixed it)
 - [session-handoffs](session-handoffs.md) — compaction handoff log
 - [agent-sessions](agent-sessions.md) — auto-generated cross-CLI coordination registry
+- [benchmark-refactor-2026-07-08](benchmark-refactor-2026-07-08.md)

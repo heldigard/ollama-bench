@@ -190,3 +190,4 @@ User asked: identify improvements / enhancements / fixes across the project now 
 - `ollama-bench candidates --help` ✓ shows positional models + --tasks + --keep-on-pull-fail
 - `ollama-bench candidates` (no args) ✓ errors with "at least one model required"
 - 2026-07-08T00:49:43Z | status:completed | Cross-CLI maintenance audit: benchmark scoring work is active; keep memory tied to durable scoring/canonical-task decisions, not transient run logs.
+- 2026-07-08T01:39:45Z | 2026-07-08: Refactored benchmark rankings and config after new scorer/rebench. RANKING.md now reflects refactor outputs; shared/config.py TASKS primary/fallback updated for canonical tasks. Tests pass (183 passed).

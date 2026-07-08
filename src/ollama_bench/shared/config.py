@@ -26,39 +26,38 @@ LOGS_DIR = Path.home() / ".cache" / "ollama-bench" / "logs"
 # runner) but MUST stay aligned with RANKING.md — the harness wires these tags
 # into ~/.claude/{hooks,scripts}/. Drift here = drift in the live harness.
 #
-# 2026-07-05 round-3: improve primary swapped pegasus912 → kai-os/Grug-12B
-# (Grug won improve by 2× on hard prompts: 8.39 vs 4.15). See
-# topics/candidates-round-3-2026-07-05.md. pegasus912 demoted to fallback.
+# 2026-07-08 refactor: canonical scorers replaced the saturating first-pass
+# cap. These defaults mirror RANKING.md snapshot 2026-07-08.
 TASKS: dict[str, dict] = {
     "improve": {
         "description": "prompt-improver hook — vague input → structured spec",
-        "budget_words": 120,
-        "primary_model_default": "hf.co/kai-os/Grug-12B-GGUF:Q4_K_M",
-        "fallback_model": "hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest",
+        "budget_words": 150,
+        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
+        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
     },
     "codeq_sum": {
         "description": "codeq summary — 1-line orientation of a function body",
-        "budget_words": 30,
-        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
-        "fallback_model": "batiai/gemma4-e4b:q4",
+        "budget_words": 32,
+        "primary_model_default": "jaahas/crow:9b",
+        "fallback_model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
     },
     "smart_trim": {
         "description": "PreCompact hook — transcript → handoff",
-        "budget_words": 150,
-        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
-        "fallback_model": "fredrezones55/Qwopus3.5:9b",
+        "budget_words": 170,
+        "primary_model_default": "fredrezones55/Qwopus3.5:9b",
+        "fallback_model": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
     },
     "web_synth": {
         "description": "web research — multi-source → 3-paragraph summary",
-        "budget_words": 180,
-        "primary_model_default": "jaahas/crow:9b",
-        "fallback_model": "batiai/gemma4-e2b:q4",
+        "budget_words": 210,
+        "primary_model_default": "aratan/gemma-4-E4B-it-heretic:Q6_K",
+        "fallback_model": "cryptidbleh/gemma4-claude-opus-4.6:latest",
     },
     "code_gen": {
         "description": "code generation — small function with type hints",
-        "budget_words": 100,
-        "primary_model_default": "aratan/gemma-4-E4B-it-heretic:Q6_K",
-        "fallback_model": "fredrezones55/Qwopus3.5:9b",
+        "budget_words": 120,
+        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "fallback_model": "cryptidbleh/gemma4-claude-opus-4.6:latest",
     },
 }
 
