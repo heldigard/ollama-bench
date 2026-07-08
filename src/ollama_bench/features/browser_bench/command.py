@@ -99,7 +99,7 @@ OUT_DIR = Path.home() / ".claude" / "state" / "browser-model-bench"
 # - HauhauCS-Balanced: smart_trim #1 (replaces Grug-12B, DROPPED 2026-07-08 PM trim)
 # - huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K: tool-call winner (kept)
 PRIMARY_MODELS = [
-    "qwen3.5:4b",
+    "cryptidbleh/gemma4-claude-opus-4.6:latest",
     "hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M",
 ]
 TOOL_MODELS = PRIMARY_MODELS + [
