@@ -73,9 +73,9 @@ run_bench() { # run_bench <stage_name> <output_md> <cmd...>
 
 # ── Stage 0: wait for the deep bench to finish ───────────────────────────────
 log "STAGE 0: wait for deep bench"
-while pgrep -f "ollama-bench deep" >/dev/null 2>&1; do
+while pgrep -f "ollama-bench " >/dev/null 2>&1; do
     done_n=$(python3 -c "import json;print(len({json.loads(l).get('model') for l in open('$DEEP_JSONL') if l.strip()}))" 2>/dev/null || echo "?")
-    log "  deep running ($done_n/30 models); sleeping 120s"
+    log "  a bench is running (deep $done_n/30); sleeping 120s"
     sleep 120
 done
 if [ ! -s "$DEEP_JSONL" ]; then
@@ -86,7 +86,7 @@ log "  deep complete."
 
 # ── Stage 1: specialized benches (sequential, GPU-paced) ─────────────────────
 log "STAGE 1: specialized benches"
-MAPFILE -t LLM < <(smoke_ok_models)
+mapfile -t LLM < <(smoke_ok_models)
 log "  ${#LLM[@]} smoke-OK LLM models"
 
 if [ "${#LLM[@]}" -gt 0 ]; then
@@ -98,7 +98,7 @@ if [ "${#LLM[@]}" -gt 0 ]; then
         ollama-bench pdf-extract -m "${LLM[@]}" --cooldown "$COOLDOWN" --temp-limit "$TEMPLIMIT"
 fi
 
-MAPFILE -t OCR < <(ocr_models)
+mapfile -t OCR < <(ocr_models)
 log "  ${#OCR[@]} OCR models for pdf-ocr"
 if [ "${#OCR[@]}" -gt 0 ]; then
     run_bench pdf-ocr "$RESULTS/pdf_ocr.md" \
