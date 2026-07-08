@@ -17,12 +17,15 @@ import argparse
 import json
 import re
 import sys
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
+from ollama_bench.shared.gpu import paced
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
 from ollama_bench.shared.scorer import prepare_scored_response
+
+DEFAULT_COOLDOWN = 60  # seconds between models (GPU safety; sequential, never parallel)
+GPU_TEMP_LIMIT = 75
 
 # Each case: (id, prompt, expected_substrings). expected = lowercase substrings
 # that MUST appear in a correct output (tool name + the key argument values).
@@ -245,20 +248,19 @@ def cmd_tool_call(args: argparse.Namespace) -> int:
     if not candidates:
         print("ERROR: --models required", file=sys.stderr)
         return 2
-    print(f"# Tool-call bench: {len(candidates)} models x {len(PROMPTS)} cases", file=sys.stderr)
+    cooldown = int(getattr(args, "cooldown", DEFAULT_COOLDOWN))
+    temp_limit = int(getattr(args, "temp_limit", GPU_TEMP_LIMIT))
+    print(
+        f"# Tool-call bench: {len(candidates)} models x {len(PROMPTS)} cases "
+        f"(cooldown={cooldown}s)",
+        file=sys.stderr,
+    )
     opts = CallOpts(num_predict=120, num_ctx=2048)
 
-    results: dict = {}
-    with ThreadPoolExecutor(max_workers=4) as ex:
-        futs = {ex.submit(run_model, m, opts): m for m in candidates}
-        for i, fut in enumerate(as_completed(futs), 1):
-            m = futs[fut]
-            try:
-                r = fut.result()
-            except Exception as e:
-                r = {m: {"err": str(e)}}
-            results.update(r)
-            print(f"  [{i:2d}/{len(candidates)}] {m[:55]}  done", file=sys.stderr, flush=True)
+    # Sequential + GPU-paced (never parallel — the old pool oversaturated the GPU).
+    results = paced(
+        candidates, lambda m: run_model(m, opts)[m], cooldown=cooldown, temp_limit=temp_limit
+    )
 
     ranked = []
     for m, r in results.items():
@@ -291,4 +293,16 @@ def add_parser(sub, parent: argparse.ArgumentParser) -> None:
     )
     p.add_argument("-m", "--models", nargs="+", required=True, help="Models to bench.")
     p.add_argument("-o", "--output", help="Output MD path (default: cache dir).")
+    p.add_argument(
+        "--cooldown",
+        type=int,
+        default=DEFAULT_COOLDOWN,
+        help=f"Seconds to wait between models (default: {DEFAULT_COOLDOWN}).",
+    )
+    p.add_argument(
+        "--temp-limit",
+        type=int,
+        default=GPU_TEMP_LIMIT,
+        help=f"Max GPU °C before forced wait (default: {GPU_TEMP_LIMIT}).",
+    )
     p.set_defaults(cmd=cmd_tool_call)

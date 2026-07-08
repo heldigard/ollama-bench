@@ -14,7 +14,6 @@ from __future__ import annotations
 import argparse
 import csv
 import json
-import subprocess
 import sys
 import time
 from pathlib import Path
@@ -22,45 +21,16 @@ from statistics import mean
 
 from ollama_bench.features.canonical_tasks import PROMPTS, iter_cases, score_task_response
 from ollama_bench.shared.config import NUM_PREDICT_DEFAULT
+from ollama_bench.shared.gpu import gpu_temp, wait_gpu_cool
 from ollama_bench.shared.ollama import CallOpts, call, get_model_names
 from ollama_bench.shared.paths import result_path
 from ollama_bench.shared.scorer import strip_reasoning
 
-WORKERS = 4
+# Execution is DELIBERATELY SEQUENTIAL — never re-introduce parallelism. A prior
+# ThreadPoolExecutor design maxed the GPU (80°C+), ran for hours, and got killed
+# mid-run, losing all progress. See memory: bench-gpu-safety.
 DEFAULT_COOLDOWN = 60  # seconds between models
 GPU_TEMP_LIMIT = 75  # °C — wait if GPU hotter
-
-
-def _gpu_temp() -> int:
-    """Return GPU temperature in °C, or 0 if unavailable."""
-    try:
-        out = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader"],
-            timeout=5,
-            text=True,
-        )
-        return int(out.strip())
-    except (
-        subprocess.CalledProcessError,
-        FileNotFoundError,
-        ValueError,
-        subprocess.TimeoutExpired,
-    ):
-        return 0
-
-
-def _wait_for_cooldown(cooldown: int, temp_limit: int) -> None:
-    """Sleep until GPU cools down and cooldown period passes."""
-    while True:
-        temp = _gpu_temp()
-        if temp > 0 and temp <= temp_limit:
-            break
-        if temp > temp_limit:
-            print(f"  GPU {temp}°C > {temp_limit}°C, waiting 30s...", file=sys.stderr)
-            time.sleep(30)
-        else:
-            break
-    time.sleep(cooldown)
 
 
 def _smoke_ok_candidates(strip: bool = True) -> list[str]:
@@ -137,29 +107,102 @@ def _aggregate(results: dict, tasks: list[str]) -> dict[str, list]:
     return per_task
 
 
-def _write_detail_jsonl(results: dict, base: Path) -> Path:
-    """Write per-case metric details without raw model outputs."""
-    path = base.with_name(f"{base.stem}_details").with_suffix(".jsonl")
-    with path.open("w") as f:
-        for model, task_map in sorted(results.items()):
-            if not isinstance(task_map, dict) or "err" in task_map:
-                continue
-            for task, items in task_map.items():
-                for item in items:
-                    f.write(
-                        json.dumps(
-                            {
-                                "model": model,
-                                "task": task,
-                                "case": item.get("pid"),
-                                "score": item.get("sc"),
-                                "metrics": item.get("metrics", {}),
-                            },
-                            sort_keys=True,
-                        )
-                        + "\n"
+def _details_path(base: Path) -> Path:
+    """Path to the append-only per-case details JSONL (kill-safe source of truth)."""
+    return base.with_name(f"{base.stem}_details").with_suffix(".jsonl")
+
+
+def _append_model_details(model: str, results: dict, base: Path, tasks: list[str]) -> None:
+    """Append one model's per-case metrics to the details JSONL immediately.
+
+    This is the incremental, kill-safe save: each completed model is flushed to
+    disk before the next one starts, so a kill/crash never loses scored work. The
+    JSONL is append-only — it is NEVER truncated mid-run (the old design wrote it
+    only at the very end, so any kill erased every score).
+    """
+    task_map = results.get(model)
+    if not isinstance(task_map, dict) or "err" in task_map:
+        return
+    path = _details_path(base)
+    with path.open("a") as f:
+        for task in tasks:
+            for item in task_map.get(task, []):
+                f.write(
+                    json.dumps(
+                        {
+                            "model": model,
+                            "task": task,
+                            "case": item.get("pid"),
+                            "score": item.get("sc"),
+                            "metrics": item.get("metrics", {}),
+                        },
+                        sort_keys=True,
                     )
-    return path
+                    + "\n"
+                )
+
+
+def _load_results_from_details(base: Path, tasks: list[str]) -> dict:
+    """Rebuild a results dict from the append-only details JSONL.
+
+    Resilient to a truncated trailing line (a kill mid-write leaves a partial
+    JSON record) — bad lines are skipped, not fatal. This is what makes --resume
+    reconstruct every previously-scored model so the final re-rank never drops
+    completed work.
+    """
+    path = _details_path(base)
+    results: dict = {}
+    if not path.exists():
+        return results
+    with path.open() as f:
+        for line in f:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                entry = json.loads(line)
+            except json.JSONDecodeError:
+                continue  # truncated tail from a killed run; skip
+            model, task = entry.get("model"), entry.get("task")
+            if not model or task not in tasks:
+                continue
+            results.setdefault(model, {}).setdefault(task, []).append(
+                {
+                    "pid": entry.get("case"),
+                    "sc": entry.get("score"),
+                    "metrics": entry.get("metrics", {}),
+                }
+            )
+    return results
+
+
+def _load_results_from_tsv(tsv_path: Path, tasks: list[str]) -> dict:
+    """Reconstruct task-level means from the ranked TSV.
+
+    Defense-in-depth fallback for when the details JSONL is missing but the TSV
+    survived (e.g. an older run written by the pre-incremental code). Produces
+    one synthetic case per task carrying the model's recorded mean score, which
+    is enough for _aggregate to rank it alongside freshly-benched models.
+    """
+    results: dict = {}
+    if not tsv_path.exists():
+        return results
+    with tsv_path.open() as f:
+        for r in csv.DictReader(f, delimiter="\t"):
+            model, task = r.get("model"), r.get("task")
+            if not model or task not in tasks:
+                continue
+            raw_score = r.get("score")
+            if raw_score is None:
+                continue
+            try:
+                score = float(raw_score)
+            except (TypeError, ValueError):
+                continue
+            results.setdefault(model, {}).setdefault(task, []).append(
+                {"pid": "tsv_mean", "sc": score, "metrics": {}}
+            )
+    return results
 
 
 def _append_model_to_tsv(model: str, task_scores: dict[str, float], tsv_path: Path) -> None:
@@ -183,10 +226,14 @@ def _rewrite_tsv_with_ranks(per_task: dict[str, list], tsv_path: Path) -> None:
                 w.writerow([t, i, s, m])
 
 
-def _write_outputs(
-    per_task: dict[str, list], tasks: list[str], base: Path, results: dict | None = None
-) -> None:
-    """Write TSV + MD summary."""
+def _write_outputs(per_task: dict[str, list], tasks: list[str], base: Path) -> None:
+    """Write TSV + MD summary.
+
+    The per-case details JSONL is maintained incrementally (_append_model_details)
+    during the run, so it is NOT rewritten here — rewriting would truncate the
+    kill-safe source of truth. TSV/MD are derived views, safe to rebuild from the
+    fully-reconstructed results each time.
+    """
     tsv_path = base.with_suffix(".tsv")
     _rewrite_tsv_with_ranks(per_task, tsv_path)
     md_path = base.with_suffix(".md")
@@ -205,9 +252,6 @@ def _write_outputs(
             for i, (m, s) in enumerate(ranked[:5], 1):
                 f.write(f"| {i} | {s} | `{m}` |\n")
     print(f"Wrote {tsv_path}\nWrote {md_path}", file=sys.stderr)
-    if results is not None:
-        detail_path = _write_detail_jsonl(results, base)
-        print(f"Wrote {detail_path}", file=sys.stderr)
 
 
 def cmd_deep(args: argparse.Namespace) -> int:
@@ -231,6 +275,13 @@ def cmd_deep(args: argparse.Namespace) -> int:
     suffix = "_strip" if strip else ""
     base = Path(args.output) if args.output else result_path(f"deep_bench{suffix}")
     tsv_path = base.with_suffix(".tsv")
+
+    # A fresh (non-resume) run starts clean so incremental appends don't stack
+    # onto stale TSV/JSONL from a previous run. --resume preserves + extends them.
+    if not resume:
+        for stale in (tsv_path, _details_path(base)):
+            if stale.exists():
+                stale.unlink()
 
     # Resume: skip models already in results
     if resume:
@@ -256,36 +307,24 @@ def cmd_deep(args: argparse.Namespace) -> int:
     num_predict = 600 if strip else NUM_PREDICT_DEFAULT
     opts = CallOpts(num_predict=num_predict, num_ctx=4096)
 
-    # Accumulate all results (including previously completed if resuming)
-    results: dict = {}
-    if resume and tsv_path.exists():
-        # Load previous results from details JSONL if available
-        detail_path = base.with_name(f"{base.stem}_details").with_suffix(".jsonl")
-        if detail_path.exists():
-            with detail_path.open() as f:
-                for line in f:
-                    entry = json.loads(line)
-                    m = entry["model"]
-                    t = entry["task"]
-                    if m not in results:
-                        results[m] = {}
-                    if t not in results[m]:
-                        results[m][t] = []
-                    results[m][t].append(
-                        {
-                            "pid": entry.get("case"),
-                            "sc": entry.get("score"),
-                            "metrics": entry.get("metrics", {}),
-                        }
-                    )
+    # Reconstruct every previously-scored model so the final re-rank never drops
+    # completed work. Source of truth = append-only details JSONL (kill-safe);
+    # the ranked TSV is the fallback when JSONL is missing (older/other runs).
+    results: dict = _load_results_from_details(base, tasks) if resume else {}
+    if resume:
+        for model, task_map in _load_results_from_tsv(tsv_path, tasks).items():
+            results.setdefault(model, task_map)
 
     for i, model in enumerate(candidates, 1):
         short = model.split("/")[-1][:60]
         print(f"  [{i:2d}/{len(candidates)}] {short}", file=sys.stderr, flush=True)
 
-        # GPU cooldown before each model
-        if i > 1 or cooldown > 0:
-            _wait_for_cooldown(cooldown, temp_limit)
+        # GPU safety: always temp-gate before loading a model (a hot card must
+        # never get a fresh workload), and sleep the cooldown BETWEEN models so
+        # the GPU dissipates heat. No cooldown before the very first model.
+        wait_gpu_cool(temp_limit)
+        if i > 1:
+            time.sleep(cooldown)
 
         try:
             r = run_model(model, tasks, opts, strip)
@@ -293,7 +332,8 @@ def cmd_deep(args: argparse.Namespace) -> int:
             r = {model: {"err": str(e)}}
         results.update(r)
 
-        # Incremental save: append this model to TSV
+        # Incremental save: flush BOTH the ranked TSV and the per-case details
+        # JSONL to disk now, so a kill/crash never loses this model's scores.
         if model in results and isinstance(results[model], dict) and "err" not in results[model]:
             task_scores = {}
             for t in tasks:
@@ -303,18 +343,19 @@ def cmd_deep(args: argparse.Namespace) -> int:
                     task_scores[t] = round(mean(scores), 2)
             if task_scores:
                 _append_model_to_tsv(model, task_scores, tsv_path)
+                _append_model_details(model, results, base, tasks)
                 print(
                     f"    saved ({', '.join(f'{t}={s:.2f}' for t, s in list(task_scores.items())[:3])}...)",
                     file=sys.stderr,
                 )
 
-        temp = _gpu_temp()
+        temp = gpu_temp()
         if temp > 0:
             print(f"    GPU: {temp}°C", file=sys.stderr)
 
-    # Final: re-rank and write complete outputs
+    # Final: re-rank over the fully-reconstructed results and write derived views.
     per_task = _aggregate(results, tasks)
-    _write_outputs(per_task, tasks, base, results)
+    _write_outputs(per_task, tasks, base)
     return 0
 
 

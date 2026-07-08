@@ -117,3 +117,64 @@ def test_cmd_smoke_skips_embeddings(tmp_path):
     assert "qwen3.5:4b" in content
     assert "nomic-embed-text" not in content
     assert "embeddinggemma" not in content
+
+
+def test_smoke_incremental_save_and_resume_skip(tmp_path):
+    """Smoke appends each row immediately (kill-safe) and --resume skips completed."""
+    from ollama_bench.features.smoke.command import _append_smoke_row, _smoke_completed
+
+    out = tmp_path / "smoke.tsv"
+    _append_smoke_row({"name": "m1", "status": "ok"}, out)
+    _append_smoke_row({"name": "m2", "status": "leak:empty_response"}, out)
+
+    # Header written once + two data rows.
+    lines = out.read_text().strip().split("\n")
+    assert len(lines) == 3
+
+    # Resume reads back exactly the completed set.
+    assert _smoke_completed(out) == {"m1", "m2"}
+
+
+def test_cmd_smoke_resume_skips_done(tmp_path):
+    """A second smoke run with --resume must not re-smoke already-present models."""
+    fake = MagicMock()
+    fake.__enter__.return_value.read.return_value = json.dumps(
+        {
+            "model": "x",
+            "response": "clean",
+            "done": True,
+            "done_reason": "stop",
+            "eval_count": 5,
+            "eval_duration": 100_000_000,
+        }
+    ).encode()
+    fake.read.return_value = fake.__enter__.return_value.read.return_value
+    out = tmp_path / "out.tsv"
+
+    # First (fresh) run smokes m1.
+    args1 = type("A", (), {"models": ["m1"], "output": str(out), "resume": False})()
+    with patch("urllib.request.urlopen", return_value=fake):
+        cmd_smoke(args1)
+    assert "m1" in out.read_text()
+
+    # Second (resume) run with m1 + m2 — m1 must be skipped, only m2 added.
+    call_count = {"n": 0}
+    real_smoke_one = __import__(
+        "ollama_bench.features.smoke.command", fromlist=["smoke_one"]
+    ).smoke_one
+
+    def counting_smoke_one(name):
+        call_count["n"] += 1
+        return real_smoke_one(name)
+
+    args2 = type("A", (), {"models": ["m1", "m2"], "output": str(out), "resume": True})()
+    with (
+        patch("urllib.request.urlopen", return_value=fake),
+        patch("ollama_bench.features.smoke.command.smoke_one", side_effect=counting_smoke_one),
+    ):
+        cmd_smoke(args2)
+    # Only m2 was actually smoked (m1 skipped via resume).
+    assert call_count["n"] == 1
+    content = out.read_text()
+    assert content.count("m1") == 1  # not duplicated
+    assert "m2" in content

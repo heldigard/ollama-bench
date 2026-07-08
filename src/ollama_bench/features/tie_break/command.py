@@ -12,49 +12,19 @@ from __future__ import annotations
 
 import argparse
 import json
-import subprocess
 import sys
 import time
 from pathlib import Path
 
 from ollama_bench.features.canonical_tasks import iter_hard_cases, score_task_response
+from ollama_bench.shared.gpu import gpu_temp, wait_gpu_cool
 from ollama_bench.shared.ollama import CallOpts, call
 from ollama_bench.shared.paths import result_path
 from ollama_bench.shared.scorer import strip_reasoning
 
 _TASKS = ("improve", "codeq_sum", "smart_trim", "web_synth", "code_gen")
-DEFAULT_COOLDOWN = 60
+DEFAULT_COOLDOWN = 60  # seconds between models (GPU safety; sequential, never parallel)
 GPU_TEMP_LIMIT = 75
-
-
-def _gpu_temp() -> int:
-    """Return GPU temperature in °C, or 0 if unavailable."""
-    try:
-        out = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=temperature.gpu", "--format=csv,noheader"],
-            timeout=5,
-            text=True,
-        )
-        return int(out.strip())
-    except (
-        subprocess.CalledProcessError,
-        FileNotFoundError,
-        ValueError,
-        subprocess.TimeoutExpired,
-    ):
-        return 0
-
-
-def _wait_for_cooldown(cooldown: int, temp_limit: int) -> None:
-    """Sleep until GPU cools down and cooldown period passes."""
-    while True:
-        temp = _gpu_temp()
-        if temp > 0 and temp > temp_limit:
-            print(f"  GPU {temp}°C > {temp_limit}°C, waiting 30s...", file=sys.stderr)
-            time.sleep(30)
-        else:
-            break
-    time.sleep(cooldown)
 
 
 def run_model(model: str, opts: CallOpts) -> dict:
@@ -120,8 +90,10 @@ def cmd_tie_break(args: argparse.Namespace) -> int:
         short = model.split("/")[-1][:55]
         print(f"  [{i:2d}/{len(candidates)}] {short}", file=sys.stderr, flush=True)
 
+        # GPU safety: temp-gate every model; cooldown BETWEEN models.
+        wait_gpu_cool(temp_limit)
         if i > 1:
-            _wait_for_cooldown(cooldown, temp_limit)
+            time.sleep(cooldown)
 
         try:
             r = run_model(model, opts)
@@ -129,7 +101,7 @@ def cmd_tie_break(args: argparse.Namespace) -> int:
             r = {model: {"err": str(e)}}
         results.update(r)
 
-        temp = _gpu_temp()
+        temp = gpu_temp()
         if temp > 0:
             print(f"    GPU: {temp}°C", file=sys.stderr)
 

@@ -7,6 +7,8 @@ on synthetic PDFs generated at runtime so the ground truth is deterministic and
 does not depend on private documents.
 """
 
+# vs-soft-allow  — end-to-end pipeline (build PDF images -> call -> score -> rank -> write).
+
 from __future__ import annotations
 
 import argparse
@@ -22,7 +24,11 @@ from tempfile import TemporaryDirectory
 from typing import Any
 
 from ollama_bench.shared.config import OLLAMA_URL
+from ollama_bench.shared.gpu import paced
 from ollama_bench.shared.paths import result_path
+
+DEFAULT_COOLDOWN = 60  # seconds between models (GPU safety; sequential, never parallel)
+GPU_TEMP_LIMIT = 75
 
 PROMPT = "ocr [img]"
 
@@ -97,7 +103,9 @@ def _import_fitz():
     try:
         import fitz  # type: ignore
     except ModuleNotFoundError as exc:
-        raise SystemExit("pdf-ocr requires PyMuPDF/fitz to generate and render PDF fixtures.") from exc
+        raise SystemExit(
+            "pdf-ocr requires PyMuPDF/fitz to generate and render PDF fixtures."
+        ) from exc
     return fitz
 
 
@@ -226,15 +234,24 @@ def cmd_pdf_ocr(args: argparse.Namespace) -> int:
     if not candidates:
         print("ERROR: --models required", file=sys.stderr)
         return 2
+    cooldown = int(getattr(args, "cooldown", DEFAULT_COOLDOWN))
+    temp_limit = int(getattr(args, "temp_limit", GPU_TEMP_LIMIT))
+    print(
+        f"# PDF-OCR bench: {len(candidates)} models x {len(CASES)} cases (cooldown={cooldown}s)",
+        file=sys.stderr,
+    )
     opts = PdfOcrOpts()
+    # Sequential + GPU-paced (run_model returns {model: rows}; paced keys by model).
     with TemporaryDirectory(prefix="ollama-bench-pdf-ocr-") as td:
         images = build_pdf_images(Path(td))
-        results = [run_model(m, images, opts) for m in candidates]
+        flat = paced(
+            candidates,
+            lambda m: run_model(m, images, opts)[m],
+            cooldown=cooldown,
+            temp_limit=temp_limit,
+        )
 
     ranked = []
-    flat: dict[str, Any] = {}
-    for result in results:
-        flat.update(result)
     for model, rows in flat.items():
         scores = [float(r["score"]) for r in rows if "score" in r]
         recalls = [float(r.get("recall", 0.0)) for r in rows]
@@ -280,4 +297,16 @@ def add_parser(sub, parent: argparse.ArgumentParser) -> None:
     )
     p.add_argument("-m", "--models", nargs="+", required=True, help="Models to bench.")
     p.add_argument("-o", "--output", help="Output MD path (default: cache dir).")
+    p.add_argument(
+        "--cooldown",
+        type=int,
+        default=DEFAULT_COOLDOWN,
+        help=f"Seconds to wait between models (default: {DEFAULT_COOLDOWN}).",
+    )
+    p.add_argument(
+        "--temp-limit",
+        type=int,
+        default=GPU_TEMP_LIMIT,
+        help=f"Max GPU °C before forced wait (default: {GPU_TEMP_LIMIT}).",
+    )
     p.set_defaults(cmd=cmd_pdf_ocr)
