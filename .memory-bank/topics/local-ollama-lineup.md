@@ -9,27 +9,31 @@
 > yuxinlu1 Gemma4, DeepSeek-V4-Flash, lift) and re-benched with `--strip`
 > think-strip mode. DeepSeek-V4-Flash is strippable but ranks last everywhere.
 
-## Per-task top-2 (wired into harness) — 2026-07-08
+## Per-task top-2 (wired into harness) — 2026-07-08 PM (round-7, combined deep+tiebreak)
 
 | task | #1 (PRIMARY) | #2 (fallback) |
 |---|---|---|
-| improve | **`zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2`** ← NEW (7.01) | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled` ← NEW |
-| codeq_sum | **`jaahas/crow:9b`** (unchanged, 9.57) | `SetneufPT/Qwopus3.5-4B-Coder-MTP` |
-| smart_trim | **`hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled`** ← NEW (11.53) | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf` |
-| web_synth | **`hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B`** ← NEW (12.50 tie) | `aratan/gemma-4-E4B-it-heretic:Q6_K` |
-| code_gen | **`hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled`** ← NEW (11.65 tie) | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2` |
-| bug_finding | **`hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B`** ← NEW (14.06) | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2` |
-| tool_call | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf` (saturated) | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
-| browser_tool | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf` (saturated) | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
-| pdf_extract | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf` (saturated) | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
-| pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF` (unchanged, 12.00) | `hf.co/prithivMLmods/lift-GGUF` ← NEW |
+| improve | **`zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2`** (7.74/6.40) | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B` |
+| codeq_sum | **`batiai/gemma4-e4b:q4`** ← NEW (10.24/11.20) | `jaahas/crow:9b` |
+| smart_trim | **`hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced`** ← NEW (12.30/13.53) | `hf.co/SC117/gemma-4-12B-it-heretic-QAT` |
+| web_synth | **`hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1`** ← NEW (11.85/12.83) | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| code_gen | **`hf.co/prithivMLmods/lift-GGUF`** ← NEW (12.13/8.23) | `SetneufPT/Qwopus3.5-4B-Coder-MTP` |
+| bug_finding | **`zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2`** ← NEW (15.43) | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| tool_call | **`SetneufPT/Qwopus3.5-4B-Coder-MTP`** ← NEW (10.10) | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus` |
+| browser_tool | `SetneufPT/Qwopus3.5-4B-Coder-MTP` ← NEW | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus` |
+| pdf_extract | **`SetneufPT/Qwopus3.5-4B-Coder-MTP`** ← NEW (12.07) | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled` |
+| pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF` (unchanged, 12.00) | `hf.co/prithivMLmods/lift-GGUF` |
 | embedding | `embeddinggemma:latest` | `bge-m3:latest` |
 
-## Key changes from 2026-07-08 re-bench
+## Key changes from 2026-07-08 PM re-bench (round-7)
 
-1. **Openclaw** (`hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M`) — NEW #1 smart_trim + code_gen (tied). Strong generalist Qwen3.5-9B fine-tune.
-2. **DeltaCoder** (`hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M`) — NEW #1 web_synth (tied) + bug_finding. Coder-optimized Qwen3.5-9B.
-3. **OmniCoder** promoted to improve #1 (was #4); SetneufPT demoted from improve #1 to #8.
+1. **OmniCoder** — improve #1 (held) + bug_finding #1 (NEW). Multi-task champion.
+2. **SetneufPT/Qwopus3.5** — tool_call + pdf_extract + browser_tool #1 (NEW). Structured-output champion.
+3. **HauhauCS-Balanced** — smart_trim #1 (NEW, combined 12.30/13.53).
+4. **TeichAI/Fable-5-v1** — web_synth combined #1 (NEW; tiebreak reshuffled past deep-only heretic).
+5. **prithiv/lift** — code_gen #1 (NEW) + pdf_ocr fallback. Dual-role.
+6. **DeltaCoder + Openclaw** (prior web_synth/bug_finding/smart_trim/code_gen #1) FELL OUT of top-5.
+7. 7/9 PRIMARY changed; improve + pdf_ocr held. Lineup trimmed to top-5 union (losers deleted).
 4. **Negentropy-4B** — compact 3GB model, top-5 in codeq_sum/code_gen. Good for VRAM-tight.
 5. **lift** — OCR model, pdf_ocr #3 (11.12). Fallback to Unlimited-OCR.
 6. **DeepSeek-V4-Flash** — strippable=1 but ranks LAST in every deep task. Not recommended.

@@ -1,5 +1,5 @@
-# Deep winners — 2026-07-08 PM run (deep pass, pending combined)
-> Status: deep + tie-break done; specialized benches running. NOT yet rewired into config.py/RANKING.md.
+# Deep winners — 2026-07-08 PM run (FINAL — pipeline complete, rewired)
+> Status: ✅ full pipeline done (deep+tie-break+specialized). config.py + RANKING.md rewired. Lineup trimmed to top-5 union (losers deleted).
 
 ## Deep-pass #1 today vs config.py primaries (prior bench)
 

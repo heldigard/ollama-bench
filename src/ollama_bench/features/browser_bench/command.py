@@ -94,13 +94,13 @@ __all__ = [
 
 OUT_DIR = Path.home() / ".claude" / "state" / "browser-model-bench"
 
-# 2026-07-05 port: aligned with ~/ollama-bench/.memory-bank/topics/local-ollama-lineup.md
-# - qwen3.5:4b: vision + tools winner (kept)
-# - kai-os/Grug-12B-GGUF:Q4_K_M: text-reasoning winner (replaces Mobius, which was DROPPED in 2026-07-04 re-bench)
-# - huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K: tool-call winner 9.82 (replaces HauhauCS Qwen3.5 tie)
+# 2026-07-08 PM: aligned with ~/ollama-bench/.memory-bank/topics/local-ollama-lineup.md
+# - qwen3.5:4b: vision + tools winner (kept; lightweight infra)
+# - HauhauCS-Balanced: smart_trim #1 (replaces Grug-12B, DROPPED 2026-07-08 PM trim)
+# - huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K: tool-call winner (kept)
 PRIMARY_MODELS = [
     "qwen3.5:4b",
-    "hf.co/kai-os/Grug-12B-GGUF:Q4_K_M",
+    "hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M",
 ]
 TOOL_MODELS = PRIMARY_MODELS + [
     "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",

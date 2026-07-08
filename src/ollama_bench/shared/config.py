@@ -33,50 +33,50 @@ TASKS: dict[str, dict] = {
         "description": "prompt-improver hook — vague input → structured spec",
         "budget_words": 150,
         "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
-        "fallback_model": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
+        "fallback_model": "hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M",
     },
     "codeq_sum": {
         "description": "codeq summary — 1-line orientation of a function body",
         "budget_words": 32,
-        "primary_model_default": "jaahas/crow:9b",
-        "fallback_model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
+        "primary_model_default": "batiai/gemma4-e4b:q4",
+        "fallback_model": "jaahas/crow:9b",
     },
     "smart_trim": {
         "description": "PreCompact hook — transcript → handoff",
         "budget_words": 170,
-        "primary_model_default": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
-        "fallback_model": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
+        "primary_model_default": "hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M",
+        "fallback_model": "hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL",
     },
     "web_synth": {
         "description": "web research — multi-source → 3-paragraph summary",
         "budget_words": 210,
-        "primary_model_default": "hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M",
-        "fallback_model": "aratan/gemma-4-E4B-it-heretic:Q6_K",
+        "primary_model_default": "hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M",
+        "fallback_model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0",
     },
     "code_gen": {
         "description": "code generation — small function with type hints",
         "budget_words": 120,
-        "primary_model_default": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
-        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "primary_model_default": "hf.co/prithivMLmods/lift-GGUF:Q4_K_M",
+        "fallback_model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
     },
 }
 
 SPECIALIZED_TASKS: dict[str, dict[str, str]] = {
     "bug_finding": {
-        "primary_model_default": "hf.co/danielcherubini/Qwen3.5-DeltaCoder-9B-GGUF:Q4_K_M",
-        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "fallback_model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0",
     },
     "tool_call": {
-        "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
-        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
+        "fallback_model": "hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M",
     },
     "browser_tool": {
-        "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
-        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
+        "fallback_model": "hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M",
     },
     "pdf_extract": {
-        "primary_model_default": "hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M",
-        "fallback_model": "huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K",
+        "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
+        "fallback_model": "hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M",
     },
     "pdf_ocr": {
         "primary_model_default": "hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M",
