@@ -5,16 +5,22 @@
 
 > Total tested: 74 · Kept: 22 · Eliminated: 52
 
-## round-8 (2026-07-08 PM) — new candidate rejects (smoke→deep→tool_call)
+## round-8 (2026-07-08 PM) — new candidate rejects (smoke→deep→tool_call/bug-finding)
 
-Both pulled, full-benched, LOST every role vs round-7 champions. Deleted. Do NOT re-pull unless a new fine-tune drops.
+Four NEW HF candidates pulled + full-benched vs round-7 champions. ALL LOST. Deleted. Do NOT re-pull unless a new fine-tune drops.
 
-| model | base | improve | codeq_sum | smart_trim | web_synth | code_gen | tool_call | verdict |
-|---|---|---|---|---|---|---|---|---|
-| `hf.co/shuhulx/Qwopus3.5-4B-Coder-Fable5-v1-GGUF:Q4_K_M` | Qwen3.5-4B-Coder | 5.14 | 8.86 | 10.54 | 9.67 | 12.26 | 9.79 | **[DEL]** Fable5 twist on Qwopus3.5-4B base = WORSE than reigning SetneufPT/Qwopus3.5-4B-MTP (tool_call 10.10) on its signature structured role. No role won. |
-| `hf.co/tvall43/Qwen3.6-14B-A3B-FableVibes-GGUF:Q4_K_M` | **Qwen3.6-14B-A3B MoE (3B active)** | 6.44 | 9.71 | 10.81 | 11.18 | 12.19 | 9.93 | **[DEL]** 14B-A3B MoE = strong generalist (mid-pack everywhere) but NO specialist-killer. MoE-latency thesis (3B-active ≈ 4B speed) FAILED — tps 6.9 vs 4B's 10.7 (14B memory bandwidth dominates). code_gen 12.19 vs lift 12.13 = noise. |
+| model | base | scores | verdict |
+|---|---|---|---|
+| `hf.co/shuhulx/Qwopus3.5-4B-Coder-Fable5-v1-GGUF:Q4_K_M` | Qwen3.5-4B-Coder | improve 5.14 / codeq_sum 8.86 / smart_trim 10.54 / web_synth 9.67 / code_gen 12.26 / **tool_call 9.79** | **[DEL]** Fable5 twist on Qwopus3.5-4B base = WORSE than reigning SetneufPT/Qwopus3.5-4B-MTP (tool_call 10.10) on its signature structured role. No role won. |
+| `hf.co/tvall43/Qwen3.6-14B-A3B-FableVibes-GGUF:Q4_K_M` | **Qwen3.6-14B-A3B MoE (3B active)** | improve 6.44 / codeq_sum 9.71 / smart_trim 10.81 / web_synth 11.18 / code_gen 12.19 / tool_call 9.93 | **[DEL]** 14B-A3B MoE = strong generalist (mid-pack everywhere) but NO specialist-killer. MoE-latency thesis (3B-active ≈ 4B speed) FAILED — tps 6.9 vs 4B's 10.7 (14B memory bandwidth dominates). code_gen 12.19 vs lift 12.13 = noise. |
+| `hf.co/llmfan46/gemma-4-12B-agentic-fable5-composer2.5-v2-3.5x-tau2-uncensored-heretic-GGUF:Q4_K_M` | gemma-4-12B-composer2.5 (Q4) | **bug_finding 15.01** / web_synth 10.82 / code_gen 11.57 / smart_trim 11.57 | **[DEL]** TIES xentriom on bug_finding (15.01 vs 14.99 = noise, same composer2.5 base) but WORSE on web_synth (Q4 10.82 vs xentriom-Q8 11.92 — the Q8 is why xentriom holds web_synth #3). No improvement over installed xentriom; duplicate. |
+| `hf.co/KevinJK51/Qwen3.6-12B-IQ-Ultra-Heretic-Uncensored-Thinking-V2-Hightop-GGUF:Q4_K_M` | Qwen3.6-12B (thinking) | **bug_finding 11.03** | **[DEL]** Thinking-V2 reasoning model = bad fit for diff-review bug_finding format (11.03, well below top-5 bar 14.49). Reasoning doesn't help structured bug-counting. |
 
-**Round-8 learning:** the Qwen3.6-14B-A3B MoE architecture is worth RE-TESTING if a coder/agentic-tuned variant drops (this FableVibes finetune is a reasoning distill, not a coder tune) — but for now the dense Qwen3.5-9B / gemma-4-12B specialists still win every role at lower VRAM. Fable5-distill finetunes of bases we already hold (Qwopus3.5-4B, gemma-4-12B) do NOT beat the original tunes here.
+**Round-8 learnings:**
+1. **Qwen3.6-14B-A3B MoE** architecture worth RE-TESTING if a CODER-tuned (not reasoning-distill) variant drops — FableVibes is a reasoning distill. Dense Qwen3.5-9B / gemma-4-12B specialists still win every role at lower VRAM.
+2. **Fable5-distill finetunes of bases we already hold** (Qwopus3.5-4B, gemma-4-12B-composer2.5) do NOT beat the original tunes. Stop pulling same-base Fable5 variants.
+3. **Q4-vs-Q8 gap is real on web_synth** (~1.1 pts): composer2.5 needs Q8 (xentriom) to hold web_synth #3; the Q4 llmfan46 loses it. Q8 stays justified for that one model.
+4. **Thinking/reasoning models underperform on structured bug_finding** (KevinJK51 11.03) — reasoning doesn't aid diff-review bug-counting.
 
 ## improve — top-10 (with status)
 

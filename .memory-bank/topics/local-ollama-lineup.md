@@ -9,11 +9,13 @@
 > (better on every metric); 13 models deleted (12 losers + qwen3.5:4b). See [deep-winners-20260708-pm](deep-winners-20260708-pm.md).
 > think-strip mode. DeepSeek-V4-Flash is strippable but ranks last everywhere.
 >
-> **Round-8 (2026-07-08 PM, same day):** tested 2 NEW HF candidates — `shuhulx/Qwopus3.5-4B-Coder-Fable5-v1`
-> (Fable5 twist on Qwopus3.5-4B base) and `tvall43/Qwen3.6-14B-A3B-FableVibes` (14B-A3B MoE, 3B active).
-> BOTH LOST every role vs round-7 champions → deleted. Lineup unchanged at 22. MoE-latency thesis failed
-> (14B mem-bandwidth → tps 6.9, no match for 4B's 10.7). See RANKING_HISTORY.md §round-8. Don't re-pull
-> unless a CODER-tuned 14B-A3B variant drops (FableVibes is a reasoning distill, not a coder tune).
+> **Round-8 (2026-07-08 PM, same day):** tested 4 NEW HF candidates — `shuhulx/Qwopus3.5-4B-Coder-Fable5-v1`,
+> `tvall43/Qwen3.6-14B-A3B-FableVibes` (MoE 3B-active), `llmfan46/...composer2.5-v2-heretic` (Q4), `KevinJK51/Qwen3.6-12B-Thinking-V2`.
+> ALL 4 LOST vs round-7 champions → deleted. Lineup unchanged at 22. Key: MoE-latency thesis failed
+> (14B mem-bandwidth → tps 6.9 vs 4B 10.7); composer2.5-v2 Q4 ties xentriom on bug_finding (15.01 vs 14.99)
+> but loses web_synth (Q4 10.82 vs Q8 11.92) — xentriom Q8 stays. See RANKING_HISTORY.md §round-8.
+> Re-pull ONLY: a CODER-tuned 14B-A3B MoE (not reasoning-distill), or a genuinely new base (not another
+> Fable5/composer2.5 finetune of Qwen3.5-9B / Qwopus3.5-4B / gemma-4-12B).
 
 ## Per-task top-2 (wired into harness) — 2026-07-08 PM (round-7, combined deep+tiebreak)
 
