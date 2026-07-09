@@ -10,10 +10,10 @@ The original problem: 60+ throwaway bench scripts in `~/bench/ollama/` that grew
 # Core pipeline (smoke → deep → tie-break → bug-finding)
 ollama-bench list                       # enumerate installed models + status
 ollama-bench smoke -m M                 # 1-prompt leak gate per model (~30s/model)
-ollama-bench deep -c C -t T            # 5-task × N model bench (~90s/model)
-ollama-bench tie-break -w W            # re-bench tied candidates (harder prompts, no score cap)
-ollama-bench bug-finding -m M          # diff-review bench (count bugs found)
-ollama-bench tool-call -m M            # structured JSON tool-call (ground-truth scoring)
+ollama-bench deep -c C -t T             # 5-task × N model bench (~90s/model)
+ollama-bench tie-break -w W             # re-bench tied candidates (harder prompts, no score cap)
+ollama-bench bug-finding -m M           # diff-review bench (count bugs found)
+ollama-bench tool-call -m M             # structured JSON tool-call (ground-truth scoring)
 
 # Cross-CLI benches (ported from cli-orchestration)
 ollama-bench browser-tool -m M          # ref-grounded a11y action bench (snap+ref)
@@ -21,14 +21,16 @@ ollama-bench browser-bench-vision       # vision-grounded browser bench (OCR/cla
 
 # Specialized slices
 ollama-bench pdf-extract -m M           # schema field-extraction bench (abstention)
+ollama-bench pdf-ocr -m M               # rendered PDF OCR bench (vision/OCR models)
 ollama-bench embedding-retrieval        # embedding MRR + recall@5 (ground-truth)
 ollama-bench lfm-variant                # codeq summary tie-break for LFM family (think-strip)
 ollama-bench multi-domain               # legacy 4-domain bench
 
-# Helpers
+# Orchestrator + helpers
+ollama-bench candidates M [M ...]       # end-to-end sweep: pull → smoke → deep → MD report
 ollama-bench judge score -i F           # LLM-as-judge scoring (manual rubric)
 ollama-bench embedding eval -m M        # embedding model benchmark
-ollama-bench report build -i F          # markdown ranking from TSV
+ollama-bench report build [-i F]        # markdown ranking from TSV (defaults to last deep TSV)
 ```
 
 ## Tasks covered
@@ -39,7 +41,7 @@ generation).
 
 Hero (ground-truth, separately-benched): `bug_finding`, `tool_call`, `browser-tool` (a11y
 ref dispatch), `browser-bench-vision` (5 subtasks T1-T5), `pdf_extract`,
-`embedding_retrieval`.
+`pdf_ocr` (vision/OCR models only), `embedding_retrieval`.
 
 The canonical tasks mirror the harness wiring in
 `~/.claude/{hooks,scripts}/`. New tasks can be added by registering them in
@@ -54,26 +56,29 @@ Shared infrastructure (HTTP, scoring, paths, config) lives in
 
 ```text
 src/ollama_bench/
-├── cli.py                              # argparse multi-command root
+├── cli.py                              # argparse multi-command root (17 slices)
 ├── shared/
 │   ├── config.py                       # TASKS registry, defaults, paths
 │   ├── ollama.py                       # HTTP call + cache (think=False at TOP-LEVEL)
 │   ├── scorer.py                       # Leak detection, structural scoring
-│   └── paths.py                        # Output paths (TSV, ranking MD)
+│   ├── paths.py                        # Output paths (TSV, ranking MD)
+│   └── gpu.py                          # GPU safety: sequential exec, cooldown, resume
 └── features/
     ├── smoke/                          # 1-prompt leak gate
     ├── deep/                           # 5-task × N model bench
+    ├── candidates/                     # Orchestrator: pull → smoke → deep → MD report
     ├── tie_break/                      # Hard prompts + structural scoring (no cap)
     ├── bug_finding/                    # Diff-review (count bugs found)
     ├── tool_call/                      # Structured JSON tool-call
     ├── browser_tool/                   # Ref-grounded a11y action (snap+ref)
     ├── browser_bench/                  # Vision-grounded browser (T1-T5; ported cli-orchestration 2026-07-05)
     ├── pdf_extract/                    # Schema field-extraction (abstention)
+    ├── pdf_ocr/                        # Rendered PDF OCR (vision/OCR models)
     ├── embedding_retrieval/            # Embedding MRR + recall@5
     ├── lfm_variant/                    # codeq summary for LFM family
     ├── multi_domain/                   # legacy 4-domain
     ├── judge/                          # LLM-as-judge helpers
-    ├── embedding/                       # embedding model benchmark
+    ├── embedding/                      # embedding model benchmark
     ├── list/                           # enumerate installed models
     └── report/                         # TSV → markdown ranking
 ```
@@ -87,22 +92,31 @@ only. New functionality should normally start as a new slice under `features/`.
 smoke (leak gate) ──┐
                     ├─→ deep (5-task, 0-7 SAT cap) ─→ tie-break (hard prompts, -5 to +15)
                     │                                          │
-                    └──────────────────────────────────────────┴─→ bug_finding / tool_call
-                                                                   (ground-truth, 0-N direct)
+                    └──────────────────────────────────────────┴─→ bug_finding / tool_call /
+                                                                   browser_tool / pdf_extract /
+                                                                   pdf_ocr (ground-truth, 0-N direct)
+
+candidates = one-shot orchestrator wrapping the pipeline above for new HF models
 ```
 
-## Current lineup (2026-07-08 refactor, Ollama 0.31.1)
+## Current lineup (2026-07-08 PM re-bench, Ollama 0.31.1)
 
-| task | #1 (PRIMARY) | #2 (fallback) |
+Combined deep+tiebreak rank; ground-truth scores for the hero tasks. PRIMARY/FALLBACK
+mirror `shared/config.py` (single source of truth) and the live harness wiring in
+`~/.claude/{hooks,scripts}/`.
+
+| task | #1 PRIMARY | #2 FALLBACK |
 |---|---|---|
-| improve | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| codeq_sum | `jaahas/crow:9b` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| smart_trim | `fredrezones55/Qwopus3.5:9b` | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
-| web_synth | `aratan/gemma-4-E4B-it-heretic:Q6_K` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
-| code_gen | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
-| bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` |
-| tool_call | `hf.co/slyfox1186/qwen3.5-9b-opus-4.6-functiongemma.gguf:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
-| pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M` | `huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K` |
+| improve | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| codeq_sum | `batiai/gemma4-e4b:q4` | `jaahas/crow:9b` |
+| smart_trim | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| tool_call | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
+| browser_tool | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
+| pdf_extract | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
+| pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M` | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` |
 
 Full lineup + history: `.memory-bank/topics/local-ollama-lineup.md` · `RANKING.md` · `RANKING_HISTORY.md`.
 
@@ -112,7 +126,7 @@ Full lineup + history: `.memory-bank/topics/local-ollama-lineup.md` · `RANKING.
 git clone https://github.com/heldigard/ollama-bench.git
 cd ollama-bench
 python3 -m pip install -e '.[test]'
-pytest
+pytest                  # 194 tests, ~0.5s
 ```
 
 ## Requirements
@@ -137,11 +151,13 @@ pytest
 - **Tie-break saturation at 10.50 / 16.00**: hard-prompt scores for smart_trim /
   web_synth / code_gen saturate at structural-scoring caps. Real winners hidden
   in ties. Workaround: bump scoring bounds or add 3rd hard prompts (open task).
+- **`pdf_ocr` is vision-only**: unlimited-OCR needs `/api/chat` + `ocr [img]`.
+  General text models score -100 on this task (use `pdf_extract` instead).
 
 ## Test
 
 ```bash
-python3 -m pytest                                       # full suite (~30s)
+python3 -m pytest                                       # full suite (194 tests, ~0.5s)
 python3 -m pytest tests/test_layout.py                  # vertical-slice integrity
 python3 -m pytest tests/test_browser_tool.py            # slice-specific
 ```
