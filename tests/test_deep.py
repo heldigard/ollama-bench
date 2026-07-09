@@ -27,6 +27,15 @@ def test_aggregate_sorts_descending():
     assert out["improve"][2][0] == "m3"
 
 
+def test_aggregate_uses_case_weights():
+    results = {
+        "unsafe": {"improve": [{"sc": 10.0}, {"sc": 0.0, "weight": 2.0}]},
+        "safe": {"improve": [{"sc": 5.0}, {"sc": 5.0, "weight": 2.0}]},
+    }
+    out = _aggregate(results, ["improve"])
+    assert out["improve"] == [("safe", 5.0), ("unsafe", 3.33)]
+
+
 def test_aggregate_skips_errors():
     results = {
         "m1": {"improve": [{"sc": 5.0}]},
@@ -74,7 +83,15 @@ def test_load_results_from_details_reconstructs_model(tmp_path):
     _write_details(
         base,
         [
-            {"model": "modelA", "task": "improve", "case": "c1", "score": 5.0, "metrics": {}},
+            {
+                "model": "modelA",
+                "task": "improve",
+                "case": "c1",
+                "score": 5.0,
+                "weight": 2.0,
+                "metrics": {},
+                "response": "answer one",
+            },
             {"model": "modelA", "task": "improve", "case": "c2", "score": 5.0, "metrics": {}},
         ],
     )
@@ -82,6 +99,8 @@ def test_load_results_from_details_reconstructs_model(tmp_path):
     assert "modelA" in results
     scores = [it["sc"] for it in results["modelA"]["improve"]]
     assert scores == [5.0, 5.0]
+    assert results["modelA"]["improve"][0]["response"] == "answer one"
+    assert results["modelA"]["improve"][0]["weight"] == 2.0
 
 
 def test_load_results_from_details_skips_truncated_line(tmp_path):

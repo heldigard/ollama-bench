@@ -1,2 +1,8 @@
 {"id": "g_001", "s": "Unlimited-OCR", "p": "requires-prompt", "o": "ocr [img]", "t": "2026-07-07", "src": "progress.md", "supersedes": [], "aliases": []}
 {"id": "g_002", "s": "Unlimited-OCR", "p": "USES", "o": "ocr [img]", "t": "2026-07-07", "src": "progress.md", "supersedes": [], "aliases": []}
+{"id": "g_003", "s": "task:improve", "p": "USES_PRIMARY_MODEL", "o": "cryptidbleh/gemma4-claude-opus-4.6:latest", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": [], "aliases": []}
+{"id": "g_004", "s": "task:codeq_sum", "p": "USES_PRIMARY_MODEL", "o": "batiai/gemma4-e4b:q4", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": [], "aliases": []}
+{"id": "g_005", "s": "task:smart_trim", "p": "USES_PRIMARY_MODEL", "o": "batiai/gemma4-e2b:q4", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": [], "aliases": []}
+{"id": "g_006", "s": "task:improve", "p": "USES", "o": "primary:cryptidbleh/gemma4-claude-opus-4.6:latest", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": ["g_003"], "aliases": []}
+{"id": "g_007", "s": "task:codeq_sum", "p": "USES", "o": "primary:batiai/gemma4-e4b:q4", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": ["g_004"], "aliases": []}
+{"id": "g_008", "s": "task:smart_trim", "p": "USES", "o": "primary:batiai/gemma4-e2b:q4", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": ["g_005"], "aliases": []}

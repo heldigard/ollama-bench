@@ -1,4 +1,22 @@
-# Current Ranking — installed Ollama models (snapshot 2026-07-08 PM, Ollama 0.31.1)
+# Current Role Wiring + Historical Ranking
+
+## Wiring validation (2026-07-09, Ollama 0.31.2)
+
+Risk-weighted semantic scorer, task-specific consumer protocol, seed 42, two
+stored response sets plus a fresh final run. Speed contributes at most 0.25;
+authority, error-branch, security, and verification cases receive 2x weight.
+Full evidence: `results_wiring_validation_20260709.md`.
+
+| task | PRIMARY | FALLBACK | repeated score |
+|---|---|---|---|
+| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` | 3.50 / 2.70 |
+| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | 9.18 / 8.99 |
+| smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` | 11.81 / 11.63 |
+
+The tables below preserve the full 2026-07-08 PM pipeline snapshot. Do not
+compare their absolute scores with the quality-first validation above.
+
+## Full-field snapshot (2026-07-08 PM, Ollama 0.31.1)
 
 > Full pipeline: smoke 31/31 → deep (30×33, --strip) → tie-break (26×15) →
 > bug_finding/tool_call/pdf_extract (×30) → pdf_ocr (×2). Canonical #1 = COMBINED
@@ -113,13 +131,13 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 | 2 | **1.000** | **1.000** | `bge-m3:latest` |
 | 3 | 0.875 | 1.000 | `nomic-embed-text:latest` |
 
-## Per-task PRIMARY + FALLBACK (config.py, rewired 2026-07-08 PM)
+## Per-task PRIMARY + FALLBACK (validated 2026-07-09)
 
 | task | PRIMARY | FALLBACK |
 |---|---|---|
-| improve | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
-| codeq_sum | `batiai/gemma4-e4b:q4 ← NEW` | `jaahas/crow:9b` |
-| smart_trim | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M ← NEW` | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M ← NEW` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M ← NEW` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
 | bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest ← NEW` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
@@ -131,9 +149,9 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 
 ## Highlights (2026-07-08 PM)
 
-- **OmniCoder**: improve #1 (held) + bug_finding #1. Multi-task champion.
+- **OmniCoder**: bug_finding #1; removed from prompt rewriting after fidelity regressions.
 - **SetneufPT/Qwopus3.5**: tool_call + pdf_extract + browser_tool #1. Structured-output champion.
-- **HauhauCS-Balanced**: smart_trim #1 (12.30/13.53). **TeichAI/Fable-5-v1**: web_synth combined #1.
+- **batiai/gemma4-e2b**: smart_trim #1. **TeichAI/Fable-5-v1**: web_synth combined #1.
 - **prithiv/lift**: code_gen #1 + pdf_ocr fallback. **DeltaCoder + Openclaw** (prior champs) fell out of top-5.
 - 7/9 PRIMARY changed; improve + pdf_ocr held. 12 loser models deleted; qwen3.5:4b replaced by cryptidbleh/gemma4-claude-opus-4.6 (better on every metric: 9.97 vs 8.85 avg, faster).
 
@@ -141,4 +159,4 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 
 - Smoke records `strippable=1`; `deep --strip` includes them, scoring cleaned output.
 - Unlimited-OCR is vision-only (`/api/chat` + `ocr [img]`); general models score -100 on pdf_ocr.
-- `cryptidbleh/gemma4-claude-opus-4.6` is the lightweight infra default (cheap-llm T1 free-text + prompt-improve small fallback). It replaced qwen3.5:4b (deleted — cryptidbleh scored higher + faster at the same 3.4GB).
+- `cryptidbleh/gemma4-claude-opus-4.6` is the prompt-improve primary and smart-trim fallback. It replaced qwen3.5:4b as the lightweight infra default.

@@ -16,11 +16,12 @@ import csv
 import json
 import sys
 import time
+from dataclasses import replace
 from pathlib import Path
 from statistics import mean
 
 from ollama_bench.features.canonical_tasks import PROMPTS, iter_cases, score_task_response
-from ollama_bench.shared.config import NUM_PREDICT_DEFAULT
+from ollama_bench.shared.config import NUM_PREDICT_DEFAULT, TASKS
 from ollama_bench.shared.gpu import gpu_temp, wait_gpu_cool
 from ollama_bench.shared.ollama import CallOpts, call, get_model_names
 from ollama_bench.shared.paths import result_path
@@ -76,8 +77,9 @@ def run_model(model: str, tasks: list[str], opts: CallOpts, strip: bool = False)
     """
     out: dict = {task: [] for task in tasks}
     for task in tasks:
+        task_opts = replace(opts, api=TASKS[task]["protocol"])
         for case in iter_cases(task):
-            res = call(model, case["prompt"], opts=opts)
+            res = call(model, case["prompt"], opts=task_opts)
             if strip and "out" in res:
                 res = {**res, "out": strip_reasoning(res["out"])}
             scored = score_task_response(task, res, case, strip_strippable=strip)
@@ -85,23 +87,35 @@ def run_model(model: str, tasks: list[str], opts: CallOpts, strip: bool = False)
                 {
                     "pid": case["id"],
                     "sc": scored["score"],
+                    "weight": float(case.get("weight", 1.0)),
                     "metrics": scored["metrics"],
+                    "response": str(res.get("out", "")),
                 }
             )
     return {model: out}
 
 
+def _weighted_mean(items: list[dict]) -> float | None:
+    scored = [item for item in items if "sc" in item]
+    if not scored:
+        return None
+    total_weight = sum(float(item.get("weight", 1.0)) for item in scored)
+    if total_weight <= 0:
+        return mean(float(item["sc"]) for item in scored)
+    return sum(float(item["sc"]) * float(item.get("weight", 1.0)) for item in scored) / total_weight
+
+
 def _aggregate(results: dict, tasks: list[str]) -> dict[str, list]:
-    """Compute mean per-task score; sort descending."""
+    """Compute risk-weighted mean per task; sort descending."""
     per_task: dict[str, list] = {t: [] for t in tasks}
     for m, r in results.items():
         if not isinstance(r, dict) or "err" in r:
             continue
         for t in tasks:
             items = r.get(t, [])
-            scores = [it["sc"] for it in items if "sc" in it]
-            if scores:
-                per_task[t].append((m, round(mean(scores), 2)))
+            task_mean = _weighted_mean(items)
+            if task_mean is not None:
+                per_task[t].append((m, round(task_mean, 2)))
     for t in per_task:
         per_task[t].sort(key=lambda x: -x[1])
     return per_task
@@ -134,7 +148,9 @@ def _append_model_details(model: str, results: dict, base: Path, tasks: list[str
                             "task": task,
                             "case": item.get("pid"),
                             "score": item.get("sc"),
+                            "weight": item.get("weight", 1.0),
                             "metrics": item.get("metrics", {}),
+                            "response": item.get("response", ""),
                         },
                         sort_keys=True,
                     )
@@ -170,7 +186,9 @@ def _load_results_from_details(base: Path, tasks: list[str]) -> dict:
                 {
                     "pid": entry.get("case"),
                     "sc": entry.get("score"),
+                    "weight": float(entry.get("weight", 1.0)),
                     "metrics": entry.get("metrics", {}),
+                    "response": entry.get("response", ""),
                 }
             )
     return results
@@ -338,9 +356,9 @@ def cmd_deep(args: argparse.Namespace) -> int:
             task_scores = {}
             for t in tasks:
                 items = results[model].get(t, [])
-                scores = [it["sc"] for it in items if "sc" in it]
-                if scores:
-                    task_scores[t] = round(mean(scores), 2)
+                task_mean = _weighted_mean(items)
+                if task_mean is not None:
+                    task_scores[t] = round(task_mean, 2)
             if task_scores:
                 _append_model_to_tsv(model, task_scores, tsv_path)
                 _append_model_details(model, results, base, tasks)

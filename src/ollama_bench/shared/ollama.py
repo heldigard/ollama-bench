@@ -21,7 +21,7 @@ import time
 import urllib.error
 import urllib.request
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Literal
 
 from ollama_bench.shared.config import OLLAMA_URL, TIMEOUT_DEFAULT
 
@@ -36,6 +36,8 @@ class CallOpts:
     temperature: float = 0.2
     seed: int = 42  # pinned for reproducible bench runs (deterministic ranking)
     think: bool = False  # TOP-LEVEL; moving into options is silently ignored
+    api: Literal["generate", "chat", "chat-fallback"] = "generate"
+    system: str = ""
 
 
 def get_models() -> list[dict[str, Any]]:
@@ -72,8 +74,47 @@ def _post_json(url: str, body: bytes, timeout: int) -> dict[str, Any]:
         r.close()
 
 
+def _request_body(model: str, prompt: str, o: CallOpts, api: str) -> dict[str, Any]:
+    options = {
+        "temperature": o.temperature,
+        "num_predict": o.num_predict,
+        "num_ctx": o.num_ctx,
+        "seed": o.seed,
+    }
+    if api == "chat":
+        messages = []
+        if o.system:
+            messages.append({"role": "system", "content": o.system})
+        messages.append({"role": "user", "content": prompt})
+        return {
+            "model": model,
+            "messages": messages,
+            "stream": False,
+            "think": o.think,
+            "options": options,
+        }
+    body: dict[str, Any] = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "think": o.think,
+        "options": options,
+    }
+    if o.system:
+        body["system"] = o.system
+    return body
+
+
+def _template_parser_failure(data: dict[str, Any]) -> bool:
+    error = str(data.get("err", "")).lower()
+    return "http 400" in error and (
+        "unable to generate parser for this template" in error
+        or "automatic parser generation failed" in error
+    )
+
+
 def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any]:
-    """Single Ollama /api/generate call. Non-streaming.
+    """Single protocol-aware Ollama completion. Non-streaming.
 
     Returns a dict with keys:
       - dt: wall time in seconds
@@ -88,26 +129,23 @@ def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any
     The `think` flag is TOP-LEVEL. Don't move it into options.
     """
     o = opts or CallOpts()
-    body = json.dumps(
-        {
-            "model": model,
-            "prompt": prompt,
-            "stream": False,
-            "think": o.think,
-            "options": {
-                "temperature": o.temperature,
-                "num_predict": o.num_predict,
-                "num_ctx": o.num_ctx,
-                "seed": o.seed,
-            },
-        }
-    ).encode()
+    requested_api = "chat" if o.api in {"chat", "chat-fallback"} else "generate"
     t0 = time.perf_counter()
-    data = _post_json(f"{OLLAMA_URL}/api/generate", body, o.timeout)
+    body = json.dumps(_request_body(model, prompt, o, requested_api)).encode()
+    data = _post_json(f"{OLLAMA_URL}/api/{requested_api}", body, o.timeout)
+    protocol = requested_api
+    if o.api == "chat-fallback" and _template_parser_failure(data):
+        body = json.dumps(_request_body(model, prompt, o, "generate")).encode()
+        data = _post_json(f"{OLLAMA_URL}/api/generate", body, o.timeout)
+        protocol = "generate-fallback"
     if "err" in data:
         return data
     dt = time.perf_counter() - t0
-    out = data.get("response", "") or ""
+    if protocol == "chat":
+        message = data.get("message", {})
+        out = message.get("content", "") if isinstance(message, dict) else ""
+    else:
+        out = data.get("response", "") or ""
     return {
         "dt": round(dt, 2),
         "tps": round(data.get("eval_count", 0) / dt, 1) if dt > 0 else 0.0,
@@ -116,6 +154,7 @@ def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any
         "len": len(out),
         "done": data.get("done_reason"),
         "out": out,
+        "protocol": protocol,
     }
 
 

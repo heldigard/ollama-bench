@@ -17,6 +17,22 @@ from ollama_bench.shared.scorer import detect_leaks, prepare_scored_response, tp
 CANONICAL_TASKS = ("improve", "codeq_sum", "smart_trim", "web_synth", "code_gen")
 
 _CODE_FENCE_RE = re.compile(r"```(?:python)?\s*(.*?)```", re.DOTALL | re.IGNORECASE)
+_FILE_TOKEN_RE = re.compile(
+    r"(?<![\w.-])(?:[\w.-]+/)*[\w.-]+\.(?:py|js|ts|tsx|jsx|go|rs|java|ya?ml|toml|json|sql)\b",
+    re.IGNORECASE,
+)
+_STACK_TERMS = (
+    "react",
+    "redis",
+    "memcached",
+    "graphql",
+    "postgresql",
+    "mysql",
+    "mongodb",
+    "oauth",
+    "kubernetes",
+    "docker",
+)
 
 # Re-export for downstream imports
 __all__ = [
@@ -49,6 +65,43 @@ def _line_count_with_prefix(text: str, prefixes: tuple[str, ...]) -> int:
 
 def _paragraph_count(text: str) -> int:
     return len([p for p in re.split(r"\n\s*\n", text.strip()) if p.strip()])
+
+
+def _contract_contains(text: str, phrase: str) -> bool:
+    """Case-insensitive phrase match; short words require token boundaries."""
+    if len(phrase) <= 3 and phrase.isalnum():
+        return re.search(rf"\b{re.escape(phrase)}\b", text, re.IGNORECASE) is not None
+    return phrase.lower() in text.lower()
+
+
+def _semantic_contract(out: str, case: dict) -> tuple[float, dict[str, int]]:
+    """Score case-specific facts that must survive and claims that must not appear."""
+    preserve = tuple(case.get("preserve", ()))
+    require_any = tuple(tuple(group) for group in case.get("require_any", ()))
+    forbidden = tuple(case.get("forbidden", ()))
+    preserve_hits = sum(1 for phrase in preserve if _contract_contains(out, phrase))
+    missing = len(preserve) - preserve_hits
+    alternative_hits = sum(
+        1
+        for alternatives in require_any
+        if any(_contract_contains(out, phrase) for phrase in alternatives)
+    )
+    missing_alternatives = len(require_any) - alternative_hits
+    forbidden_hits = sum(1 for phrase in forbidden if _contract_contains(out, phrase))
+    score = (
+        preserve_hits * 1.25
+        - missing * 1.5
+        + alternative_hits * 1.25
+        - missing_alternatives * 2.0
+        - forbidden_hits * 3.0
+    )
+    return score, {
+        "preserve_hits": preserve_hits,
+        "missing_required": missing,
+        "alternative_hits": alternative_hits,
+        "missing_alternatives": missing_alternatives,
+        "forbidden_hits": forbidden_hits,
+    }
 
 
 def _extract_code(text: str) -> str:
@@ -85,6 +138,7 @@ def _hygiene(res: dict, budget_words: int) -> tuple[float, dict[str, Any]]:
         "word_count": wc,
         "leaks": ",".join(leaks),
         "tps": round(float(res.get("tps", 0) or 0), 2),
+        "protocol": str(res.get("protocol", "unknown")),
     }
     if not out.strip():
         score -= 10.0
@@ -105,15 +159,19 @@ def _hygiene(res: dict, budget_words: int) -> tuple[float, dict[str, Any]]:
     else:
         score -= 1.5
         detail["budget"] = "over"
+        excess_penalty = min(8.0, round((wc / budget_words - 1.5) * 1.5, 2))
+        score -= excess_penalty
+        detail["excess_length_penalty"] = -excess_penalty
     if res.get("done") == "length":
         score -= 2.0
         detail["truncated"] = 1
-    # Specificity bonus: concrete numbers/paths beat generic placeholders
+    # Record specificity for diagnostics, but do not reward it: fabricated
+    # paths/numbers previously inflated otherwise ungrounded answers.
     concrete_patterns = re.findall(r"\b\d+[.,]?\d*\b|[A-Z]:\\|/[a-z]+/|\.\w{2,4}\b", out)
-    if len(concrete_patterns) >= 2:
-        score += 0.5
-        detail["specificity_bonus"] = 0.5
-    speed = tps_bonus(float(res.get("tps", 0) or 0), cap=1.5)
+    detail["specificity_count"] = len(concrete_patterns)
+    # Quality-first wiring: speed remains a tie-break signal, capped so it
+    # cannot overcome a missing evidence anchor or a hallucination penalty.
+    speed = tps_bonus(float(res.get("tps", 0) or 0), cap=0.25)
     score += speed
     detail["speed_bonus"] = speed
     return score, detail
@@ -151,10 +209,21 @@ def _score_improve(out: str, case: dict) -> tuple[float, dict[str, Any]]:
     concrete = sum(
         1
         for token in ("test", "pytest", "curl", "trace", "profile", "measure", "log", "reproduce")
-        if token in low
+        if token in low and token in str(case["prompt"]).lower()
     )
     score = section_hits * 1.0 + min(anchors, 5) * 0.9 + min(step_lines, 5) * 0.35
     score += min(concrete, 4) * 0.35
+    contract_score, contract_metrics = _semantic_contract(out, case)
+    score += contract_score
+    prompt = str(case["prompt"])
+    unprompted_files = {
+        token.lower()
+        for token in _FILE_TOKEN_RE.findall(out)
+        if token.lower() not in prompt.lower()
+    }
+    unprompted_stack = {term for term in _STACK_TERMS if term in low and term not in prompt.lower()}
+    evidence_penalty = min(8.0, len(unprompted_files) * 1.5 + len(unprompted_stack) * 1.5)
+    score -= evidence_penalty
     # Stronger penalty for generic filler
     for filler in ("generic advice", "best practices", "it depends", "consider using"):
         if filler in low:
@@ -164,6 +233,10 @@ def _score_improve(out: str, case: dict) -> tuple[float, dict[str, Any]]:
         "anchor_hits": anchors,
         "step_lines": step_lines,
         "concrete_terms": concrete,
+        "unprompted_files": len(unprompted_files),
+        "unprompted_stack": len(unprompted_stack),
+        "evidence_penalty": -evidence_penalty,
+        **contract_metrics,
     }
 
 
@@ -190,11 +263,14 @@ def _score_codeq_sum(out: str, case: dict) -> tuple[float, dict[str, Any]]:
     )
     if impl_details > 0:
         score -= 0.5 * impl_details
+    contract_score, contract_metrics = _semantic_contract(stripped, case)
+    score += contract_score
     return score, {
         "anchor_hits": keyword_hits,
         "sentences": sentences,
         "summary_words": len(words),
         "format_clean": int("```" not in stripped and "\n" not in stripped),
+        **contract_metrics,
     }
 
 
@@ -219,10 +295,13 @@ def _score_smart_trim(out: str, case: dict) -> tuple[float, dict[str, Any]]:
     out_words = set(_words(out))
     if prompt_words and len(out_words & prompt_words) / max(len(out_words), 1) > 0.7:
         score -= 0.8
+    contract_score, contract_metrics = _semantic_contract(out, case)
+    score += contract_score
     return score, {
         "required_hits": required_hits,
         "anchor_hits": anchors,
         "bullet_count": bullet_count,
+        **contract_metrics,
     }
 
 
@@ -336,6 +415,7 @@ def iter_cases(task: str) -> list[dict[str, Any]]:
             "prompt": prompt,
             "anchors": anchors,
             "budget_words": cfg["budget_words"],
+            "weight": 1.0,
             **extra,
         }
         if task == "web_synth":

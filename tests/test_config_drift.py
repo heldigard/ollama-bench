@@ -16,6 +16,8 @@ from pathlib import Path
 
 import pytest
 
+from ollama_bench.shared.config import SPECIALIZED_TASKS, TASKS
+
 ROOT = Path(__file__).parent.parent
 CONFIG = ROOT / "src" / "ollama_bench" / "shared" / "config.py"
 RANKING = ROOT / "RANKING.md"
@@ -30,10 +32,22 @@ def _ranking_top1_per_task() -> dict[str, str]:
     text = RANKING.read_text()
     top: dict[str, str] = {}
     current_task: str | None = None
+    in_primary_table = False
     for line in text.splitlines():
+        if line.startswith("## Per-task PRIMARY"):
+            in_primary_table = True
+            current_task = None
+            continue
         m = re.match(r"^##\s+(\w+)", line)
         if m:
+            in_primary_table = False
             current_task = m.group(1)
+            continue
+        if in_primary_table:
+            summary = re.match(r"^\|\s*(\w+)\s*\|\s*`([^`]+)`", line)
+            if summary:
+                tag = re.sub(r"\s+←.*$", "", summary.group(2))
+                top[summary.group(1)] = tag
             continue
         if current_task is None:
             continue
@@ -50,13 +64,11 @@ def _ranking_top1_per_task() -> dict[str, str]:
 
 
 def _config_primary_per_task() -> dict[str, str]:
-    """Return {task: primary_model_default} from shared/config.py::TASKS."""
-    text = CONFIG.read_text()
-    # Match `"task": { ... "primary_model_default": "...",` (compact dict style).
-    primary: dict[str, str] = {}
-    for m in re.finditer(r'"(\w+)":\s*\{[^}]*?"primary_model_default":\s*"([^"]+)"', text):
-        primary[m.group(1)] = m.group(2)
-    return primary
+    """Return the imported canonical + specialized primary registry."""
+    return {
+        task: str(cfg["primary_model_default"])
+        for task, cfg in {**TASKS, **SPECIALIZED_TASKS}.items()
+    }
 
 
 def test_config_keys_are_subset_of_tasks():
@@ -70,6 +82,16 @@ def test_config_keys_are_subset_of_tasks():
     assert expected.issubset(actual), (
         f"config.py TASKS missing canonical tasks: {expected - actual}"
     )
+
+
+def test_canonical_tasks_declare_consumer_protocol():
+    assert {task: cfg.get("protocol") for task, cfg in TASKS.items()} == {
+        "improve": "chat-fallback",
+        "codeq_sum": "generate",
+        "smart_trim": "chat-fallback",
+        "web_synth": "generate",
+        "code_gen": "generate",
+    }
 
 
 def test_ranking_present():
@@ -98,7 +120,7 @@ def test_config_primary_matches_ranking_top1():
         cfg_model = cfg.get(task)
         rank_model = ranking[task]
         if cfg_model != rank_model:
-            drift.append((task, cfg_model, rank_model))
+            drift.append((task, cfg_model or "<missing>", rank_model))
     if missing_ranking:
         pytest.fail(f"RANKING.md has no top-1 row for canonical tasks: {missing_ranking}")
     if drift:
@@ -108,6 +130,17 @@ def test_config_primary_matches_ranking_top1():
             "Either update config.py to match RANKING (if RANKING is canonical), "
             "or update RANKING.md and re-run the bench."
         )
+
+
+def test_specialized_config_primary_matches_ranking_top1():
+    cfg = _config_primary_per_task()
+    ranking = _ranking_top1_per_task()
+    drift = {
+        task: (cfg[task], ranking.get(task))
+        for task in SPECIALIZED_TASKS
+        if ranking.get(task) != cfg[task]
+    }
+    assert not drift, f"specialized task config drifted from RANKING.md: {drift}"
 
 
 def test_no_known_typos_in_config_models():

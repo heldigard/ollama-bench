@@ -49,6 +49,69 @@ PROMPTS: dict[str, dict[str, Any]] = {
                 "Rewrite into an actionable spec. Original: el API de reports esta lento, users are complaining que tarda mucho cuando seleccionan un date range grande. Also the PDF export crashes sometimes.",
                 ("reports", "date range", "pdf export", "performance", "crash", "timeout", "pagination"),
             ),
+            (
+                "improve_grounded_ranking",
+                "Rewrite into a faithful research task without adding implementation details. Original: revisa ~/ollama-bech/ para establecer el modelo #1 real y reconciliar la deuda mencionada; el memory entry viejo de codeq dice jaahas/crow:9b, pero el directorio existente ~/ollama-bench/, RANKING.md y el codigo dicen batiai/gemma4-e4b:q4. Treat the existing path and exact model identifiers as evidence; the winner is role-specific, not an active/global Ollama model.",
+                ("ollama-bench", "ranking", "role-specific", "batiai/gemma4-e4b:q4", "jaahas/crow:9b", "evidence"),
+                {
+                    "weight": 2.0,
+                    "preserve": (
+                        "~/ollama-bench/",
+                        "batiai/gemma4-e4b:q4",
+                        "jaahas/crow:9b",
+                        "role-specific",
+                    ),
+                    "forbidden": (
+                        "golang",
+                        "codescan",
+                        ".env",
+                        "config.yaml",
+                        "ollama run",
+                        "active model",
+                        "modelo activo",
+                    ),
+                },
+            ),
+            (
+                "improve_read_only_docs",
+                "Rewrite faithfully without expanding scope. Original: revisa solo ~/payments/README.md y ~/payments/pyproject.toml, compara la version declarada y reporta cualquier diferencia; es solo lectura, no cambies archivos ni implementes nada.",
+                ("payments", "README.md", "pyproject.toml", "version", "read-only", "report"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("~/payments/README.md", "~/payments/pyproject.toml", "solo lectura", "no cambies archivos"),
+                    "forbidden": ("implementa", "refactoriza", "despliega", "base de datos", "codescan", "Golang"),
+                },
+            ),
+            (
+                "improve_ownership_boundary",
+                "Rewrite as a source-of-truth review. Original: compara ~/smart-trim/ y ~/agent-memory/ sin fusionarlos; smart-trim compacta el contexto de sesion y agent-memory conserva decisiones durables. Identifica solapamientos, pero respeta esos propietarios.",
+                ("smart-trim", "agent-memory", "session context", "durable decisions", "ownership", "overlap"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("~/smart-trim/", "~/agent-memory/", "compacta", "decisiones durables", "sin fusionarlos"),
+                    "forbidden": (
+                        "un solo proyecto", "migrar ambos", "base de datos compartida", "reescribir desde cero",
+                        "VERIFIED", "distributed systems", "database", "Recommendation:", "architecture benefits",
+                    ),
+                },
+            ),
+            (
+                "improve_unknown_context",
+                "Rewrite without guessing missing facts. Original: arregla lo que hablamos ayer. No transcript, current task, repository, language, or error is available in the execution context.",
+                ("missing", "context", "evidence", "verify", "task"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("missing", "context", "verify"),
+                    "require_any": (
+                        ("do not guess", "without guessing", "must not infer", "no assumptions"),
+                        ("verify available context", "verify evidence", "locate evidence", "inspect available context"),
+                    ),
+                    "forbidden": (
+                        "Python", "Go", "React", "database", "authentication", "src/", ".env", "codescan",
+                        "please provide", "share these details", "what specific topic", "could you provide",
+                    ),
+                },
+            ),
         ],
     },
     "codeq_sum": {
@@ -89,6 +152,51 @@ PROMPTS: dict[str, dict[str, Any]] = {
                 "Summarize in ONE sentence, max 30 words. NO preamble.\n\nfunction flatten(arr) {\n  const out = [];\n  for (const item of arr) {\n    if (Array.isArray(item)) out.push(...flatten(item));\n    else out.push(item);\n  }\n  return out;\n}",
                 ("flatten", "recursive", "array", "nested", "push"),
             ),
+            (
+                "sum_stale_cache",
+                "Summarize in ONE sentence, max 30 words. State the error behavior precisely.\n\nasync function getOrLoad(key) {\n  try {\n    const fresh = await remote.load(key);\n    cache.set(key, fresh);\n    return fresh;\n  } catch (err) {\n    if (cache.has(key)) return cache.get(key);\n    throw err;\n  }\n}",
+                ("remote", "cache", "fresh", "stale", "error", "throws"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("cache", "remote"),
+                    "require_any": (
+                        ("if available", "if present", "when cached", "returns cached", "cached value"),
+                        ("otherwise", "if absent", "if missing", "cache miss", "without cached", "no cached"),
+                        ("throws", "rethrows", "propagates", "propagate"),
+                    ),
+                    "forbidden": (
+                        "always swallows", "returns null", "retries", "clears the cache",
+                        "instead of propagating the error", "always returns",
+                    ),
+                },
+            ),
+            (
+                "sum_finally_release",
+                "Summarize in ONE sentence, max 30 words. Mention the invariant and exception behavior.\n\nasync function withLock(lock, fn) {\n  await lock.acquire();\n  try {\n    return await fn();\n  } finally {\n    lock.release();\n  }\n}",
+                ("lock", "acquire", "release", "finally", "exception", "propagate"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("acquire", "release"),
+                    "require_any": (
+                        ("always", "finally", "even if", "regardless"),
+                        ("exception", "throws", "error", "propagates"),
+                    ),
+                    "forbidden": ("swallows", "retries", "returns false", "only releases on success"),
+                },
+            ),
+            (
+                "sum_transaction_rollback",
+                "Summarize in ONE sentence, max 30 words. State both success and failure behavior.\n\nasync function saveOrder(db, order) {\n  const tx = await db.begin();\n  try {\n    await tx.insertOrder(order);\n    await tx.insertLines(order.lines);\n    await tx.commit();\n  } catch (err) {\n    await tx.rollback();\n    throw err;\n  }\n}",
+                ("transaction", "order", "lines", "commit", "rollback", "rethrows"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("commit", "rollback"),
+                    "require_any": (("throws", "rethrows", "propagates", "propagate"),),
+                    "forbidden": (
+                        "swallows", "partial commit", "retries", "returns the order", "fails by rolling back",
+                    ),
+                },
+            ),
         ],
     },
     "smart_trim": {
@@ -123,6 +231,36 @@ PROMPTS: dict[str, dict[str, Any]] = {
                 "trim_multi_blocker",
                 "Condense into 6-10 bullets.\n\n[Earlier] Auth flow broken after migration. Blocker: JWT secret rotation not deployed. [Earlier] Deployed secret rotation. New blocker: token refresh endpoint returns 401 for tokens issued before rotation. [Now] Added grace period for old tokens. New blocker: grace period bypasses revocation check. [Decision] Grace period only applies to non-revoked tokens. [Risk] Clock skew between auth servers could allow brief window of invalid tokens. [Next] Add NTP sync check to health endpoint. [Blocked] Waiting on infra team for NTP config.",
                 ("jwt", "secret rotation", "401", "grace period", "revocation", "clock skew", "ntp", "infra"),
+            ),
+            (
+                "trim_model_reversal",
+                "Compress to a handoff. Preserve the current winner and mark superseded choices correctly.\n\n[Earlier] codeq_sum PRIMARY was jaahas/crow:9b. [Later] Round-7 promoted batiai/gemma4-e4b:q4 and demoted Crow. [Now] Two protocol-aware runs keep batiai/gemma4-e4b:q4 PRIMARY and rank SetneufPT/Qwopus3.5-4B as FALLBACK. [Decision] Crow remains installed but is no longer wired. [Next] Update RANKING, config, and memory. [Blocked] None.",
+                ("batiai", "primary", "qwopus", "fallback", "crow", "demoted", "next", "blocked none"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("batiai/gemma4-e4b:q4", "Qwopus3.5-4B", "Crow", "no longer wired", "Blocked"),
+                    "forbidden": ("Crow remains PRIMARY", "Crow as fallback", "Qwopus as PRIMARY", "benchmark pending"),
+                },
+            ),
+            (
+                "trim_negative_constraint",
+                "Compress to a handoff and preserve the negative security constraint verbatim.\n\n[Task] Diagnose config loading. [Constraint] Never read or print .env; use config.example.toml and mocked values only. [Now] Parser test reproduces the failure with config.example.toml. [Verified] No secret files were opened. [Next] Fix interpolation and rerun the focused parser test. [Blocked] None.",
+                ("never", ".env", "config.example.toml", "mocked", "parser", "interpolation", "next", "blocked"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("Never read or print .env", "config.example.toml", "No secret files", "interpolation", "Blocked"),
+                    "forbidden": ("open .env", "inspect .env", "all tests pass"),
+                },
+            ),
+            (
+                "trim_partial_verification",
+                "Compress to a factual handoff. Do not turn partial verification into all-green status.\n\n[Task] Harden transport errors. [Verified] pytest: 91 passed. Ruff: passed. [Failed] Pyright: 2 reportArgumentType errors in candidates/command.py. [Not run] codescan. [Decision] Fix the type boundary without changing runtime behavior. [Next] rerun Pyright, then codescan. [Blocked] None.",
+                ("91 passed", "ruff", "pyright", "2", "reportArgumentType", "not run", "codescan", "next"),
+                {
+                    "weight": 2.0,
+                    "preserve": ("91 passed", "Ruff", "Pyright", "2 reportArgumentType", "Not run", "codescan"),
+                    "forbidden": ("all checks passed", "Pyright passed", "codescan passed", "fully verified"),
+                },
             ),
         ],
     },

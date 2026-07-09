@@ -116,11 +116,20 @@ def _render_report(
         lines.append(f"| `{m}` | {status} |")
     lines.append("")
 
-    lines.extend(["## 2. Smoke classification", "", "| model | status | handling | etoks |", "|---|---|---|---|"])
+    lines.extend(
+        [
+            "## 2. Smoke classification",
+            "",
+            "| model | status | handling | etoks |",
+            "|---|---|---|---|",
+        ]
+    )
     for m in candidates:
         if m in smoke_results:
             status, strippable, etoks = smoke_results[m]
-            handling = "strip-required" if strippable == "1" else ("clean" if status == "ok" else "drop")
+            handling = (
+                "strip-required" if strippable == "1" else ("clean" if status == "ok" else "drop")
+            )
             lines.append(f"| `{m}` | {status} | {handling} | {etoks} |")
         else:
             lines.append(f"| `{m}` | (no result) | drop | — |")
@@ -129,7 +138,7 @@ def _render_report(
     if survivors:
         lines.extend(
             [
-            f"## 3. Deep bench ({len(tasks)} tasks, clean + strip-required survivors)",
+                f"## 3. Deep bench ({len(tasks)} tasks, clean + strip-required survivors)",
                 "",
                 "| task | model | score |",
                 "|---|---|---|",
@@ -173,7 +182,7 @@ def cmd_candidates(args: argparse.Namespace) -> int:
     deep_tsv = out_dir / f"candidates-deep-{run_id}.tsv"
     md_path = out_dir / f"candidates-{run_id}.md"
 
-    tasks = list(args.tasks) if args.tasks else list(DEFAULT_TASKS)
+    tasks: list[str] = [str(task) for task in (args.tasks or DEFAULT_TASKS)]
 
     # 1. Pull each model (sequential, ~5-10 min/model)
     pull_log: dict[str, str] = {}
@@ -183,9 +192,7 @@ def cmd_candidates(args: argparse.Namespace) -> int:
         pull_log[m] = "success " + tail if ok else "FAIL " + tail
         print(f"  {'OK' if ok else 'FAIL'} {m} — {tail}", file=sys.stderr)
         if not ok and not args.keep_on_pull_fail:
-            print(
-                "  stopping (use --keep-on-pull-fail to continue past failures)", file=sys.stderr
-            )
+            print("  stopping (use --keep-on-pull-fail to continue past failures)", file=sys.stderr)
             break
 
     # 2. Smoke gate (all models)
@@ -194,8 +201,7 @@ def cmd_candidates(args: argparse.Namespace) -> int:
     survivors = [
         m
         for m in args.models
-        if m in smoke_results
-        and (smoke_results[m][0] == "ok" or smoke_results[m][1] == "1")
+        if m in smoke_results and (smoke_results[m][0] == "ok" or smoke_results[m][1] == "1")
     ]
     strip_required = [m for m in survivors if smoke_results[m][1] == "1"]
     dropped = [m for m in args.models if m in smoke_results and m not in survivors]

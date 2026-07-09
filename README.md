@@ -99,7 +99,11 @@ smoke (leak gate) ──┐
 candidates = one-shot orchestrator wrapping the pipeline above for new HF models
 ```
 
-## Current lineup (2026-07-08 PM re-bench, Ollama 0.31.1)
+## Current lineup (wiring validated 2026-07-09, Ollama 0.31.2)
+
+There is no meaningful global "#1 model." Winners are role-specific because
+free-text prompt rewriting, one-line summaries, structured tool calls, OCR, and
+embeddings have different contracts. `RANKING.md` is authoritative per role.
 
 Combined deep+tiebreak rank; ground-truth scores for the hero tasks. PRIMARY/FALLBACK
 mirror `shared/config.py` (single source of truth) and the live harness wiring in
@@ -107,9 +111,9 @@ mirror `shared/config.py` (single source of truth) and the live harness wiring i
 
 | task | #1 PRIMARY | #2 FALLBACK |
 |---|---|---|
-| improve | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
-| codeq_sum | `batiai/gemma4-e4b:q4` | `jaahas/crow:9b` |
-| smart_trim | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
 | bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
@@ -148,9 +152,9 @@ pytest                  # 194 tests, ~0.5s
   `DeepSeek-V4-Flash`, `Phi-4-mini-reasoning`. Predictable — pre-reject without pull.
 - **First-pass score saturation**: a per-task cap-of-7.0 makes 20+ models tie.
   Re-bench with `tie-break` for real discrimination.
-- **Tie-break saturation at 10.50 / 16.00**: hard-prompt scores for smart_trim /
-  web_synth / code_gen saturate at structural-scoring caps. Real winners hidden
-  in ties. Workaround: bump scoring bounds or add 3rd hard prompts (open task).
+- **Historical tie-break saturation at 10.50 / 16.00** affected smart_trim /
+  web_synth / code_gen. Smart-trim now has weighted state, security, and partial
+  verification cases; web_synth and code_gen still need equivalent hard cases.
 - **`pdf_ocr` is vision-only**: unlimited-OCR needs `/api/chat` + `ocr [img]`.
   General text models score -100 on this task (use `pdf_extract` instead).
 

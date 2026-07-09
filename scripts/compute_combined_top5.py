@@ -5,8 +5,9 @@
 Reads deep_bench.tsv + tiebreak_ranking.md, computes combined rank, prints
 top-N per task + KEEP set (any top-N) vs DELETE candidates.
 
-Usage: python3 scripts/compute_combined_top5.py [--top N] [--delete]
+Usage: python3 scripts/compute_combined_top5.py --deep RUN.tsv --tiebreak RUN.md
 """
+
 from __future__ import annotations
 
 import argparse
@@ -14,8 +15,6 @@ import csv
 import re
 import sys
 from pathlib import Path
-
-CACHE = Path.home() / ".cache/ollama-bench/results"
 
 
 def _deep_ranks(tsv: Path) -> dict:
@@ -73,12 +72,20 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--top", type=int, default=5)
     ap.add_argument("--delete", action="store_true")
-    ap.add_argument("--deep", default=str(CACHE / "deep_bench.tsv"))
-    ap.add_argument("--tiebreak", default=str(CACHE / "tiebreak_ranking.md"))
+    ap.add_argument("--deep", required=True, help="deep TSV from the same benchmark cycle")
+    ap.add_argument(
+        "--tiebreak", required=True, help="tie-break Markdown from the same benchmark cycle"
+    )
     args = ap.parse_args()
 
-    deep = _deep_ranks(Path(args.deep))
-    tb = _tiebreak_ranks(Path(args.tiebreak))
+    deep_path = Path(args.deep)
+    tb_path = Path(args.tiebreak)
+    if not deep_path.is_file() or not tb_path.is_file():
+        print("ERROR: deep/tie-break input does not exist", file=sys.stderr)
+        return 2
+    print(f"# Inputs: deep={deep_path.name} tiebreak={tb_path.name}\n")
+    deep = _deep_ranks(deep_path)
+    tb = _tiebreak_ranks(tb_path)
     if not deep or not tb:
         print("ERROR: missing inputs", file=sys.stderr)
         return 2
