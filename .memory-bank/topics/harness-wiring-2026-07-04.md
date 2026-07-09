@@ -7,17 +7,17 @@
 
 | tool | role | model (default; env override) | repo | status |
 |---|---|---|---|---|
-| prompt-improve | improve (rewrite/clarify) | **→ NEEDS REWIRE**: `OmniCoder` (improve #1 7.01) replaces Grug-12B. Chain: `OmniCoder` → `Openclaw` → `qwen3.5:4b` (`OLLAMA_IMPROVE_MODELS`) | ~/prompt-improve | ⚠️ **PENDING 2026-07-08** — Grug-12B no longer #1. OmniCoder +0.41 over old. |
-| smart-trim | PreCompact summarize | **→ NEEDS REWIRE**: PRIMARY `Openclaw` (smart_trim #1 11.53) replaces SetneufPT. (`SMART_TRIM_PRIMARY_MODEL`) | ~/smart-trim | ⚠️ **PENDING 2026-07-08** — SetneufPT dropped to #13 in new bench. |
-| web-research | web_synth (final cited answer) | **→ NEEDS REWIRE**: `DeltaCoder` (web_synth #1 12.50 tied) replaces crow:9b. (`OLLAMA_SYNTH_MODEL`) | ~/web-research | ⚠️ **PENDING 2026-07-08** — DeltaCoder ties aratan; crow:9b no longer #1 web_synth. |
-| web-research | query_profile / focused_extract | `qwen3.5:4b` (high-freq per-page) | same | ✅ anchor |
+| prompt-improve | improve (rewrite/clarify) | `OmniCoder` (improve #1, held) → `Openclaw` → `qwen3.5:4b` (`OLLAMA_IMPROVE_MODELS`) | ~/prompt-improve | ✅ rewired 2026-07-08 PM — `config.py:31` "PM re-bench winners, OmniCoder improve #1". |
+| smart-trim | PreCompact summarize | PRIMARY `HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced` (smart_trim #1 12.30/13.53). (`SMART_TRIM_PRIMARY_MODEL`) | ~/smart-trim | ✅ rewired 2026-07-08 PM — `features/summarize/command.py:28`. SetneufPT + the map's earlier `Openclaw` suggestion both superseded by HauhauCS-Balanced. |
+| web-research | web_synth (final cited answer) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (web_synth combined #1 11.85/12.83). (`OLLAMA_SYNTH_MODEL`) | ~/web-research | ✅ rewired 2026-07-08 PM — `shared/config.py:56`. DeltaCoder + crow:9b both superseded (DeltaCoder fell out of top-5). |
+| web-research | query_profile / focused_extract | `cryptidbleh/gemma4-claude-opus-4.6:latest` (high-freq per-page) | same | ✅ anchor (inherits web-research `_OLLAMA_DEFAULT_MODEL`, `config.py:54`) |
 | codeq | summary / context / relations | `batiai/gemma4-e4b:q4` (`CODEQ_SUMMARY_MODEL` in ~/.zshrc + `llm.py` default; commit 671d934) | ~/codeq | ✅ rewired 2026-07-08 PM — batiai codeq_sum #1 (10.24/11.20); `jaahas/crow:9b` demoted to fallback #2 (10.01/11.25). |
-| diff-review | bug_finding | **→ NEEDS REWIRE**: `DeltaCoder` (bug_finding #1 14.06) replaces huihui. (`OLLAMA_CODE_MODEL`) | ~/.claude/scripts/diff-review.py | ⚠️ **PENDING 2026-07-08** — DeltaCoder overtakes huihui. |
-| project-memory | maintain (semantic-dedup + compact) | `qwen3.5:4b` (via ollama_client DEFAULT_GEN_MODEL) | ~/.claude/scripts/project-memory.py | ✅ anchor |
+| diff-review | bug_finding | `zfujicute/OmniCoder-...Opus-Uncensored-v2` (bug_finding #1 15.43 AND code_gen top-5). (`OLLAMA_CODE_MODEL`) | ~/.claude/scripts/diff-review.py | ✅ rewired 2026-07-08 PM — `diff-review.py:62` "OmniCoder bug_finding #1 15.58". huihui + DeltaCoder superseded (OmniCoder overtook both). |
+| project-memory | maintain (semantic-dedup + compact) | `cryptidbleh/gemma4-claude-opus-4.6:latest` (via ollama_client DEFAULT_GEN_MODEL) | ~/.claude/scripts/project-memory.py | ✅ anchor (inherits default, which is now cryptidbleh) |
 | agent-browser subagent | browser PRIMARY | `functiongemma` (browser-tool #1 10.22, saturated); FALLBACK `huihui` | ~/.claude/scripts/agent_browser_subagent.py | ✅ unchanged (saturated bench) |
 | pdf-extract-structured | PDF extraction | `functiongemma` (pdf_extract #2 11.96, near-saturated) + OPT-IN cloud `deepseek-v4-flash` | ~/.claude/scripts/pdf-extract-structured.py | ✅ unchanged (saturated bench) |
 | pdf-ocr | rendered PDF OCR | `Unlimited-OCR` (pdf_ocr #1 12.00, 573 tok/s); FALLBACK `lift` (pdf_ocr #3 11.12) | ~/.claude/scripts/pdf-extract-structured.py | ✅ lift added as fallback |
-| ollama_client | DEFAULT_GEN_MODEL | `qwen3.5:4b` | ~/.claude/scripts/ollama_client.py | ✅ anchor |
+| ollama_client | DEFAULT_GEN_MODEL | `cryptidbleh/gemma4-claude-opus-4.6:latest` (3.4GB universal fallback) | ~/.claude/scripts/ollama_client.py (shim → ~/ollama-client/ollama_client/_config.py:18) | ✅ rewired 2026-07-08 PM — qwen3.5:4b deleted from lineup, replaced by cryptidbleh (better+faster at same VRAM). |
 | ollama_client | DEFAULT_EMBED_MODEL | `embeddinggemma` (768-d) | same | ✅ MRR 1.000; bge-m3 ties |
 | memory-semantic | rerank | `qwen3.5:4b` | ~/.claude/scripts/memory-semantic.py | ✅ anchor |
 
