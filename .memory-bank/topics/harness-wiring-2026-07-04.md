@@ -11,7 +11,7 @@
 | smart-trim | PreCompact summarize | **→ NEEDS REWIRE**: PRIMARY `Openclaw` (smart_trim #1 11.53) replaces SetneufPT. (`SMART_TRIM_PRIMARY_MODEL`) | ~/smart-trim | ⚠️ **PENDING 2026-07-08** — SetneufPT dropped to #13 in new bench. |
 | web-research | web_synth (final cited answer) | **→ NEEDS REWIRE**: `DeltaCoder` (web_synth #1 12.50 tied) replaces crow:9b. (`OLLAMA_SYNTH_MODEL`) | ~/web-research | ⚠️ **PENDING 2026-07-08** — DeltaCoder ties aratan; crow:9b no longer #1 web_synth. |
 | web-research | query_profile / focused_extract | `qwen3.5:4b` (high-freq per-page) | same | ✅ anchor |
-| codeq | summary / context / relations | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU` (`CODEQ_SUMMARY_MODEL`) | ~/codeq | ✅ still #2 codeq_sum (9.15); crow:9b #1 (9.57). SetneufPT still good here. |
+| codeq | summary / context / relations | `batiai/gemma4-e4b:q4` (`CODEQ_SUMMARY_MODEL` in ~/.zshrc + `llm.py` default; commit 671d934) | ~/codeq | ✅ rewired 2026-07-08 PM — batiai codeq_sum #1 (10.24/11.20); `jaahas/crow:9b` demoted to fallback #2 (10.01/11.25). |
 | diff-review | bug_finding | **→ NEEDS REWIRE**: `DeltaCoder` (bug_finding #1 14.06) replaces huihui. (`OLLAMA_CODE_MODEL`) | ~/.claude/scripts/diff-review.py | ⚠️ **PENDING 2026-07-08** — DeltaCoder overtakes huihui. |
 | project-memory | maintain (semantic-dedup + compact) | `qwen3.5:4b` (via ollama_client DEFAULT_GEN_MODEL) | ~/.claude/scripts/project-memory.py | ✅ anchor |
 | agent-browser subagent | browser PRIMARY | `functiongemma` (browser-tool #1 10.22, saturated); FALLBACK `huihui` | ~/.claude/scripts/agent_browser_subagent.py | ✅ unchanged (saturated bench) |
