@@ -32,3 +32,6 @@ uv.lock
 
 # ctags index (regenerable by codeq tags)
 .tags
+
+# cli-orchestration: cross-CLI coordination registry (runtime noise, auto-managed)
+.memory-bank/blocked-writes.log
