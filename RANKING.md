@@ -9,9 +9,9 @@ Full evidence: `results_wiring_validation_20260709.md`.
 
 | task | PRIMARY | FALLBACK | repeated score |
 |---|---|---|---|
-| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` | 3.50 / 2.70 |
-| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | 9.18 / 8.99 |
-| smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` | 11.81 / 11.63 |
+| improve | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` | 2.46 / 2.03 |
+| codeq_sum | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | `batiai/gemma4-e4b:q4` | 9.40 / 9.19 |
+| smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` | 11.67 / 11.63 |
 
 The tables below preserve the full 2026-07-08 PM pipeline snapshot. Do not
 compare their absolute scores with the quality-first validation above.
@@ -28,37 +28,36 @@ compare their absolute scores with the quality-first validation above.
 
 | # | deep | tiebreak | model |
 |---|---|---|---|
-| **1** | 7.74 | 6.40 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| 2 | 6.30 | 6.65 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| **1** | 2.46 | (round-10 only) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
+| **1** *(held)* | 7.74 | 6.40 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| **2** *(held)* | 6.30 | 6.65 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
 | 3 | 5.87 | 6.95 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-4B-GGUF:Q4_K_M` |
 | 4 | 6.64 | 6.07 | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
 | 5 | 5.90 | 6.00 | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
 
-Discrimination: 30 models scored; combined deep+tiebreak rank.
+Discrimination: 30 models scored; combined deep+tiebreak rank. Round-10 2026-07-12 cross-task promotion: **TeichAI/Fable-5-v1 (web_synth champion) dethroned OmniCoder in 4-way deep (2.46 vs 0.93, +1.53)**. OmniCoder demoted to bug_finding/tool_call/broswer_tool/pdf_extract depth. See `topics/candidates-round-10-2026-07-12.md`. Historical round-7 combined-rank leaderboard preserved above (marked *held*) for reference.
 
 ## codeq_sum
 
 | # | deep | tiebreak | model |
 |---|---|---|---|
-| **1** | 10.24 | 11.20 | `batiai/gemma4-e4b:q4` |
-| 2 | 10.01 | 11.25 | `jaahas/crow:9b` |
-| 3 | 10.15 | 11.07 | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
-| 4 | 9.52 | 11.77 | `Librellama/gemma4:e2b-Uncensored` |
-| 5 | 9.53 | 11.47 | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
+| **1** | 9.40 | 9.93 | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` |
+| 2 | 9.19 | 8.13 | `batiai/gemma4-e4b:q4` |
+| 3 | 8.99 | 7.04 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 4 | 8.87 | 6.89 | `jaahas/crow:9b` |
 
-Discrimination: 30 models scored; combined deep+tiebreak rank.
+Discrimination: 30 models scored; combined deep+tiebreak rank. Round-9 2026-07-12 promotion: Qwythos dethroned batiai (9.40 vs 9.19, +2.3% on hard prompts) in 4-way deep; see `topics/candidates-round-9-2026-07-12.md`. Historical round-7 leaderboard preserved in `RANKING_HISTORY.md`.
 
 ## smart_trim
 
 | # | deep | tiebreak | model |
 |---|---|---|---|
-| **1** | 12.30 | 13.53 | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
-| 2 | 12.10 | 12.28 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
-| 3 | 12.19 | 11.93 | `batiai/gemma4-e2b:q4` |
-| 4 | 12.10 | 12.28 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
-| 5 | 12.19 | 11.78 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| **1** | 11.67 | round-15 cross-validation | `batiai/gemma4-e2b:q4` |
+| 2 | 11.63 | round-15 cross-validation | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| 3 | 10.79 | round-10 4-way | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| 4 | 9.87 | round-10 4-way | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
 
-Discrimination: 30 models scored; combined deep+tiebreak rank.
+Discrimination: round-15 2026-07-13 cross-validation (same round, same smart_trim rubric) scored batiai-e2b 11.67 and cryptidbleh 11.63 ABOVE SC117 10.79 and Hauhau 9.87. Quality governs, not throughput: batiai-e2b wins on score. The earlier round-15 "candidate" demotion was a name-bias error ('e2b' was treated as a low-fidelity tiny though Ollama reports it as 4.6B); reverted. batiai-e2b also held smart_trim #3 (11.93) in round-7 — two consistent data points above SC117.
 
 ## web_synth
 
@@ -88,11 +87,14 @@ Discrimination: 30 models scored; combined deep+tiebreak rank.
 
 | # | score | model |
 |---|---|---|
-| **1** | 15.43 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| 2 | 14.99 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
-| 3 | 14.70 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
-| 4 | 14.60 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
-| 5 | 14.49 | `hf.co/mradermacher/Gemma-4-12B-StyleTune-i1-GGUF:Q4_K_M` *(deleted)* |
+| **1** | 14.97 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| 2 | 14.70 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
+| 3 | 14.68 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| 4 | 14.49 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| 5 | 14.06 | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
+| *(round-7 #1)* | 15.43 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` (held, now #4 above) |
+
+Discrimination: 30 models scored; combined deep+tiebreak rank. Round-10 2026-07-12 cross-task promotion: **xentriom Q8_0 (web_synth champion) dethroned OmniCoder in 5-way specialized bug_finding (14.97 vs 14.49, +0.48)**. WARNING: xentriom Q8_0 = 12GB VRAM; OmniCoder retained as fallback for VRAM-tight contexts. TeichAI 14.06 (#5) — no displace. See `topics/candidates-round-10-2026-07-12.md`.
 
 ## tool_call
 
@@ -108,11 +110,11 @@ Discrimination: 30 models scored; combined deep+tiebreak rank.
 
 | # | score | model |
 |---|---|---|
-| **1** | 12.07 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| 2 | 12.06 | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
-| 3 | 12.06 | `qwen3.5:4b` *(deleted)* |
-| 4 | 12.05 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| 5 | 12.03 | `hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M` *(deleted)* |
+| **1** | 12.05 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| **2** | 12.00 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| 3 | 11.97 | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
+| 4 | 11.80 | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
+| 5 | 12.03 *(deleted)* | `hf.co/FadedRedStar/Qwen3.5-9B-heretic-GGUF:Q4_K_M` |
 
 ## pdf_ocr
 
@@ -135,15 +137,15 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 
 | task | PRIMARY | FALLBACK |
 |---|---|---|
-| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
-| codeq_sum | `batiai/gemma4-e4b:q4` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| improve | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| codeq_sum | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | `batiai/gemma4-e4b:q4` |
 | smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
-| web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M ← NEW` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
-| code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M ← NEW` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest ← NEW` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
-| tool_call | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest ← NEW` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
-| browser_tool | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest ← NEW` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
-| pdf_extract | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest ← NEW` | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
+| web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| bug_finding | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| tool_call | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
+| browser_tool | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
+| pdf_extract | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
 | pdf_ocr | `hf.co/sahilchachra/Unlimited-OCR-GGUF:Q4_K_M` | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` |
 | embedding | `embeddinggemma:latest` | `bge-m3:latest` |
 

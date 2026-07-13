@@ -16,15 +16,25 @@ ollama-bench is a **plain CLI** invoked on-demand. Each command family
 src/ollama_bench/
   shared/        config, paths, ollama, scorer (infra; no feature deps)
   features/
-    smoke/        1-prompt leak gate (per-model fast filter)
-    deep/         5-task × N model bench
-    tie_break/    re-bench tied candidates with harder prompts
-    lfm_variant/  codeq summary tie-break for LFM family (think-strip)
-    multi_domain/ legacy 4-domain bench (improve/compact/code/reason)
-    judge/        LLM-as-judge helpers (LLM scoring rubric)
-    embedding/    embedding model evaluation
-    report/       ranking markdown generation
-    list/         enumerate installed models
+    smoke/              1-prompt leak gate (per-model fast filter)
+    deep/               5-task × N model bench
+    candidates/         orchestrator: pull → smoke → deep → MD report
+    tie_break/          re-bench tied candidates with harder prompts
+    bug_finding/        diff-review bench (count bugs found)
+    tool_call/          structured JSON tool-call (ground-truth)
+    classification/     closed-label routing + promotion gate (macro-F1)
+    rerank/             top-3 doc ranking, nDCG@3 + MRR@3 (ground-truth)
+    browser_tool/       ref-grounded a11y action (snap+ref)
+    browser_bench/      vision-grounded browser bench (5 subtasks T1-T5)
+    pdf_extract/        schema field-extraction (abstention)
+    pdf_ocr/            rendered PDF OCR (vision/OCR models)
+    embedding_retrieval/ embedding MRR + recall@5 (ground-truth)
+    lfm_variant/        codeq summary tie-break for LFM family (think-strip)
+    multi_domain/       legacy 4-domain bench (improve/compact/code/reason)
+    judge/              LLM-as-judge helpers (LLM scoring rubric)
+    embedding/          embedding model evaluation
+    report/             ranking markdown generation
+    list/               enumerate installed models
 ```
 
 ## Conventions
@@ -42,12 +52,23 @@ src/ollama_bench/
 ollama-bench list                    # installed models (ollama list wrapper)
 ollama-bench smoke [-m M]            # 1-prompt leak gate per model
 ollama-bench deep [--tasks ...]      # 5-task × N model bench
+ollama-bench candidates M [M ...]    # end-to-end sweep: pull → smoke → deep → MD report
 ollama-bench tie-break --winners W   # re-bench tied candidates (harder prompts)
+ollama-bench bug-finding -m M        # diff-review bench (count bugs found)
+ollama-bench tool-call -m M          # structured JSON tool-call (ground-truth)
+ollama-bench classification -m M     # closed-label macro-F1 + promotion gate
+ollama-bench rerank -m M             # top-3 doc reranking, nDCG@3 + MRR@3
+ollama-bench browser-tool -m M       # ref-grounded a11y action (snap+ref)
+ollama-bench browser-bench-vision    # vision-grounded browser bench (T1-T5)
+ollama-bench pdf-extract -m M        # schema field-extraction (abstention)
+ollama-bench pdf-ocr -m M            # rendered PDF OCR (vision/OCR models)
+ollama-bench embedding-retrieval     # embedding MRR + recall@5
 ollama-bench lfm-variant             # codeq summary tie-break for LFM family
 ollama-bench multi-domain [-m M]     # legacy 4-domain bench (improve/compact/code/reason)
 ollama-bench judge score --input F   # LLM-as-judge scoring
 ollama-bench embedding eval [-m M]   # embedding model benchmark
 ollama-bench report build            # markdown ranking from TSV
+# 19 slices total; `ollama-bench --help` is authoritative.
 ```
 
 ## Critical constraints (regression risks)

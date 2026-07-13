@@ -13,6 +13,7 @@ from ollama_bench.features.browser_bench.command import add_parser as add_browse
 from ollama_bench.features.browser_tool.command import add_parser as add_browser_tool
 from ollama_bench.features.bug_finding.command import add_parser as add_bug_finding
 from ollama_bench.features.candidates.command import add_parser as add_candidates
+from ollama_bench.features.classification.command import add_parser as add_classification
 from ollama_bench.features.deep.command import add_parser as add_deep
 from ollama_bench.features.embedding.command import add_parser as add_embedding
 from ollama_bench.features.embedding_retrieval.command import add_parser as add_embedding_retrieval
@@ -23,6 +24,7 @@ from ollama_bench.features.multi_domain.command import add_parser as add_multi_d
 from ollama_bench.features.pdf_extract.command import add_parser as add_pdf_extract
 from ollama_bench.features.pdf_ocr.command import add_parser as add_pdf_ocr
 from ollama_bench.features.report.command import add_parser as add_report
+from ollama_bench.features.rerank.command import add_parser as add_rerank
 from ollama_bench.features.smoke.command import add_parser as add_smoke
 from ollama_bench.features.tie_break.command import add_parser as add_tie_break
 from ollama_bench.features.tool_call.command import add_parser as add_tool_call
@@ -36,6 +38,12 @@ _SLICES = [
     ("tie-break", add_tie_break, "Re-bench tied candidates with harder prompts"),
     ("bug-finding", add_bug_finding, "Diff-review bench (count bugs found)"),
     ("tool-call", add_tool_call, "Structured JSON tool-call bench (ground-truth)"),
+    (
+        "classification",
+        add_classification,
+        "Closed-label macro-F1 + latency bench (ground-truth)",
+    ),
+    ("rerank", add_rerank, "Ground-truth document reranking: nDCG@3 + MRR@3"),
     ("browser-tool", add_browser_tool, "Ref-grounded a11y action bench (snap+ref)"),
     (
         "browser-bench-vision",

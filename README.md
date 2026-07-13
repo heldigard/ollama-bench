@@ -14,6 +14,8 @@ ollama-bench deep -c C -t T             # 5-task × N model bench (~90s/model)
 ollama-bench tie-break -w W             # re-bench tied candidates (harder prompts, no score cap)
 ollama-bench bug-finding -m M           # diff-review bench (count bugs found)
 ollama-bench tool-call -m M             # structured JSON tool-call (ground-truth scoring)
+ollama-bench classification -m M        # closed-label macro-F1 + latency promotion gate
+ollama-bench rerank -m M                # quality-first top-3 document reranking (ground-truth)
 
 # Cross-CLI benches (ported from cli-orchestration)
 ollama-bench browser-tool -m M          # ref-grounded a11y action bench (snap+ref)
@@ -39,7 +41,7 @@ Canonical 5 (deep): `improve` (prompt improver), `codeq_sum` (codeq summary), `s
 (PreCompact), `web_synth` (web research synthesis), `code_gen` (small function
 generation).
 
-Hero (ground-truth, separately-benched): `bug_finding`, `tool_call`, `browser-tool` (a11y
+Hero (ground-truth, separately-benched): `bug_finding`, `tool_call`, `classification`, `rerank`, `browser-tool` (a11y
 ref dispatch), `browser-bench-vision` (5 subtasks T1-T5), `pdf_extract`,
 `pdf_ocr` (vision/OCR models only), `embedding_retrieval`.
 
@@ -56,7 +58,7 @@ Shared infrastructure (HTTP, scoring, paths, config) lives in
 
 ```text
 src/ollama_bench/
-├── cli.py                              # argparse multi-command root (17 slices)
+├── cli.py                              # argparse multi-command root (19 slices)
 ├── shared/
 │   ├── config.py                       # TASKS registry, defaults, paths
 │   ├── ollama.py                       # HTTP call + cache (think=False at TOP-LEVEL)
@@ -70,6 +72,8 @@ src/ollama_bench/
     ├── tie_break/                      # Hard prompts + structural scoring (no cap)
     ├── bug_finding/                    # Diff-review (count bugs found)
     ├── tool_call/                      # Structured JSON tool-call
+    ├── classification/                 # Closed-label routing + promotion policy
+    ├── rerank/                         # Top-3 document ranking, nDCG@3 + MRR@3
     ├── browser_tool/                   # Ref-grounded a11y action (snap+ref)
     ├── browser_bench/                  # Vision-grounded browser (T1-T5; ported cli-orchestration 2026-07-05)
     ├── pdf_extract/                    # Schema field-extraction (abstention)

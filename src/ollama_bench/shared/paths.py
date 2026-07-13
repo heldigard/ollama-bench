@@ -1,4 +1,5 @@
 """Output paths. ABSOLUTE resolution to survive symlinks and CWD changes."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -26,10 +27,3 @@ def result_path(name: str, ext: str = "tsv") -> Path:
     if not name or "/" in name or ".." in name:
         raise ValueError(f"unsafe result name: {name!r}")
     return results_dir() / f"{name}.{ext}"
-
-
-def log_path(name: str) -> Path:
-    """Return path to a named log file under logs_dir()."""
-    if not name or "/" in name or ".." in name:
-        raise ValueError(f"unsafe log name: {name!r}")
-    return logs_dir() / f"{name}.log"
