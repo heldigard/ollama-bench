@@ -9,7 +9,7 @@ from email.message import Message
 from unittest.mock import MagicMock, patch
 
 from ollama_bench.shared.config import OLLAMA_URL
-from ollama_bench.shared.ollama import CallOpts, call
+from ollama_bench.shared.ollama import CallOpts, call, unload
 
 
 def _fake_response(
@@ -193,3 +193,19 @@ def test_call_retries_zero_makes_single_attempt():
         res = call("m", "p", opts=CallOpts(retries=0))
     assert "err" in res
     mock_sleep.assert_not_called()
+
+
+def test_unload_posts_keep_alive_zero_best_effort():
+    """unload() POSTs keep_alive=0 to /api/generate so the bench releases VRAM
+    between models (2026-07-13 Qwythos contention fix). Errors are ignored."""
+    captured = {}
+
+    def fake_post(url, body, timeout):
+        captured["url"] = url
+        captured["body"] = json.loads(body)
+        return {"err": "anything — must be ignored, not raised"}
+
+    with patch("ollama_bench.shared.ollama._post_json", side_effect=fake_post):
+        unload("mymodel")  # must not raise even though _post_json returned err
+    assert captured["body"] == {"model": "mymodel", "keep_alive": 0}
+    assert captured["url"].endswith("/api/generate")

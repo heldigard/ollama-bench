@@ -213,3 +213,18 @@ def embed(model: str, text: str, timeout: int = TIMEOUT_DEFAULT) -> dict[str, An
     if "err" in data:
         return data
     return {"vec": data.get("embedding") or [], "dt": round(time.perf_counter() - t0, 2)}
+
+
+def unload(model: str) -> None:
+    """Best-effort unload of ``model`` from VRAM (keep_alive=0).
+
+    The bench calls this between models so each candidate loads into clean VRAM
+    rather than competing with the previous model's resident weights. Without
+    it, a large / context-hungry model (e.g. Qwythos 6.8GB / 1M-ctx) can
+    collapse to empty responses under residual contention — the 2026-07-13
+    artifact where it scored -100 across all deep prompts while working fine in
+    isolation. The result is ignored: an unload failure (model not loaded,
+    daemon hiccup) must not abort a bench run.
+    """
+    body = json.dumps({"model": model, "keep_alive": 0}).encode()
+    _post_json(f"{OLLAMA_URL}/api/generate", body, 15)

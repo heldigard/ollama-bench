@@ -23,7 +23,7 @@ from statistics import mean
 from ollama_bench.features.canonical_tasks import PROMPTS, iter_cases, score_task_response
 from ollama_bench.shared.config import NUM_PREDICT_DEFAULT, TASKS
 from ollama_bench.shared.gpu import gpu_temp, wait_gpu_cool
-from ollama_bench.shared.ollama import CallOpts, call, get_model_names
+from ollama_bench.shared.ollama import CallOpts, call, get_model_names, unload
 from ollama_bench.shared.paths import result_path
 from ollama_bench.shared.scorer import strip_reasoning
 
@@ -353,6 +353,13 @@ def cmd_deep(args: argparse.Namespace) -> int:
         except Exception as e:
             r = {model: {"err": str(e)}}
         results.update(r)
+
+        # Release VRAM before the next model loads. Ollama keeps finished models
+        # resident for keep_alive minutes; without an explicit unload the next
+        # candidate (especially a large one like Qwythos 6.8GB/1M-ctx) loads into
+        # fragmented VRAM and can collapse to empty — the 2026-07-13 contention
+        # artifact. Best-effort: an unload failure must not abort the run.
+        unload(model)
 
         # Incremental save: flush BOTH the ranked TSV and the per-case details
         # JSONL to disk now, so a kill/crash never loses this model's scores.
