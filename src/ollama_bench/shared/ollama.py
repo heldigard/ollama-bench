@@ -113,7 +113,44 @@ def _template_parser_failure(data: dict[str, Any]) -> bool:
     )
 
 
+# Transient-load retry. A model that fails with HTTP/timeout/load contention
+# during a big bench run (empty `out`, no `etoks`) used to score -100 and could
+# dethrone a healthy champion — see the 2026-07-13 Qwythos codeq_sum incident
+# (worked when called in isolation, returned empty across all deep prompts
+# under GPU contention). Retrying transient errors here, in the single HTTP
+# path, protects every feature at once. Permanent client errors (HTTP 4xx:
+# bad model tag, malformed request) are NOT retried — they cannot succeed.
+_TRANSIENT_RETRIES = 2
+_TRANSIENT_BACKOFF_SEC = (5.0, 15.0)
+
+
+def _is_transient(err: str) -> bool:
+    """Client errors (HTTP 4xx) are permanent; everything else (5xx, timeouts,
+    connection resets, model-load races, OOM) is worth one more attempt."""
+    return not err.startswith("HTTP 4")
+
+
 def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any]:
+    """Single protocol-aware Ollama completion with transient-load retry.
+
+    Wraps :func:`_call_once`. On a transient error (HTTP 5xx / timeout /
+    load-race) it retries up to ``_TRANSIENT_RETRIES`` times with backoff before
+    returning the final ``{"err": ...}``. Permanent 4xx errors return
+    immediately. This stops GPU-contention drops from registering as empty-real
+    hard-DQs that silently dethrone healthy champions.
+    """
+    o = opts or CallOpts()
+    last: dict[str, Any] = {}
+    for attempt in range(_TRANSIENT_RETRIES + 1):
+        last = _call_once(model, prompt, o)
+        if "err" not in last or not _is_transient(last["err"]):
+            return last
+        if attempt < _TRANSIENT_RETRIES:
+            time.sleep(_TRANSIENT_BACKOFF_SEC[attempt])
+    return last
+
+
+def _call_once(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any]:
     """Single protocol-aware Ollama completion. Non-streaming.
 
     Returns a dict with keys:

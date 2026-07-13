@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import io
 import json
+import urllib.error
+from email.message import Message
 from unittest.mock import MagicMock, patch
 
 from ollama_bench.shared.config import OLLAMA_URL
@@ -56,8 +59,12 @@ def test_call_think_flag_at_top_level():
 
 
 def test_call_handles_http_error():
-    # Generic Exception via urlopen -> err key in response
-    with patch("urllib.request.urlopen", side_effect=Exception("boom")):
+    # Generic Exception via urlopen -> transient err -> retried, then returned.
+    # Backoff patched to 0 so the test does not wait on real sleeps.
+    with (
+        patch("urllib.request.urlopen", side_effect=Exception("boom")),
+        patch("ollama_bench.shared.ollama._TRANSIENT_BACKOFF_SEC", (0.0, 0.0)),
+    ):
         res = call("m", "p")
     assert "err" in res
     assert "boom" in res["err"]
@@ -126,3 +133,50 @@ def test_callopts_is_frozen():
         raise AssertionError("expected FrozenInstanceError")
     except Exception:
         pass  # OK, frozen prevents mutation
+
+
+# --- transient-load retry (2026-07-13: stop false -100 hard-DQs) ------------
+
+
+def test_call_retries_transient_then_succeeds():
+    """A transient error (timeout / load race) MUST be retried; the 3rd attempt
+    succeeds. Regression for the Qwythos codeq_sum incident: a model that empties
+    under GPU contention must not be hard-DQd when a retry would have worked."""
+    responses = [
+        urllib.error.URLError("timeout"),  # attempt 1: transient
+        urllib.error.URLError("conn reset"),  # attempt 2: transient
+        _fake_response("ok", eval_count=3),  # attempt 3: success
+    ]
+    with (
+        patch("urllib.request.urlopen", side_effect=responses),
+        patch("ollama_bench.shared.ollama._TRANSIENT_BACKOFF_SEC", (0.0, 0.0)),
+    ):
+        res = call("m", "p")
+    assert res["out"] == "ok"
+    assert res["etoks"] == 3
+
+
+def test_call_no_retry_on_permanent_4xx():
+    """Permanent 4xx (bad model tag / malformed request) MUST NOT be retried —
+    it cannot succeed. No backoff sleep is taken."""
+    http_err = urllib.error.HTTPError("u", 404, "Not Found", Message(), io.BytesIO(b"nope"))
+    with (
+        patch("urllib.request.urlopen", side_effect=http_err),
+        patch("ollama_bench.shared.ollama.time.sleep") as mock_sleep,
+    ):
+        res = call("m", "p")
+    assert "err" in res
+    assert "HTTP 404" in res["err"]
+    mock_sleep.assert_not_called()
+
+
+def test_call_returns_err_after_all_retries_fail():
+    """All-transient-failure returns the err after exhausting retries
+    (1 initial + 2 retries = 3 attempts)."""
+    with (
+        patch("urllib.request.urlopen", side_effect=urllib.error.URLError("down")),
+        patch("ollama_bench.shared.ollama._TRANSIENT_BACKOFF_SEC", (0.0, 0.0)),
+    ):
+        res = call("m", "p")
+    assert "err" in res
+    assert "down" in res["err"]
