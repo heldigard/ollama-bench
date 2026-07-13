@@ -323,7 +323,11 @@ def cmd_deep(args: argparse.Namespace) -> int:
     # In strip mode, reasoning models spend tokens on <think>/<reasoning> BEFORE
     # the answer; give them headroom so the cleaned answer actually fits.
     num_predict = 600 if strip else NUM_PREDICT_DEFAULT
-    opts = CallOpts(num_predict=num_predict, num_ctx=4096)
+    # retries=0: the bench must score fast. A model failing consistently under
+    # GPU contention (transient empty) registers -100 immediately rather than
+    # stalling every prompt on backoff retries — that -100 is the diagnostic
+    # signal, not a silent hang. Production callers keep the default retries=2.
+    opts = CallOpts(num_predict=num_predict, num_ctx=4096, retries=0)
 
     # Reconstruct every previously-scored model so the final re-rank never drops
     # completed work. Source of truth = append-only details JSONL (kill-safe);

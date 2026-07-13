@@ -38,6 +38,7 @@ class CallOpts:
     think: bool = False  # TOP-LEVEL; moving into options is silently ignored
     api: Literal["generate", "chat", "chat-fallback"] = "generate"
     system: str = ""
+    retries: int = 2  # transient-load retries (timeout/5xx); 0 disables for bench runs
 
 
 def get_models() -> list[dict[str, Any]]:
@@ -120,7 +121,6 @@ def _template_parser_failure(data: dict[str, Any]) -> bool:
 # under GPU contention). Retrying transient errors here, in the single HTTP
 # path, protects every feature at once. Permanent client errors (HTTP 4xx:
 # bad model tag, malformed request) are NOT retried — they cannot succeed.
-_TRANSIENT_RETRIES = 2
 _TRANSIENT_BACKOFF_SEC = (5.0, 15.0)
 
 
@@ -134,19 +134,19 @@ def call(model: str, prompt: str, opts: CallOpts | None = None) -> dict[str, Any
     """Single protocol-aware Ollama completion with transient-load retry.
 
     Wraps :func:`_call_once`. On a transient error (HTTP 5xx / timeout /
-    load-race) it retries up to ``_TRANSIENT_RETRIES`` times with backoff before
-    returning the final ``{"err": ...}``. Permanent 4xx errors return
-    immediately. This stops GPU-contention drops from registering as empty-real
-    hard-DQs that silently dethrone healthy champions.
+    load-race) it retries up to ``opts.retries`` times (default 2) with backoff
+    before returning the final ``{"err": ...}``. Permanent 4xx errors return
+    immediately. Bench runs pass ``retries=0`` so a model failing consistently
+    under GPU contention scores -100 fast instead of stalling every prompt.
     """
     o = opts or CallOpts()
     last: dict[str, Any] = {}
-    for attempt in range(_TRANSIENT_RETRIES + 1):
+    for attempt in range(o.retries + 1):
         last = _call_once(model, prompt, o)
         if "err" not in last or not _is_transient(last["err"]):
             return last
-        if attempt < _TRANSIENT_RETRIES:
-            time.sleep(_TRANSIENT_BACKOFF_SEC[attempt])
+        if attempt < o.retries:
+            time.sleep(_TRANSIENT_BACKOFF_SEC[min(attempt, len(_TRANSIENT_BACKOFF_SEC) - 1)])
     return last
 
 

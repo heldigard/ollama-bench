@@ -180,3 +180,16 @@ def test_call_returns_err_after_all_retries_fail():
         res = call("m", "p")
     assert "err" in res
     assert "down" in res["err"]
+
+
+def test_call_retries_zero_makes_single_attempt():
+    """Bench runs pass retries=0 so a model failing consistently under GPU
+    contention scores fast (one attempt, no backoff) instead of stalling every
+    prompt — the -100 is the diagnostic signal, not a silent hang."""
+    with (
+        patch("urllib.request.urlopen", side_effect=urllib.error.URLError("down")),
+        patch("ollama_bench.shared.ollama.time.sleep") as mock_sleep,
+    ):
+        res = call("m", "p", opts=CallOpts(retries=0))
+    assert "err" in res
+    mock_sleep.assert_not_called()
