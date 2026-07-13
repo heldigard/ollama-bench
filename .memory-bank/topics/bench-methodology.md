@@ -64,6 +64,49 @@ Lower = better. Top 5 per task are the winners.
 - Total cost: ~120s/model for a complete evaluation across 5 tasks.
 - For 40 candidates: ~80 min total. Acceptable.
 
+## Step 6: Cross-Task 4-Way Validation (mandatory after a rewire)
+
+**Lesson from rounds 9-12 (2026-07-12):** the champion listed in `RANKING.md` is
+only as good as the challengers it was tested against. Tie-break vs a single
+champion is misleading because that champion may not be the strongest in the
+task — it was just the one whose flaws were the loudest. After any round that
+promotes a new primary, run a **cross-task 4-way deep** with:
+
+1. The current primary (defender)
+2. The current fallback (incumbent #2)
+3. The current tertiary (incumbent #3, if defined)
+4. A cross-task challenger — a current primary from a **different** task
+
+This catches:
+
+- **Round-9 (1 dethrone)**: TeichAI/Fable-5-v1 web_synth champion → codeq_sum beat
+  batiai/e4b. Cross-task pattern first observed.
+- **Round-10 (3 dethrones)**: stale round-7 champions never challenged by other-task
+  champions. TeichAI → improve (+1.53), SC117/heretic-QAT → smart_trim (+0.92),
+  xentriom Q8_0 → bug_finding (+0.48). All three were cross-task promotions.
+- **Round-11 (0 dethrones)**: round-10 champions held against round-10 cross-task
+  challengers. Pattern is asymmetric: reasoning-heavy beats coding-heavy, but
+  two reasoning-heavy champions don't compete (orthogonal skills).
+- **Round-12 (0 dethrones)**: gemma-4 official variants (MoE 26B-A4B + 12B QAT)
+  tied or lost. Confirms lineup at local optimum under current architectures.
+
+**Pattern validity check**: if a cross-task challenger wins, it's a real dethrone.
+If not, the existing champion is hardened for the current installed lineup.
+
+### When to run this
+
+- After ANY round that promotes a new primary (round-9, round-10).
+- After pulling a new HF candidate that could plausibly win multiple tasks
+  (round-12 MoE exploration).
+- NOT after rounds where no rewires happen (round-11) — it's wasted cycles.
+
+### Cost
+
+4-way deep × 5 tasks × ~3min/task = ~1.5h GPU. Plus smoke (~30s/model). Worth
+it if it produces 1+ dethrone, wasteful if it produces 0 — but you only know
+after running. Triggered by external signal (new candidate OR observed stale
+champion), not periodic.
+
 ## Critical invariants
 
 1. **`think: false` is TOP-LEVEL** in the Ollama API body. Putting it inside `options` is silently ignored.

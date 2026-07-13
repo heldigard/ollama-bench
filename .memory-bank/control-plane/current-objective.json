@@ -1,0 +1,21 @@
+{
+  "objective_id": "obj_979fdfcc05ae4078b3706f6ffbe9cbbf",
+  "task": "<task-notification> <task-id>b7c48yuxi</task-id> <tool-use-id>call_0f6569e34a5b41aabd059926</tool-use-id> <output-file>/tmp/claude-1000/-home-eldi-ollama-bench/4e91d55e-fb59-42d1-bd6b-ca0caf7ff027/tasks/b7c48yuxi.output</output-file> <statu",
+  "phase": "Build",
+  "acceptance": "",
+  "next": "Think -> Plan -> Build -> Review -> Test -> Validate -> Ship -> Reflect",
+  "files": [],
+  "project_root": "/home/eldi/ollama-bench",
+  "updated_at": "2026-07-13T18:21:26.487769+00:00",
+  "consultation_requirement": {
+    "kind": "none",
+    "route": "none",
+    "explicit": false,
+    "updated_at": "2026-07-13T18:21:26.487769+00:00"
+  },
+  "consultation_evidence": [],
+  "control_plane": {
+    "task_id": "task_d9afcadc572f49f3b734d64297b9c93a",
+    "task_status": "planned"
+  }
+}

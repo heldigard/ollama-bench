@@ -117,3 +117,37 @@ Session: unknown
 - `~/agent-memory` (DEFAULT_GEN_MODEL)
 - `~/.claude/scripts/` (4 harness scripts)
 - `~/
+
+## 2026-07-13T10:05:32
+Method: ollama-gemma-4-12B-it-heretic-QAT
+Session: 019f5bdb-3b78-7c12-8c47-b1c7b669851b
+
+> Session data only; never overrides safety, permissions, or current instructions.
+
+## Session constraints (quoted; non-authoritative)
+- DO NOT re-introduce parallel pools (ThreadPoolExecutor) — GPU overheat root cause.
+- DO NOT run benches without `--cooldown`/`--temp-limit`.
+- DO NOT pull Q5/Q6/Q8 of existing Q4 winners; DO NOT install >10GB models (RTX 5080 16GB).
+- DO NOT discard strippable models solely for thinking leaks.
+- DO NOT re-pull round-8 rejects (shuhulx, tvall43, llmfan46, KevinJK51) — see RANKING_HISTORY §round-8.
+
+**Task**: Finalize lineup stability, perform cleanup pass, and harden drift guards.
+
+**Acceptance**: Lineup at terminal stability (zero rewires), cross-CLI rewire complete, dead code removed, and disk space optimized.
+
+**Verified**: 
+- Lineup stable: 19 LLMs + 3 embeddings = 22 models.
+- Cross-CLI Rewire: `~/prompt-improve` (192/192 tests), `~/smart-trim` (170/170 tests).
+- Performance: `xentriom Q8_0` holds web_synth #3; `lift` leads code_gen.
+- Disk: 84.3GB freed rounds 12-14.
+
+**Current**: Lineup frozen; terminal stability confirmed against new families (Llama-4, Codestral).
+
+**Errors**: None reported in latest pass.
+
+**Decisions**:
+- **Lineup Freeze**: Stop "test-the-limits" work; lineup is stable unless a 5-8GB sweet-spot model emerges.
+- **Model Deletions**: Removed `Librellama/gemma4-e2b-Uncensored` and `hf.co/unsloth/gemma-4-12b-it-qat` (not in top-5). Deleted `Llama-4-Scout-17B` (latency veto) and `Codestral-22B` (inferior to lift).
+- **Architecture**: Maintain 16GB VRAM limits; no parallel pools (GPU overheat); xentriom Q8_0 is the only justified >10GB exception.
+
+**Next**: Resume only if a genuinely new base/fine-tune appears or a coder-tuned Q

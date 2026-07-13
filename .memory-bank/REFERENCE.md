@@ -25,16 +25,19 @@ ollama-bench report build [-i IN] [-o OUT]   # TSV -> MD ranking
 
 ## Canonical 6 tasks
 
-| task | budget_words | PRIMARY (re-bench 2026-07-04) |
+| task | budget_words | PRIMARY (re-bench 2026-07-12 round-10) |
 |---|---|---|
-| improve | 120 | hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl |
-| codeq_sum | 30 | batiai/gemma4-e4b:q4 |
-| smart_trim | 150 | SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU |
-| web_synth | 200 | batiai/gemma4-e4b:q4 |
-| code_gen | 100 | fredrezones55/Qwopus3.5:9b |
-| bug_finding | — | cryptidbleh/gemma4-claude-sonnet-4.6 |
+| improve | 120 | hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M |
+| codeq_sum | 30 | hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M |
+| smart_trim | 150 | batiai/gemma4-e2b:q4 |
+| web_synth | 200 | hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M |
+| code_gen | 100 | hf.co/prithivMLmods/lift-GGUF:Q4_K_M |
+| bug_finding | — | xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0 |
 
-Full top-2 map + 16-winner rationale: `topics/local-ollama-lineup.md`.
+Full top-2 map + per-task champions + rationale: `topics/local-ollama-lineup.md`.
+**NOTE**: REFERENCE.md previously held stale round-7 snapshot. Round-10 cross-task
+validation generalized round-9's lesson: stale champions are vulnerable to other-task
+challengers. TeichAI now improve + web_synth; batiai-e2b smart_trim (round-15 correction); xentriom bug_finding.
 
 ## Leak patterns (shared/scorer.py LEAK_PATTERNS)
 

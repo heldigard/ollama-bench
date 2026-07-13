@@ -7,6 +7,9 @@
 - [local-ollama-lineup](local-ollama-lineup.md) — 21 LLM winners + per-role map (re-bench 2026-07-05 round-3 + 4; re-installed batiai/gemma4-e2b:q4 missing winner)
 - [harness-wiring-2026-07-04](harness-wiring-2026-07-04.md) — cross-CLI consumer → champion map (smart-trim/codeq/web-research/diff-review/etc.) + live-env drift gotcha
 
+- [tiny-models-strategy-2026-07-13](tiny-models-strategy-2026-07-13.md) — análisis + plan ejecutable: tinys 0.3B–2B como capa cascada residente (classification/rerank/extract), regla de aceptación 2%-F1 + 3x tps + ≤2GB; NO tocar roles de calidad.
+- [candidates-round-15-2026-07-13](candidates-round-15-2026-07-13.md) — tiny classification empirical run: LFM, Qwen and Gemma3 all rejected; E2B GGUFs exceed resident-size gate.
+- [candidates-round-16-2026-07-13](candidates-round-16-2026-07-13.md) — quality-first screen: Qwythos v2, Qwen3 Embedding 4B, and Granite 4.1 8B all rejected; no live rewires.
 ## Bench iterations (2026-07-04)
 - [new-benchmarks-roadmap-2026-07-04](new-benchmarks-roadmap-2026-07-04.md) — 8 new bench dimensions → cross-CLI consumers (tool_call + embedding_retrieval landed)
 - [new-models-bench-2026-07-04](new-models-bench-2026-07-04.md) — HF candidates benched; huihui = bug_finding #1 (17.98)
@@ -14,6 +17,12 @@
 
 ## Bench iterations (2026-07-08)
 - [deep-winners-20260708-pm](deep-winners-20260708-pm.md) — deep pass 4/5 winners CHANGED vs config primaries (Openclaw/DeltaCoder fell out); pending combined rewire
+
+## Bench iterations (2026-07-12)
+- [candidates-round-9-2026-07-12](candidates-round-9-2026-07-12.md) — 9 HF candidates filtered (7 rejected pre-bench, gemma-4-oficial ollama-pull blocker). Qwythos dethroned batiai in codeq_sum (+2.3% in 4-way deep); batiai demoted to fallback. Qwythos also #2 code_gen fallback (close to lift).
+- [candidates-round-10-2026-07-12](candidates-round-10-2026-07-12.md) — **3 PRIMARY DETHRONES via cross-task 4-way validation** (TeichAI in improve, SC117 in smart_trim, xentriom in bug_finding). Round-9 learning generalized: stale per-task champions were never challenged by other-task champions. `diff-review.py` default `OLLAMA_CODE_MODEL` rewired to xentriom Q8_0.
+- [candidates-round-11-2026-07-12](candidates-round-11-2026-07-12.md) — **ZERO REWIRES.** Round-10 champions held all 4 cross-task validations. Lineup is at local optimum. Strategic recommendation: move from every-2-days re-bench to triggered/quarterly cadence.
+- [candidates-round-12-2026-07-12](candidates-round-12-2026-07-12.md) — **ZERO REWIRES, MoE test exhausted.** Tested gemma-4-26B-A4B MoE (loses code_gen + 0.8 tps 10× latency → DELETE) + gemma-4-12B-it-qat official (ties HauhauCS within 0.05 in smart_trim, loses SC117 → KEEP as depth). Lineup at terminal stability. **STOP periodic re-bench. Adopt TRIGGERED policy.**
 
 ## Bench iterations (2026-07-05)
 - [candidates-round-3-2026-07-05](candidates-round-3-2026-07-05.md) — 3 HF candidates tested; Grug-12B won improve by 2× (hard prompts); DeepSeek-V4-Flash dropped (leak); ollama infra fixed.
@@ -26,3 +35,9 @@
 - [agent-sessions](agent-sessions.md) — auto-generated cross-CLI coordination registry
 - [benchmark-refactor-2026-07-08](benchmark-refactor-2026-07-08.md)
 - [current-models-strip-2026-07-08](current-models-strip-2026-07-08.md)
+
+## Round-13 results (2026-07-12 PM)
+- **Purge rule applied** — deleted `Librellama/gemma4:e2b-Uncensored` (3.4GB) + `hf.co/unsloth/gemma-4-12b-it-qat-GGUF:UD-Q4_K_XL` (6.9GB) for not appearing in any of the 10 task top-5 lists. Combined with round-12 26B-A4B delete: 23.3GB freed this session. Lineup 24 → 22 models (19 LLM + 3 embed).
+
+## Round-14 results (2026-07-12 PM)
+- **Llama-4 + Codestral — both new families lose.** `unsloth/Llama-4-Scout-17B-16E Q3_K_S` → 0.5 tps partial GPU offload (DELETE without bench). `bartowski/Codestral-22B Q4_K_M` → code_gen 8.67 #4 (-1.85 vs lift, +1.8 tps) → DELETE. **Lineup at DEEPER terminal stability:** robust across new families (Meta Llama-4, Mistral) AND same-base variants AND cross-task challengers. 84.3GB total disk freed this session (rounds 12-14). See `topics/candidates-round-14-2026-07-12.md`.

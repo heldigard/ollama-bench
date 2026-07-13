@@ -1,0 +1,14 @@
+{
+  "acceptance": [],
+  "completed_at": null,
+  "created_at": "2026-07-12T18:04:55.643769+00:00",
+  "objective_id": "obj_979fdfcc05ae4078b3706f6ffbe9cbbf",
+  "project_root": "/home/eldi/ollama-bench",
+  "schema_version": 1,
+  "status": "active",
+  "task_ids": [
+    "task_d9afcadc572f49f3b734d64297b9c93a"
+  ],
+  "title": "<task-notification> <task-id>b7c48yuxi</task-id> <tool-use-id>call_0f6569e34a5b41aabd059926</tool-use-id> <output-file>/tmp/claude-1000/-home-eldi-ollama-bench/4e91d55e-fb59-42d1-bd6b-ca0caf7ff027/tasks/b7c48yuxi.output</output-file> <statu",
+  "updated_at": "2026-07-13T18:21:26.490992+00:00"
+}

@@ -31,21 +31,30 @@
    - **Scoring**: ground-truth (parse JSON + exact-match tool name + arg schema
      check). No keyword noise.
 
-2. **`classification`** — classify a prompt into `{code, web, doc, trivial, security}`
-   or an error into `{auth, timeout, config, syntax, network}`. Multi-class.
-   - **Consumers**: prompt-router (41 routes), caveman-classify, error-classify,
-     test-triage, n8n-lint error mapping.
+2. **`classification` — LANDED 2026-07-13** — classify a prompt into
+   `{code, web, doc, trivial, security}` and exercise the real caveman outcome
+   taxonomy `{critical, routine, base}`.
+   - **Consumers represented**: task routing and caveman-classify. `error-classify`
+     is deliberately excluded: its live contract is `{system, cause, fix}`, not
+     the speculative `{auth, timeout, config, syntax, network}` taxonomy.
    - **Why P0**: the harness runs classification on EVERY prompt (prompt-router
      stage 3). Mis-routing = wrong skill loaded = degraded answer. Currently
      zero bench coverage for the most-fired local-model role.
-   - **Scoring**: macro-F1 + exact-match accuracy on a labeled set (≥30 items).
+   - **Scoring**: macro-F1 + exact-match accuracy on a balanced bilingual set
+     (48 items), invalid-output rate, median end-to-end latency and TPS. Promotion
+     requires baseline quality -0.02 or better, ≥3x latency speedup, ≤2 GiB, and
+     invalid rate ≤40%. TPS is diagnostic because one-label generation makes it noisy.
 
-3. **`rerank`** — given a query + 10 candidate docs, return top-3.
+3. **`rerank` — LANDED 2026-07-13** — given a query + 10 candidate docs,
+return top-3 as strict JSON.
    - **Consumer**: web-research rerank step (`search --smart`), search-swarm,
      memory semsearch re-ranking.
    - **Why P0**: rerank quality drives every "search → ground" workflow. nDCG@3
      vs a gold ranking.
-   - **Scoring**: nDCG@3 (information-retrieval standard).
+   - **Scoring**: graded relevance (0-3), nDCG@3, MRR@3, top-1 accuracy, and
+strict JSON validity. Cases cover ES/EN, negation, entity ambiguity and
+position-sensitive distractors. Speed is diagnostic only and never promotes a
+model.
 
 4. **`embedding_retrieval`** — proper eval of `embeddinggemma` vs `nomic-embed-text`
    vs any new embed model. MRR + recall@5 on a query→passage set.
@@ -102,9 +111,9 @@ descartamos por thinking leaks podrían aprovecharse si limpiamos eso."
 ## Implementation order (proposed)
 
 1. `tool_call` slice (P0, ground-truth, biggest gap) — next session.
-2. `classification` slice (P0, highest fire-rate consumer).
+2. `classification` slice — **landed** with deterministic promotion policy.
 3. Promote `embedding_retrieval` from scaffolding to real eval (P0).
-4. `rerank` slice (P0).
+4. `rerank` slice — **landed**; use it before evaluating Qwen3-Reranker tags.
 5. `extract_fields` + `draft_gen` (P1, rubric — needs the LLM-judge upgrade first).
 
 Each new slice = `features/<slice>/command.py` + register in `cli.py::_SLICES`

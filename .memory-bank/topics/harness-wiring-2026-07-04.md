@@ -7,12 +7,12 @@
 
 | tool | role | model (default; env override) | repo | status |
 |---|---|---|---|---|
-| prompt-improve | improve (rewrite/clarify) | `OmniCoder` (improve #1, held) → `Negentropy-claude-opus-4.7-9B` → `SetneufPT/Qwopus3.5` → `cryptidbleh` (`OLLAMA_IMPROVE_MODELS`, `config.py:38` `_DEFAULT_IMPROVE_CHAIN`) | ~/prompt-improve | ✅ rewired 2026-07-08 PM — chain = PM winners; OmniCoder held as improve #1. |
-| smart-trim | PreCompact summarize | PRIMARY `HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced` (smart_trim #1 12.30/13.53). (`SMART_TRIM_PRIMARY_MODEL`) | ~/smart-trim | ✅ rewired 2026-07-08 PM — `features/summarize/command.py:28`. SetneufPT + the map's earlier `Openclaw` suggestion both superseded by HauhauCS-Balanced. |
-| web-research | web_synth (final cited answer) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (web_synth combined #1 11.85/12.83). (`OLLAMA_SYNTH_MODEL`) | ~/web-research | ✅ rewired 2026-07-08 PM — `shared/config.py:56`. DeltaCoder + crow:9b both superseded (DeltaCoder fell out of top-5). |
+| prompt-improve | improve (rewrite/clarify) | **`TeichAI/Fable-5-v1`** (improve #1 2.46) → `Negentropy-claude-opus-4.7-9B` → `cryptidbleh` (`OLLAMA_IMPROVE_MODELS`, `config.py:38` `_DEFAULT_IMPROVE_CHAIN`) | ~/prompt-improve | ✅ **rewired 2026-07-12 round-10** — TeichAI dethroned OmniCoder in 4-way deep (2.46 vs 0.93, +1.53). Cross-task promotion: web_synth champ also beats improve champ. Update `_DEFAULT_IMPROVE_CHAIN` to put TeichAI first. |
+| smart-trim | PreCompact summarize | PRIMARY **`hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`** → **`hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M`**. (`SMART_TRIM_PRIMARY_MODEL`) | ~/smart-trim | ✅ quality-first incumbent. Round-15 E2B is an unreplicated candidate; throughput cannot displace fidelity. `features/summarize/command.py:27`. |
+| web-research | web_synth (final cited answer) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (web_synth combined #1 11.85/12.83, improve #1 2.46). (`OLLAMA_SYNTH_MODEL`) | ~/web-research | ✅ rewired 2026-07-08 PM — `shared/config.py:56`. TeichAI also won improve round-10, dual-role. |
 | web-research | query_profile / focused_extract | `cryptidbleh/gemma4-claude-opus-4.6:latest` (high-freq per-page) | same | ✅ anchor (inherits web-research `_OLLAMA_DEFAULT_MODEL`, `config.py:54`) |
-| codeq | summary / context / relations | `batiai/gemma4-e4b:q4` (`CODEQ_SUMMARY_MODEL` in ~/.zshrc + `llm.py` default; commit 671d934) | ~/codeq | ✅ rewired 2026-07-08 PM — batiai codeq_sum #1 (10.24/11.20); `jaahas/crow:9b` demoted to fallback #2 (10.01/11.25). |
-| diff-review | bug_finding | `zfujicute/OmniCoder-...Opus-Uncensored-v2` (bug_finding #1 15.43 AND code_gen top-5). (`OLLAMA_CODE_MODEL`) | ~/.claude/scripts/diff-review.py | ✅ rewired 2026-07-08 PM — `diff-review.py:62` "OmniCoder bug_finding #1 15.58". huihui + DeltaCoder superseded (OmniCoder overtook both). |
+| codeq | summary / context / relations | **`hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M`** (`CODEQ_SUMMARY_MODEL` in ~/.zshrc + `llm.py` default) | ~/codeq | ✅ **rewired 2026-07-12 round-9** — Qwythos dethroned batiai codeq_sum #1 (9.40 vs 9.19, +2.3%); batiai demoted to fallback. See `topics/candidates-round-9-2026-07-12.md`. |
+| diff-review | bug_finding | **`xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0`** (bug_finding #1 14.97 5-way round-10). (`OLLAMA_CODE_MODEL`) | ~/.claude/scripts/diff-review.py | ✅ **rewired 2026-07-12 round-10** — xentriom Q8_0 dethroned OmniCoder in 5-way specialized bench (14.97 vs 14.49, +0.48). Cross-task promotion: web_synth champion also wins bug_finding. WARNING: Q8_0 = 12GB; override `OLLAMA_CODE_MODEL=OmniCoder` for low-VRAM contexts. |
 | project-memory | maintain (semantic-dedup + compact) | `cryptidbleh/gemma4-claude-opus-4.6:latest` (via ollama_client DEFAULT_GEN_MODEL) | ~/.claude/scripts/project-memory.py | ✅ anchor (inherits default, which is now cryptidbleh) |
 | agent-browser subagent | browser PRIMARY | `SetneufPT/Qwopus3.5-4B-Coder-MTP` (browser_tool + tool_call + pdf_extract #1); FALLBACK `huihui` | ~/.claude/scripts/agent_browser_subagent.py (shim → cli-orchestration browser/subagent.py:5) | ✅ rewired 2026-07-08 PM — functiongemma deleted from lineup, replaced by SetneufPT. |
 | pdf-extract-structured | PDF extraction | `SetneufPT/Qwopus3.5-4B-Coder-MTP` (pdf_extract #1 12.07) + OPT-IN cloud `deepseek-v4-flash`; fallback chain → `cryptidbleh` | ~/.claude/scripts/pdf-extract-structured.py:40 | ✅ rewired 2026-07-08 PM — functiongemma deleted; DEFAULT_MODEL now SetneufPT (pdf_extract #1). |
@@ -44,6 +44,40 @@ wired in source today:
 4. **~/.claude/scripts/diff-review.py**: `OLLAMA_CODE_MODEL` = OmniCoder.
 
 Source defaults in each repo match; zshrc exports must match too (see gotcha below).
+
+## Round-9 rewire delta (2026-07-12)
+
+ONE row updated: `codeq` → Qwythos primary (was batiai). `~/.zshrc:1134`
+`CODEQ_SUMMARY_MODEL` rewired in same atomic edit. All other rows HELD — no
+move at the top-5 level for improve / smart_trim / web_synth / code_gen /
+bug_finding / tool_call / pdf_extract / pdf_ocr.
+
+Qwythos did not displace any consumer champion — but came within striking
+distance on code_gen (10.38 vs lift 10.52, -1.3% on hard prompts). Not promoted
+there; recorded as "watch" for round-10.
+
+## Round-10 rewire delta (2026-07-12) — **MAJOR**
+
+3 PRIMARY changes via cross-task 4-way validation:
+
+| row | OLD | NEW | source of upset |
+|---|---|---|---|
+| prompt-improve | OmniCoder | **TeichAI/Fable-5-v1** (web_synth champion crossed-task) | 2.46 vs 0.93 in 4-way deep |
+| smart-trim | HauhauCS-Balanced | **SC117/heretic-QAT** (smart_trim #2 fallback promoted) | 10.79 vs 9.87 in 4-way deep |
+| diff-review (`OLLAMA_CODE_MODEL`) | OmniCoder | **xentriom Q8_0** (web_synth champion crossed-task) | 14.97 vs 14.49 in 5-way specialized |
+
+Plus ONE fallback swap: pdf_extract #2 → OmniCoder (12.00 vs ykarout/Openclaw 11.97).
+
+Pattern: stale round-7 champions were never challenged by other-task champions.
+Cross-task validation dethroned 3 specialists with broad generalists. The
+"broad generalist" winners (TeichAI, xentriom) won multiple roles; the
+"specialist" losers (OmniCoder, HauhauCS) lost to siblings in same family.
+
+**Action items for downstream consumers:**
+1. ✅ Update `~/prompt-improve/_DEFAULT_IMPROVE_CHAIN` to put TeichAI first. **DONE 2026-07-12 PM** (TeichAI primary, Negentropy-9B fallback, SetneufPT, cryptidbleh). Tests: 192/192 pass.
+2. ✅ Update `~/smart-trim/features/summarize/command.py:28` to use SC117/heretic-QAT as PRIMARY. **DONE 2026-07-12 PM** (SC117 primary, HauhauCS-Balanced secondary). Tests: 170/170 pass.
+3. ✅ `~/.claude/scripts/diff-review.py` already rewired to xentriom Q8_0. **DONE 2026-07-12 PM**.
+4. `OLLAMA_CODE_MODEL=OmniCoder` env override available for low-VRAM contexts (xentriom Q8_0 = 12GB).
 
 ## Gotcha: live env drift
 
