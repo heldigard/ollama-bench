@@ -31,6 +31,16 @@
 > **TERMINAL STABILITY:** all plausible architectures exhausted. Recommend TRIGGERED re-bench policy.
 > See [candidates-round-12-2026-07-12](candidates-round-12-2026-07-12.md).
 >
+> **Round-13 (2026-07-12 PM, purge):** deleted Librellama/gemma4:e2b-Uncensored + unsloth/gemma-4-12B-it-qat-GGUF (neither in any task top-5). Lineup 24 → 22.
+>
+> **Round-14 (2026-07-12):** no new candidates tested.
+>
+> **Round-15 (2026-07-13, tiny classification empirical):** tested LFM, Qwen and Gemma3 tinys for classification role. All rejected; E2B GGUFs exceed resident-size gate.
+>
+> **Round-16 (2026-07-13, quality-first screen):** tested Qwythos v2, Qwen3 Embedding 4B, Granite 4.1 8B (improve). Granite rejected (isolated 3.00, fresh 3-way replication 2.33 vs TeichAI 2.46 and Negentropy 2.03).
+>
+> **Round-17 (2026-07-13, fresh 5-way re-bench):** **ONE PRIMARY DETHRONE** — `cryptidbleh/gemma4-claude-opus-4.6` dethroned `TeichAI/Qwen3.5-9B-Fable-5-v1` in improve (2.97 vs 2.46, +0.51). Round-10 blind spot: cryptidbleh was chain tail (legacy 2026-07-09 #1, smart_trim round-15 #2) but NOT in round-10 4-way, so its strength was never re-validated. TeichAI demoted to fallback. OmniCoder held lowest (0.93) — confirmed demoted to bug_finding/pdf_extract depth only. SetneufPT bench-validated at 1.68 (was untested in improve). Lineup unchanged. See [candidates-round-17-2026-07-13](candidates-round-17-2026-07-13.md).
+>
 > **Round-8 (2026-07-08 PM, same day):** tested 4 NEW HF candidates — `shuhulx/Qwopus3.5-4B-Coder-Fable5-v1`,
 > `tvall43/Qwen3.6-14B-A3B-FableVibes` (MoE 3B-active), `llmfan46/...composer2.5-v2-heretic` (Q4), `KevinJK51/Qwen3.6-12B-Thinking-V2`.
 > ALL 4 LOST vs round-7 champions → deleted. Lineup unchanged at 22. Key: MoE-latency thesis failed
@@ -43,7 +53,7 @@
 
 | task | #1 (PRIMARY) | #2 (fallback) |
 |---|---|---|
-| improve | **`hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M`** ← round-10 NEW (2.46; dethroned OmniCoder 0.93) | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| improve | **`cryptidbleh/gemma4-claude-opus-4.6:latest`** ← round-17 NEW (2.97 fresh 5-way; dethroned TeichAI 2.46 — round-10 blind spot, cryptidbleh was chain tail never re-validated) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (round-10 champion demoted to fallback, 2.46) |
 | codeq_sum | **`hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M`** ← round-9 (9.40/9.93) | `batiai/gemma4-e4b:q4` |
 | smart_trim | **`hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`** ← round-10 NEW (10.79; dethroned HauhauCS-Balanced 9.87) | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (held 10.20 4-way deep) | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |

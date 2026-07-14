@@ -32,8 +32,8 @@ TASKS: dict[str, dict] = {
     "improve": {
         "description": "prompt-improver hook — vague input → structured spec",
         "budget_words": 150,
-        "primary_model_default": "hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M",  # round-10 2026-07-12: dethroned OmniCoder (2.46 vs 0.93 in 4-way deep). Cross-task promotion: web_synth champ also beats improve champ.
-        "fallback_model": "hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M",
+        "primary_model_default": "cryptidbleh/gemma4-claude-opus-4.6:latest",  # round-17 2026-07-13: dethroned round-10 champion TeichAI in fresh 5-way (2.97 vs 2.46, +0.51). Round-10's blind spot: cryptidbleh was chain tail (legacy 2026-07-09 #1, smart_trim round-15 #2) but NOT in round-10 4-way.
+        "fallback_model": "hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M",  # round-10 champion demoted to fallback after round-17 dethrone.
         "protocol": "chat-fallback",
     },
     "codeq_sum": {

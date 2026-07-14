@@ -9,7 +9,7 @@ Full evidence: `results_wiring_validation_20260709.md`.
 
 | task | PRIMARY | FALLBACK | repeated score |
 |---|---|---|---|
-| improve | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` | 2.46 / 2.03 |
+| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | 2.97 / 2.46 |
 | codeq_sum | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | `batiai/gemma4-e4b:q4` | 9.40 / 9.19 |
 | smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` | 11.67 / 11.63 |
 
@@ -28,14 +28,15 @@ compare their absolute scores with the quality-first validation above.
 
 | # | deep | tiebreak | model |
 |---|---|---|---|
-| **1** | 2.46 | (round-10 only) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
-| **1** *(held)* | 7.74 | 6.40 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| **2** *(held)* | 6.30 | 6.65 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
-| 3 | 5.87 | 6.95 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-4B-GGUF:Q4_K_M` |
-| 4 | 6.64 | 6.07 | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
-| 5 | 5.90 | 6.00 | `hf.co/ykarout/Qwen3.5-9b-Opus-Openclaw-Distilled-GGUF:Q4_K_M` |
+| **1** | **2.97** | (round-17 fresh) | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| **2** | 2.46 | (round-17 fresh) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
+| 3 | 2.03 | (round-17 fresh) | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| 4 | 1.68 | (round-17 fresh) | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 5 | 0.93 | (round-17 fresh) | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| *(round-10 #1, demoted round-17)* | 2.46 | (round-10 only) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
+| *(round-7 #1, held round-10, removed round-17)* | 7.74 | 6.40 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
 
-Discrimination: 30 models scored; combined deep+tiebreak rank. Round-10 2026-07-12 cross-task promotion: **TeichAI/Fable-5-v1 (web_synth champion) dethroned OmniCoder in 4-way deep (2.46 vs 0.93, +1.53)**. OmniCoder demoted to bug_finding/tool_call/broswer_tool/pdf_extract depth. See `topics/candidates-round-10-2026-07-12.md`. Historical round-7 combined-rank leaderboard preserved above (marked *held*) for reference.
+Discrimination: round-17 2026-07-13 fresh 5-way deep re-bench (smoke-passed models: cryptidbleh, TeichAI, Negentropy-9B, SetneufPT, OmniCoder). Round-10 4-way did NOT include cryptidbleh (chain tail, legacy 2026-07-09 #1, smart_trim round-15 #2) — its strength was never re-validated against TeichAI. Round-17 caught the drift: **cryptidbleh 2.97 dethroned TeichAI 2.46 (+0.51, +21%)**. OmniCoder held lowest (0.93), confirmed demoted to bug_finding/pdf_extract depth only. Round-7 historical *(held)* row preserved for reference (old cap-of-7.0 scoring). See `topics/candidates-round-17-2026-07-13.md`.
 
 ## codeq_sum
 
@@ -137,7 +138,7 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 
 | task | PRIMARY | FALLBACK |
 |---|---|---|
-| improve | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` |
+| improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
 | codeq_sum | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | `batiai/gemma4-e4b:q4` |
 | smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
@@ -161,4 +162,4 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 
 - Smoke records `strippable=1`; `deep --strip` includes them, scoring cleaned output.
 - Unlimited-OCR is vision-only (`/api/chat` + `ocr [img]`); general models score -100 on pdf_ocr.
-- `cryptidbleh/gemma4-claude-opus-4.6` is the prompt-improve primary and smart-trim fallback. It replaced qwen3.5:4b as the lightweight infra default.
+- `cryptidbleh/gemma4-claude-opus-4.6` is the prompt-improve primary (round-17 2026-07-13 fresh 5-way 2.97) and smart-trim fallback. It replaced qwen3.5:4b as the lightweight infra default. Multi-task champion: improve #1 + smart_trim #2.
