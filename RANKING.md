@@ -55,12 +55,14 @@ Discrimination: round-17 2026-07-13 fresh 5-way deep re-bench (smoke-passed: Tei
 
 | # | deep | tiebreak | model |
 |---|---|---|---|
-| **1** | 11.67 | round-15 cross-validation | `batiai/gemma4-e2b:q4` |
-| 2 | 11.63 | round-15 cross-validation | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
-| 3 | 10.79 | round-10 4-way | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
-| 4 | 9.87 | round-10 4-way | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
+| **1** | 11.81 | round-17 + round-18 fresh 6-way | `batiai/gemma4-e2b:q4` |
+| 2 | 11.63 | round-17 + round-18 fresh 6-way | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
+| **3** | **11.35** | round-18 fresh 6-way | `batiai/gemma4-12b:q4` ← NEW depth (#3) |
+| 4 | 10.79 | round-10 4-way | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| 5 | 9.87 | round-10 4-way | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
+| 6 | 9.47 | round-18 fresh 6-way | `hf.co/mradermacher/gemma-4-12b-marvin-v2-GGUF:Q4_K_M` (rejected round-18) |
 
-Discrimination: round-15 2026-07-13 cross-validation (same round, same smart_trim rubric) scored batiai-e2b 11.67 and cryptidbleh 11.63 ABOVE SC117 10.79 and Hauhau 9.87. Quality governs, not throughput: batiai-e2b wins on score. The earlier round-15 "candidate" demotion was a name-bias error ('e2b' was treated as a low-fidelity tiny though Ollama reports it as 4.6B); reverted. batiai-e2b also held smart_trim #3 (11.93) in round-7 — two consistent data points above SC117.
+Discrimination: round-15 2026-07-13 cross-validation scored batiai-e2b 11.67 and cryptidbleh 11.63 ABOVE SC117 10.79 and Hauhau 9.87. Round-17 2026-07-13 fresh 5-way held (batiai-e2b 11.81 > cryptidbleh 11.63 > SC117 10.79 > Hauhau 9.87 > crow 5.86). Round-18 2026-07-13 fresh 6-way (added gemma-4-12b-marvin + batiai/gemma4-12b): **batiai/gemma4-12b 11.35 dethroned SC117 from chain top-3** (Google DeepMind official Gemma 4 12B-it weights, Q4 6.9GB, multimodal). Quality governs, not throughput: batiai-e2b wins on score. The earlier round-15 "candidate" demotion was a name-bias error ('e2b' was treated as a low-fidelity tiny though Ollama reports it as 4.6B); reverted. batiai-e2b also held smart_trim #3 (11.93) in round-7 — two consistent data points above SC117. gemma-4-12b-marvin rejected round-18 (below HauhauCS, removed from lineup).
 
 ## web_synth
 

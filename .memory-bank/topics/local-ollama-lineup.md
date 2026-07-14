@@ -113,6 +113,7 @@ xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0              (bug_findin
 huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K                (code_gen #3)
 jaahas/crow:9b                                                        (codeq_sum depth)
 batiai/gemma4-e2b:q4                                                  (smart_trim depth)
+batiai/gemma4-12b:q4                                                  (smart_trim #3 round-18 depth — Google DeepMind official Gemma 4 12B-it)
 cryptidbleh/gemma4-claude-opus-4.6:latest                             (universal fallback-of-fallbacks, web_synth depth)
 
 # Embeddings

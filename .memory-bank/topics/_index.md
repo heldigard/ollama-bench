@@ -27,6 +27,7 @@
 - [candidates-round-15-2026-07-13](candidates-round-15-2026-07-13.md) — tiny classification empirical: LFM, Qwen, Gemma3 all rejected; E2B GGUFs exceed resident-size gate.
 - [candidates-round-16-2026-07-13](candidates-round-16-2026-07-13.md) — quality-first screen: Qwythos v2, Qwen3 Embedding 4B, Granite 4.1 8B all rejected; no live rewires.
 - [candidates-round-17-2026-07-13](candidates-round-17-2026-07-13.md) — **FRESH 5-WAY IMPROVE RE-BENCH: cryptidbleh dethrones TeichAI** (2.97 vs 2.46, +0.51). Round-10 blind spot: cryptidbleh was chain tail never re-validated. prompt-improve + ollama-bench config rewire applied. Lineup unchanged (multi-task winner promotion).
+- [candidates-round-18-2026-07-13](candidates-round-18-2026-07-13.md) — 6 HF candidates tested (improve + smart_trim): **batiai/gemma4-12b:q4 depth-promoted to smart_trim #3** (11.35, dethrones SC117). 4 rejected (WaveCut/Qwythos-v2-Heretic, Parable-Granite, Qworum3, gemma-4-12b-marvin). Lineup 22 → 23 models. Official upstream weights > community fine-tunes; heretic variants hurt structural tasks.
 
 ## Bench iterations (2026-07-05)
 - [candidates-round-3-2026-07-05](candidates-round-3-2026-07-05.md) — 3 HF candidates tested; Grug-12B won improve by 2× (hard prompts); DeepSeek-V4-Flash dropped (leak); ollama infra fixed.
