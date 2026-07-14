@@ -90,14 +90,15 @@ Discrimination: 30 models scored; combined deep+tiebreak rank.
 
 | # | score | model |
 |---|---|---|
-| **1** | 14.97 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
-| 2 | 14.70 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
-| 3 | 14.68 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
-| 4 | 14.49 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
-| 5 | 14.06 | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
-| *(round-7 #1)* | 15.43 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` (held, now #4 above) |
+| **1** | **15.35** | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| 2 | 14.99 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
+| 3 | 14.70 | `hf.co/pegasus912/gemma-4-12b-it-qat-heretic-ud-q4-k-xl:latest` |
+| 3 | 14.70 | `hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL` |
+| 5 | 14.08 | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
+| *(round-10 #1, demoted round-17)* | 14.97 | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` (now #2) |
+| *(round-7 #1, demoted round-10, restored round-17)* | 15.43 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` (now #1) |
 
-Discrimination: 30 models scored; combined deep+tiebreak rank. Round-10 2026-07-12 cross-task promotion: **xentriom Q8_0 (web_synth champion) dethroned OmniCoder in 5-way specialized bug_finding (14.97 vs 14.49, +0.48)**. WARNING: xentriom Q8_0 = 12GB VRAM; OmniCoder retained as fallback for VRAM-tight contexts. TeichAI 14.06 (#5) — no displace. See `topics/candidates-round-10-2026-07-12.md`.
+Discrimination: round-17 2026-07-13 fresh 5-way specialized bench (smoke-passed: xentriom, pegasus912, SC117, OmniCoder, TeichAI). Round-10 blind spot: OmniCoder was demoted to improve depth after losing to xentriom; bug_finding head-to-head re-validation was never run. Round-17 caught the drift: **OmniCoder 15.35 dethroned xentriom 14.99 (+0.36, +2.4%)**. xentriom demoted to fallback. WARNING: xentriom Q8_0 = 12GB VRAM (fallback now, not default — VRAM-tight contexts benefit from the OmniCoder primary at 5.6GB). TeichAI 14.08 held at #5. Round-7 + round-10 historical rows preserved for reference. See `topics/candidates-round-17-2026-07-13.md`.
 
 ## tool_call
 
@@ -145,7 +146,7 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 | smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| bug_finding | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| bug_finding | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | tool_call | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
 | browser_tool | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
 | pdf_extract | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |

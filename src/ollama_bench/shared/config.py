@@ -69,8 +69,8 @@ TASKS: dict[str, dict] = {
 
 SPECIALIZED_TASKS: dict[str, dict[str, str]] = {
     "bug_finding": {
-        "primary_model_default": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0",  # round-10 2026-07-12: dethroned OmniCoder (14.97 vs 14.49 in 5-way deep, +0.48). Cross-task promotion: web_synth champ also beats bug_finding champ. WARNING: Q8_0 = 12GB; OmniCoder fallback for VRAM-tight contexts.
-        "fallback_model": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",
+        "primary_model_default": "zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest",  # round-17 2026-07-13: dethroned round-10 champion xentriom Q8_0 in fresh 5-way specialized bench (15.35 vs 14.99, +0.36). Round-10 blind spot: OmniCoder was demoted to improve depth after losing to xentriom; bug_finding head-to-head re-validation reversed the order.
+        "fallback_model": "xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0",  # round-10 champion demoted to fallback after round-17 dethrone. WARNING: Q8_0 = 12GB VRAM; OmniCoder primary at 5.6GB is the better low-memory choice.
     },
     "tool_call": {
         "primary_model_default": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",

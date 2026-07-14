@@ -58,7 +58,7 @@
 | smart_trim | **`hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`** ← round-10 NEW (10.79; dethroned HauhauCS-Balanced 9.87) | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (held 10.20 4-way deep) | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` (held 10.52) | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` (10.38) |
-| bug_finding | **`xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0`** ← round-10 NEW (14.97 5-way; dethroned OmniCoder 14.49) | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` |
+| bug_finding | **`zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest`** ← round-17 NEW (15.35 fresh 5-way; dethroned xentriom 14.99 — round-10 blind spot, OmniCoder was demoted to depth after losing to xentriom but bug_finding head-to-head was never re-validated) | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` (round-10 champion demoted to fallback, 14.99; Q8_0 = 12GB VRAM, OmniCoder at 5.6GB is better low-memory choice) |
 | tool_call | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` (held 10.10) | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
 | browser_tool | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | `hf.co/yuxinlu1/gemma-4-12B-it-Claude-4.6-4.8-Opus-GGUF:Q4_K_M` |
 | pdf_extract | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` (held 12.05) | **`zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest`** ← round-10 NEW (12.00; was ykarout/Openclaw 11.97) |
