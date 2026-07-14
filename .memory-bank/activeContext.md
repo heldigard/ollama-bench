@@ -11,3 +11,4 @@
 - **Decisions**: **Lineup Freeze**: Stop "test-the-limits" work; lineup is stable unl …[recortado]… s the only justified >10GB exception.
 - **Detail**: .memory-bank/topics/session-handoffs.md
 - 2026-07-13: continua lo que estas haciendo, que eres autonomo, toma las decisiones mas inteligentes y coherentes
+- 2026-07-13: eliminar los modelos que no estén en top 5 de alguna categoría
