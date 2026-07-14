@@ -114,6 +114,19 @@ huihui_ai/qwen3.5-abliterated:9b-Claude-4.6-Opus-q4_K                (code_gen #
 jaahas/crow:9b                                                        (codeq_sum depth)
 batiai/gemma4-e2b:q4                                                  (smart_trim depth)
 batiai/gemma4-12b:q4                                                  (smart_trim #3 round-18 depth — Google DeepMind official Gemma 4 12B-it)
+
+## Round-18 purge 2026-07-13 (top-5 union enforcement)
+
+Per round-13 + round-18 top-5 union rule — deleted 4 models NOT in any task top-5:
+
+| model | reason |
+|-------|--------|
+| `hf.co/LiquidAI/LFM2.5-8B-A1B-GGUF:Q4_K_M` | model-inherent think-leak per `topics/ollama-0.23.2-gemma4-q4_0-incompat.md` line 26-30: "All 9 LFM variants deleted. Not candidates for any task." Re-emerged in ollama but kept the deletion. |
+| `hf.co/RavichandranJ/Dolphin3-Cyber-8B-GGUF:Q4_K_M` | not in any task top-5; not referenced in RANKING; candidate no-show. |
+| `hf.co/deepreinforce-ai/Ornith-1.0-9B-GGUF:Q4_K_M` | round-9 explicit skip (Qwen3.5-9B finetune, same-base finetunes lose vs round-7+ champions); never benched on any task. |
+| `hf.co/lmstudio-community/gemma-4-E2B-it-GGUF:Q4_K_M` | lmstudio-community variant of gemma-4 E2B; batiai/gemma4-e2b is the lineup's E2B representative at higher quality (Q4 vs base). |
+
+12GB disk freed (207GB used vs 219GB before; 4 deletion sizes 2-4GB each, larger ones already partly stored as blobs). Lineup 27 → 23 models.
 cryptidbleh/gemma4-claude-opus-4.6:latest                             (universal fallback-of-fallbacks, web_synth depth)
 
 # Embeddings
