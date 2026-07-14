@@ -54,7 +54,7 @@
 | task | #1 (PRIMARY) | #2 (fallback) |
 |---|---|---|
 | improve | **`cryptidbleh/gemma4-claude-opus-4.6:latest`** ← round-17 NEW (2.97 fresh 5-way; dethroned TeichAI 2.46 — round-10 blind spot, cryptidbleh was chain tail never re-validated) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (round-10 champion demoted to fallback, 2.46) |
-| codeq_sum | **`hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M`** ← round-9 (9.40/9.93) | `batiai/gemma4-e4b:q4` |
+| codeq_sum | **`hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M`** ← round-17 NEW (9.84 fresh 5-way; dethroned Qwythos 9.40 — cross-task blind spot, TeichAI was web_synth + improve champion but never tested against Qwythos in codeq_sum) | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` (round-9 champion demoted to fallback, 9.40) |
 | smart_trim | **`hf.co/SC117/gemma-4-12B-it-heretic-QAT-GGUF:UD-Q4_K_XL`** ← round-10 NEW (10.79; dethroned HauhauCS-Balanced 9.87) | `hf.co/HauhauCS/Gemma4-12B-QAT-Uncensored-HauhauCS-Balanced:Q4_K_M` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` (held 10.20 4-way deep) | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` (held 10.52) | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` (10.38) |

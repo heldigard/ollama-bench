@@ -39,9 +39,9 @@ TASKS: dict[str, dict] = {
     "codeq_sum": {
         "description": "codeq summary — 1-line orientation of a function body",
         "budget_words": 32,
-        "primary_model_default": "hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M",  # round-9 2026-07-12: dethroned batiai/gemma4-e4b:q4 (9.40 vs 9.19, +2.3% on hard prompts)
-        "fallback_model": "batiai/gemma4-e4b:q4",
-        "tertiary_model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",
+        "primary_model_default": "hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M",  # round-17 2026-07-13: dethroned round-9 champion Qwythos in fresh 5-way (9.84 vs 9.40, +4.7%). Cross-task promotion: web_synth + improve #2 champion also wins codeq_sum. Round-9/10 blind spot: TeichAI was never tested against Qwythos directly in codeq_sum.
+        "fallback_model": "hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M",  # round-9 champion demoted to fallback after round-17 dethrone.
+        "tertiary_model": "SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest",  # held at #4 fresh (8.99).
         "protocol": "generate",
     },
     "smart_trim": {

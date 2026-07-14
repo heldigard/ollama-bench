@@ -1,47 +1,45 @@
-# Candidates Round 17 (2026-07-13) — Improve Re-bench After Round-10 Blind Spot
+# Candidates Round 17 (2026-07-13) — Cross-Task Chain Re-Validation
 
 ## TL;DR
 
-Fresh 5-way deep re-bench of the improve task dethroned the round-10 champion
-with the chain-tail model that round-10 never included:
+Two re-bench cycles (improve + codeq_sum) on 2026-07-13 each caught a chain-blind
+dethrone: the round-10/9 cross-task champions were vulnerable to other-task
+champions never tested against them in their own task.
 
-| rank | model | fresh score | prior |
-|------|-------|-------------|-------|
-| **1** | `cryptidbleh/gemma4-claude-opus-4.6:latest` | **2.97** | round-17 NEW #1 (was chain tail) |
-| **2** | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | 2.46 | round-10 #1 (now demoted) |
-| 3 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` | 2.03 | round-7 held (fallback unchanged) |
-| 4 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | 1.68 | round-17 bench-validated (was untested in improve) |
-| 5 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | 0.93 | round-10 (demoted) |
+| task | rank | model | fresh score | prior |
+|------|------|-------|-------------|-------|
+| **improve** | **1** | `cryptidbleh/gemma4-claude-opus-4.6:latest` | **2.97** | round-17 NEW #1 (was chain tail) |
+| improve | 2 | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | 2.46 | round-10 #1 (now demoted) |
+| improve | 3 | `hf.co/Jackrong/Negentropy-claude-opus-4.7-9B-GGUF:Q4_K_M` | 2.03 | round-7 held (fallback unchanged) |
+| improve | 4 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | 1.68 | round-17 bench-validated (was untested) |
+| improve | 5 | `zfujicute/OmniCoder-Qwen3.5-9B-Claude-4.6-Opus-Uncensored-v2-GGUF:latest` | 0.93 | round-10 (demoted) |
+| **codeq_sum** | **1** | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | **9.84** | round-17 NEW #1 (cross-task challenger) |
+| codeq_sum | 2 | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | 9.40 | round-9 #1 (now demoted) |
+| codeq_sum | 3 | `batiai/gemma4-e4b:q4` | 9.19 | round-9 held |
+| codeq_sum | 4 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` | 8.99 | held |
+| codeq_sum | 5 | `jaahas/crow:9b` | 8.87 | held |
 
-**One primary dethrone:** cryptidbleh promotes to improve #1. TeichAI demoted to
-fallback. Negentropy-9B held at #3. SetneufPT now bench-validated. OmniCoder
-held lowest (already demoted).
+**Two primary dethrones:**
+- **improve:** cryptidbleh promotes from chain tail (was legacy 2026-07-09 #1, smart_trim round-15 #2); TeichAI demoted to fallback.
+- **codeq_sum:** TeichAI promotes from cross-task champion (web_synth + improve); Qwythos demoted to fallback.
 
-## Methodology
+**smart_trim re-bench:** ZERO DRIFT (batiai-e2b 11.81 > cryptidbleh 11.63 > SC117 10.79 > HauhauCS 9.87 > crow 5.86). Chain held.
 
-- Bench command: `ollama-bench deep -t improve -c <5 models> --cooldown 30 --strip -o /tmp/improve_revalidation_2026-07-13.tsv`
-- 11 prompts × 5 candidates, seed=42, smoke-OK only (all 5 passed leak gate)
-- Rubric: `canonical_tasks.py::_score_improve` (no cap, structural, evidence penalty up to -8)
-- GPU temp stayed 55-67°C across the run
+**Multi-task winner pattern emerges:** TeichAI now PRIMARY in 2 tasks (codeq_sum #1 + web_synth #1), improve #2 fallback. Cryptidbleh PRIMARY in improve #1 + smart_trim #2 fallback. Multi-role champions are robust.
 
-## Why round-10 missed this
+## Why round-10/9 missed these
 
-Round-10 4-way validation only included:
+**Round-10 improve 4-way** only included TeichAI (defender), Negentropy-9B, OmniCoder, HauhauCS-Balanced. Cryptidbleh was the **chain tail** and NOT included.
 
-1. TeichAI/Fable-5-v1 (defender)
-2. Negentropy-9B (incumbent #2)
-3. OmniCoder (incumbent #3 / depth)
-4. HauhauCS-Balanced (cross-task smart_trim challenger)
+**Round-9 codeq_sum 4-way** only included Qwythos (defender), batiai, SetneufPT, OmniCoder. TeichAI was a cross-task champion (web_synth + improve) but was NOT tested against Qwythos in codeq_sum.
 
-Cryptidbleh was the **chain tail** (legacy 2026-07-09 #1, smart_trim round-15 #2)
-and was NOT included. Per bench-methodology Step 6: "the champion listed in
-RANKING.md is only as good as the challengers it was tested against. Tie-break
-vs a single champion is misleading because that champion may not be the
-strongest in the task — it was just the one whose flaws were the loudest."
+Both per bench-methodology Step 6: "the champion listed in RANKING.md is only as good as the challengers it was tested against."
 
-Round-17's lesson: **never trust a chain-tail to be weaker than the head**.
-The tail should be re-validated when re-promoting the head, even if its other
-tasks (smart_trim) are stable.
+**Round-17 lesson (now codified):** every chain has TWO blind spots:
+1. **Chain tail** (older 2nd/3rd place may have grown stronger than the head).
+2. **Cross-task champions** (models winning task X may also be best for task Y, never tested).
+
+Re-promoting the head = mandatory re-bench of BOTH categories.
 
 ## Rewire actions applied
 
@@ -53,26 +51,34 @@ tasks (smart_trim) are stable.
 | `~/prompt-improve` | `scripts/ollama-warmup.sh` | `OLLAMA_IMPROVE_WARM_MODEL` default → cryptidbleh |
 | `~/prompt-improve` | `.memory-bank/REFERENCE.md` | chain + round-17 entry |
 | `~/ollama-bench` | `src/ollama_bench/shared/config.py` `TASKS["improve"]` | primary → cryptidbleh, fallback → TeichAI |
-| `~/ollama-bench` | `RANKING.md` (4 sections) | improve table + per-task table + validation table + runtime notes |
-| `~/ollama-bench` | `.memory-bank/topics/local-ollama-lineup.md` | round-17 header + improve row |
-| `~/ollama-bench` | `.memory-bank/topics/harness-wiring-2026-07-04.md` | prompt-improve row + web-research dual-role note |
-| `~/ollama-bench` | `.memory-bank/topics/candidates-round-17-2026-07-13.md` | this file |
+| `~/ollama-bench` | `src/ollama_bench/shared/config.py` `TASKS["codeq_sum"]` | primary → TeichAI, fallback → Qwythos |
+| `~/ollama-bench` | `RANKING.md` (5 sections) | improve + codeq_sum tables + per-task table + validation table + runtime notes |
+| `~/ollama-bench` | `.memory-bank/topics/local-ollama-lineup.md` | round-17 header + improve row + codeq_sum row |
+| `~/ollama-bench` | `.memory-bank/topics/harness-wiring-2026-07-04.md` | prompt-improve row + codeq row + web-research dual-role note |
+| `~/codeq` | `src/codeq/shared/llm.py` `_CODEQ_SUMMARY_MODEL` | TeichAI (was Qwythos) |
+| `~/codeq` | `src/codeq/shared/llm.py` `_CODEQ_FALLBACK_MODEL` | Qwythos (was batiai/e4b) |
+| `~/codeq` | `src/codeq/cli.py` `--summary` help | updated to match constants |
+| `~/codeq` | `tests/code_intelligence/test_codeq_context.py` | assertion updated to match new default |
+| `~/agent-memory` | `src/agent_memory/shared/config.py` `MAINT_MODEL_DEFAULT` | TeichAI (was Qwythos) |
+| `~/.zshrc` | `CODEQ_SUMMARY_MODEL` | TeichAI (was Qwythos) |
 
 ## Validation
 
 - prompt-improve tests: 199/199 pass (2 pre-existing env-dependent `test_target.py` failures unrelated — `ANTHROPIC_MODEL=*` + `CLAUDECODE=1` requires unset env)
 - ollama-bench tests: 242/242 pass (full suite)
-- ruff: clean in both repos
-- mypy: clean in both repos
+- codeq tests: full suite pass (regression test `test_codeq_body_summary_help_mentions_actual_default` updated)
+- agent-memory tests: 4/4 (test_maintain.py)
+- ruff: clean in all 4 repos
+- mypy: clean in all 4 repos
 - py_compile: OK
-- shellcheck on `ollama-warmup.sh`: clean
+- shellcheck: not relevant this round
 
 ## Cost
 
-5 candidates × 11 prompts × ~3min/prompt = ~16min GPU + 4×30s cooldowns = ~18min wall.
+3 benches × ~18min wall = ~54min total (improve + smart_trim + codeq_sum). code_gen + bug_finding benches still running.
 
 ## Outstanding items
 
-- smart_trim, codeq_sum, code_gen, bug_finding chains NOT yet re-validated against
-  their chain tails. Round-17 only covered improve. Round-18+ planned for those
-  four (in-progress).
+- code_gen bench in progress (in background)
+- bug_finding bench queued after code_gen completes
+- 5 NEW HF candidates queued for round-18: Stadedlor/qwythos-9b-v2-nim-fix, WaveCut/Qwythos-9B-v2-Heretic-GGUF, mradermacher/gemma-4-12b-marvin-v2-GGUF, AnkitAI/Parable-Granite-4.1-8B-Claude-Fable-5-GGUF, Yure0718/Qworum3-8B-Q4_K_M-GGUF

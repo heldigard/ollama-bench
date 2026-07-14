@@ -10,7 +10,7 @@ Full evidence: `results_wiring_validation_20260709.md`.
 | task | PRIMARY | FALLBACK | repeated score |
 |---|---|---|---|
 | improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | 2.97 / 2.46 |
-| codeq_sum | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | `batiai/gemma4-e4b:q4` | 9.40 / 9.19 |
+| codeq_sum | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | 9.84 / 9.40 |
 | smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` | 11.67 / 11.63 |
 
 The tables below preserve the full 2026-07-08 PM pipeline snapshot. Do not
@@ -42,12 +42,14 @@ Discrimination: round-17 2026-07-13 fresh 5-way deep re-bench (smoke-passed mode
 
 | # | deep | tiebreak | model |
 |---|---|---|---|
-| **1** | 9.40 | 9.93 | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` |
-| 2 | 9.19 | 8.13 | `batiai/gemma4-e4b:q4` |
-| 3 | 8.99 | 7.04 | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
-| 4 | 8.87 | 6.89 | `jaahas/crow:9b` |
+| **1** | **9.84** | (round-17 fresh) | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
+| **2** | 9.40 | (round-17 fresh) | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` |
+| 3 | 9.19 | (round-17 fresh) | `batiai/gemma4-e4b:q4` |
+| 4 | 8.99 | (round-17 fresh) | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
+| 5 | 8.87 | (round-17 fresh) | `jaahas/crow:9b` |
+| *(round-9 #1, demoted round-17)* | 9.40 | 9.93 | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` |
 
-Discrimination: 30 models scored; combined deep+tiebreak rank. Round-9 2026-07-12 promotion: Qwythos dethroned batiai (9.40 vs 9.19, +2.3% on hard prompts) in 4-way deep; see `topics/candidates-round-9-2026-07-12.md`. Historical round-7 leaderboard preserved in `RANKING_HISTORY.md`.
+Discrimination: round-17 2026-07-13 fresh 5-way deep re-bench (smoke-passed: TeichAI, Qwythos, batiai/e4b, SetneufPT, jaahas/crow). Round-9/10 blind spot: TeichAI (web_synth + improve champion) was never tested against Qwythos in codeq_sum directly. Round-17 caught the drift: **TeichAI 9.84 dethroned Qwythos 9.40 (+0.44, +4.7%)**. Qwythos demoted to fallback. batiai/e4b held at #3. SetneufPT held at #4. jaahas/crow held at #5. Round-9 historical *(held)* row preserved for reference. See `topics/candidates-round-17-2026-07-13.md`.
 
 ## smart_trim
 
@@ -139,7 +141,7 @@ Separate rendered-PDF OCR category. Unlimited-OCR needs `/api/chat` vision + `oc
 | task | PRIMARY | FALLBACK |
 |---|---|---|
 | improve | `cryptidbleh/gemma4-claude-opus-4.6:latest` | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` |
-| codeq_sum | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` | `batiai/gemma4-e4b:q4` |
+| codeq_sum | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `hf.co/empero-ai/Qwythos-9B-Claude-Mythos-5-1M-GGUF:Q4_K_M` |
 | smart_trim | `batiai/gemma4-e2b:q4` | `cryptidbleh/gemma4-claude-opus-4.6:latest` |
 | web_synth | `hf.co/TeichAI/Qwen3.5-9B-Fable-5-v1-GGUF:Q4_K_M` | `xentriom/gemma-4-12B-agentic-fable5-composer2.5-v2:Q8_0` |
 | code_gen | `hf.co/prithivMLmods/lift-GGUF:Q4_K_M` | `SetneufPT/Qwopus3.5-4B-Coder-MTP_Q4_64k_8GB-GPU:latest` |
