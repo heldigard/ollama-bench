@@ -2,6 +2,8 @@
 
 from pathlib import Path
 
+import pytest
+
 from ollama_bench.features.pdf_ocr.command import CASES, build_pdf_images, score_ocr
 
 
@@ -22,6 +24,7 @@ def test_score_ocr_rewards_recall_and_penalizes_hallucination():
 
 
 def test_build_pdf_images_returns_png_bytes(tmp_path: Path):
+    pytest.importorskip("fitz", reason="pdf-ocr fixtures need PyMuPDF (extra: pdf-ocr)")
     images = build_pdf_images(tmp_path)
     assert sorted(images) == sorted(case["id"] for case in CASES)
     assert all(data.startswith(b"\x89PNG") for data in images.values())
