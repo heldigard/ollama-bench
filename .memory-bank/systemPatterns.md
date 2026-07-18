@@ -94,3 +94,11 @@ governing metric. When a model wins on the governing metric, secondary metrics
 (throughput, size) are reported, not used as vetoes. A single-round win is a
 *caution* signal for fidelity-critical roles (smart_trim, judging) — then run a
 second cross-validation round, don't reach for a non-governing metric to block it.
+
+## 2026-07-18 — Keep installed winners; prune only via RANKING_HISTORY
+
+- **Decision**: Installed Ollama models after a closed bench round are **kept assets**, not a cleanup backlog.
+- **Why**: Roles differ (improve ≠ codeq_sum ≠ tool_call ≠ OCR). Looking similar ≠ redundant.
+- **Process**: New HF candidates → smoke → deep → tie-break → update RANKING.md → only then delete losers. Never reverse-delete from disk-size heuristics.
+- **Incident**: 2026-07-18 native-Ubuntu ecosystem review almost marked the winner library as prune candidates; corrected + memory banks updated.
+

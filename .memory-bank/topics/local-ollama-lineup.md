@@ -1,5 +1,12 @@
 # Local Ollama Model Lineup (RTX 5080, 16GB) — RE-BENCH 2026-07-08 (Ollama 0.31.1)
 
+> **2026-07-18 agent note:** The models listed as winners / top-N in this package
+> (and currently installed via `ollama list`) are **kept**. Do **not** recommend
+> bulk prune for disk savings. Authority for current PRIMARY/FALLBACK is repo
+> `RANKING.md` (round-17/18 supersede older tables in this file if they conflict).
+> Host runtime mirror: `~/.config/dev/ollama-roles.json` + home `topics/local-ollama-lineup.md`.
+
+
 > **Purpose:** Single source of truth for LOCAL Ollama winners + per-role map.
 > Re-bench cycles: 2026-07-04 (16 winners) → round-3/5 → round-6 (strip mode) →
 > **round-7 (2026-07-08 PM): full pipeline (smoke→deep→tie-break→specialized),

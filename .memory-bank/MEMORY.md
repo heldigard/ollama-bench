@@ -2,6 +2,7 @@
 > Project: ollama-bench — vertical-slice CLI for local Ollama model evaluation
 
 ## Read First
+- **IRON RULE (2026-07-18):** installed ollama library = RANKING.md winners. DO NOT prune for “disk cleanup.” See REFERENCE § Installed library + topics rounds 17–18.
 - CONTEXT.md: current state (14 subcommands, 22-model lineup, harness wiring)
 - REFERENCE.md: stable facts (CLI surface, scoring rubrics, leak patterns)
 - systemPatterns.md: architectural decisions (vertical-slice, two-pass scoring)

@@ -6,3 +6,4 @@
 {"id": "g_006", "s": "task:improve", "p": "USES", "o": "primary:cryptidbleh/gemma4-claude-opus-4.6:latest", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": ["g_003"], "aliases": []}
 {"id": "g_007", "s": "task:codeq_sum", "p": "USES", "o": "primary:batiai/gemma4-e4b:q4", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": ["g_004"], "aliases": []}
 {"id": "g_008", "s": "task:smart_trim", "p": "USES", "o": "primary:batiai/gemma4-e2b:q4", "t": "2026-07-09", "src": "systemPatterns.md", "supersedes": ["g_005"], "aliases": []}
+{"id": "g_009", "s": "InstalledLineup", "p": "OWNS", "o": "RankingMdWinners", "t": "2026-07-18", "src": "systemPatterns.md", "supersedes": [], "aliases": ["do-not-prune"]}

@@ -1,4 +1,12 @@
 # Current Task
+> 2026-07-18: **IDLE** — lineup = bench winners (keep). Champions below supersede older “TeichAI improve / Qwythos codeq” lines in this file.
+
+## Champions (RANKING.md round-17/18, authoritative)
+
+- improve = **cryptidbleh**/gemma4-claude-opus-4.6 · codeq_sum = **TeichAI** Fable-5-v1 (Qwythos fallback) · smart_trim = **batiai-e2b** · web_synth = TeichAI · code_gen = **lift** · bug_finding = **OmniCoder** (xentriom fallback) · tool_call/browser/pdf_extract = **SetneufPT** · pdf_ocr = Unlimited-OCR · embed = embeddinggemma.
+- **Agent rule:** do not propose pruning the installed library; see REFERENCE iron rule 2026-07-18.
+
+---
 > 2026-07-12 (PM, very late): Round-12 CLOSED + cleanup pass applied. **Lineup 24 models TERMINAL STABILITY.** Cross-CLI rewire all done. Drift guard hardened. Dead code removed.
 
 ## State: IDLE — lineup CLOSED (round-12 terminal stability); cross-CLI rewire ALL APPLIED 2026-07-12 PM

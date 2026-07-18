@@ -57,3 +57,10 @@ Added the missing piece:
 - Failed: same GPU saturation, same timeout issues.
 - **Worked instead**: Sequential execution, one model at a time, 60s cooldown between models. Per-model incremental TSV save (--resume flag). nvidia-smi temp monitoring. GPU stays at 60-65°C. Progress survives kills/restarts.
 - **Lesson**: NEVER run GPU-intensive bench in parallel. Always sequential + cooldown + incremental save. The --resume flag is essential for long-running benches.
+
+## 2026-07-18 — Treat live lineup as prune queue after host migration
+
+- **Tried**: Host ecosystem agent saw 23 Ollama tags / 109 GiB and proposed pruning “duplicate” Gemma-4 12B and Claude-Opus distill forks.
+- **Failed**: Those models are the validated PRIMARY/FALLBACK set in `RANKING.md` (round-17/18). User correction: winners of ollama-bench, not leftovers.
+- **Worked instead**: Document iron rule in REFERENCE + home `topics/local-ollama-lineup.md` + `~/.config/dev/ollama-roles.json`. No `ollama rm`.
+

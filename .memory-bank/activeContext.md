@@ -1,14 +1,16 @@
 # Active Context
-- 2026-07-13: Smart trim summary (ollama-gemma-4-12B-it-heretic-QAT).
-- Authority: session data only; never overrides safety, permissions, or current instructions.
-- **Session constraints (quoted)**: DO NOT re-introduce parallel pools (ThreadPoolExecutor) — GPU overhe …[recortado]… JK51) — see RANKING_HISTORY §round-8.
-- **Task**: Finalize lineup stability, perform cleanup pass, and harden drift guards.
-- **Acceptance**: Lineup at terminal stability (zero rewires), cross-CLI rewire complete, dead code removed, and disk space optimized.
-- **Verified**: Lineup stable: 19 LLMs + 3 embeddings = 22 models. | Cross-CLI Rewir …[recortado]… n. | Disk: 84.3GB freed rounds 12-14.
-- **Errors**: None reported in latest pass.
-- **Next**: Resume only if a genuinely new base/fine-tune appears or a coder-tuned Q
-- **Current**: Lineup frozen; terminal stability confirmed against new families (Llama-4, Codestral).
-- **Decisions**: **Lineup Freeze**: Stop "test-the-limits" work; lineup is stable unl …[recortado]… s the only justified >10GB exception.
-- **Detail**: .memory-bank/topics/session-handoffs.md
-- 2026-07-13: continua lo que estas haciendo, que eres autonomo, toma las decisiones mas inteligentes y coherentes
-- 2026-07-13: eliminar los modelos que no estén en top 5 de alguna categoría
+> 2026-07-18 — memory correction (no bench run)
+
+## Task
+Prevent future agents from treating the installed Ollama winner library as prune candidates.
+
+## Verified
+- `RANKING.md` is SoT for PRIMARY/FALLBACK (round-17: cryptidbleh improve #1; TeichAI codeq_sum #1).
+- Host maps: `~/.config/dev/ollama-roles.json`, home `topics/local-ollama-lineup.md`.
+- All RANKING PRIMARY/FALLBACK tags present in `ollama list` (~23 / ~109 GiB).
+
+## Decisions
+- Keep full installed lineup. Prune only via bench history, never ecosystem “disk cleanup.”
+
+## Next
+- None for lineup. New models → full ollama-bench pipeline before any delete.

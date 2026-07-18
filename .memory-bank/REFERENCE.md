@@ -76,3 +76,12 @@ challengers. TeichAI now improve + web_synth; batiai-e2b smart_trim (round-15 co
 ## Quant rule (verified 2026-07-04)
 
 Q4_K_M is the quality ceiling for gemma4-e4b/e2b and qwen3.5:4b. Higher quants (Q5/Q6/Q8) add weight + latency WITHOUT quality gain, sometimes strictly worse (non-monotonic). Do not pull Q8 variants of existing Q4 winners. See `topics/quant-comparison-2026-07-04.md`.
+
+## Installed library = winners (agent rule, 2026-07-18)
+
+- The live `ollama list` set on this host **is** the bench winner lineup (top-N union + PRIMARY/FALLBACK from `RANKING.md`).
+- Size (~109 GiB / ~23 tags) is expected for multi-role coverage on RTX 5080 16 GB.
+- **Agents must not recommend pruning** “similar” Gemma-4 / Claude-distill tags after ecosystem audits. Losers are already gone (`RANKING_HISTORY.md`).
+- Cross-host runtime maps: `~/.config/dev/ollama-roles.json`, home `topics/local-ollama-lineup.md`.
+- Authoritative table: repo root `RANKING.md` (not stale memory tables from 2026-07-04).
+
