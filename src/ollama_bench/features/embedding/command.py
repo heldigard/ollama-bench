@@ -14,8 +14,10 @@ def get_embedding(model: str, prompt: str) -> dict:
     """Single Ollama /api/embed call. Returns {embedding, dt}."""
     body = json.dumps({"model": model, "prompt": prompt}).encode()
     req = urllib.request.Request(
-        f"{OLLAMA_URL}/api/embed", data=body,
-        headers={"Content-Type": "application/json"}, method="POST",
+        f"{OLLAMA_URL}/api/embed",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
     t0 = time.perf_counter()
     try:

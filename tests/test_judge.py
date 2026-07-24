@@ -1,4 +1,5 @@
 """Unit tests for judge slice."""
+
 from __future__ import annotations
 
 from ollama_bench.features.judge.command import FAIL_PATTERNS, judge_quality

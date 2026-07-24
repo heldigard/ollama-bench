@@ -1,4 +1,5 @@
 """report - markdown ranking generation from deep_bench TSV."""
+
 from __future__ import annotations
 
 import csv
@@ -52,7 +53,9 @@ def cmd_report_build(args) -> int:
 
 
 def add_parser(sub, parent):
-    p = sub.add_parser("report", parents=[parent], help="Generate markdown ranking from bench results.")
+    p = sub.add_parser(
+        "report", parents=[parent], help="Generate markdown ranking from bench results."
+    )
     sp = p.add_subparsers(dest="report_cmd", required=True)
     bc = sp.add_parser("build", parents=[parent], help="Read TSV -> write MD.")
     bc.add_argument("-i", "--input", help="Input TSV (default: cache/deep_bench.tsv).")

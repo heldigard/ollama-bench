@@ -39,7 +39,7 @@ src/ollama_bench/
 _SLICES = [
     ("smoke", add_smoke, "1-prompt leak gate per model"),
     ("deep", add_deep, "5-task x N model bench"),
-    ...
+    ...,
 ]
 for slug, add_parser_fn, brief in _SLICES:
     add_parser_fn(sub, parent)

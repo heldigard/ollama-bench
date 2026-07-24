@@ -6,6 +6,7 @@ should run `deep` instead (5 tasks, modern scoring, think-strip).
 
 # vs-soft-allow  — deep nested control flow in JSONL output + dataclass glue.
 """
+
 from __future__ import annotations
 
 import json
@@ -67,19 +68,29 @@ COMPACT_PROMPTS = [
 ]
 
 CODE_PROMPTS = [
-    ("code_1",
-     "Write a Python function `validate_email(s: str) -> bool` using ONLY stdlib (re or email.utils). Handle None/empty/whitespace. Explain edge cases in 2 lines."),
-    ("code_2",
-     "Write a Python async function `fetch_all(urls: list[str]) -> list[dict]` using aiohttp. Use semaphore to cap concurrency at 10. Return results preserving input order. Include exception handling per URL."),
-    ("code_3",
-     "Write a Python function `chunk_text(text: str, max_tokens: int) -> list[str]` that splits text into chunks of approx max_tokens, splitting on sentence boundaries when possible. No external deps."),
+    (
+        "code_1",
+        "Write a Python function `validate_email(s: str) -> bool` using ONLY stdlib (re or email.utils). Handle None/empty/whitespace. Explain edge cases in 2 lines.",
+    ),
+    (
+        "code_2",
+        "Write a Python async function `fetch_all(urls: list[str]) -> list[dict]` using aiohttp. Use semaphore to cap concurrency at 10. Return results preserving input order. Include exception handling per URL.",
+    ),
+    (
+        "code_3",
+        "Write a Python function `chunk_text(text: str, max_tokens: int) -> list[str]` that splits text into chunks of approx max_tokens, splitting on sentence boundaries when possible. No external deps.",
+    ),
 ]
 
 REASON_PROMPTS = [
-    ("reason_1",
-     "If A > B and B > C, and C = D - 2, and D = 10, what is A? Show reasoning in 3 steps max. End with: ANSWER: <number>"),
-    ("reason_2",
-     "A box has 3 red, 2 blue, 5 green balls. P(red then green without replacement)? Show work. End with: ANSWER: <fraction>"),
+    (
+        "reason_1",
+        "If A > B and B > C, and C = D - 2, and D = 10, what is A? Show reasoning in 3 steps max. End with: ANSWER: <number>",
+    ),
+    (
+        "reason_2",
+        "A box has 3 red, 2 blue, 5 green balls. P(red then green without replacement)? Show work. End with: ANSWER: <fraction>",
+    ),
 ]
 
 
@@ -126,9 +137,9 @@ def _get_gpu_mem() -> int:
     """Return GPU memory used in MiB."""
     try:
         out = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=memory.used",
-             "--format=csv,noheader,nounits"],
-            timeout=5, text=True,
+            ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
+            timeout=5,
+            text=True,
         ).strip()
         return int(out)
     except Exception:
@@ -137,15 +148,19 @@ def _get_gpu_mem() -> int:
 
 def _call(model: str, prompt: str) -> dict:
     """Single Ollama /api/generate call. Non-streaming."""
-    body = json.dumps({
-        "model": model,
-        "prompt": prompt,
-        "stream": False,
-        "options": {"temperature": 0.2, "num_predict": 512, "num_ctx": 4096},
-    }).encode()
+    body = json.dumps(
+        {
+            "model": model,
+            "prompt": prompt,
+            "stream": False,
+            "options": {"temperature": 0.2, "num_predict": 512, "num_ctx": 4096},
+        }
+    ).encode()
     req = urllib.request.Request(
-        f"{OLLAMA}/api/generate", data=body,
-        headers={"Content-Type": "application/json"}, method="POST",
+        f"{OLLAMA}/api/generate",
+        data=body,
+        headers={"Content-Type": "application/json"},
+        method="POST",
     )
     t0 = time.perf_counter()
     try:
@@ -159,31 +174,44 @@ def _call(model: str, prompt: str) -> dict:
         "total_s": time.perf_counter() - t0,
         "prompt_tokens": data.get("prompt_eval_count", 0),
         "eval_tokens": data.get("eval_count", 0),
-        "ttft_s": (data.get("prompt_eval_duration", 0) / 1e9) if data.get("prompt_eval_duration") else 0.0,
+        "ttft_s": (data.get("prompt_eval_duration", 0) / 1e9)
+        if data.get("prompt_eval_duration")
+        else 0.0,
         "output": data.get("response", ""),
     }
 
 
-def _result_from_call(model: str, test_id: str, domain: str,
-                       prompt: str, call_res: dict, mem_peak: int) -> BenchResult:
+def _result_from_call(
+    model: str, test_id: str, domain: str, prompt: str, call_res: dict, mem_peak: int
+) -> BenchResult:
     """Build BenchResult from _call() output."""
     if "error" in call_res:
         return BenchResult(
-            model=model, test_id=test_id, domain=domain,
-            prompt_chars=len(prompt), status="error", error=call_res["error"],
+            model=model,
+            test_id=test_id,
+            domain=domain,
+            prompt_chars=len(prompt),
+            status="error",
+            error=call_res["error"],
         )
     output = call_res.get("output", "") or ""
     total = call_res.get("total_s") or 0.0
     return BenchResult(
-        model=model, test_id=test_id, domain=domain,
-        prompt_chars=len(prompt), status="ok",
-        load_s=0.0, ttft_s=call_res.get("ttft_s", 0.0),
+        model=model,
+        test_id=test_id,
+        domain=domain,
+        prompt_chars=len(prompt),
+        status="ok",
+        load_s=0.0,
+        ttft_s=call_res.get("ttft_s", 0.0),
         total_s=total,
         eval_tokens=call_res.get("eval_tokens", 0),
         prompt_tokens=call_res.get("prompt_tokens", 0),
         tok_per_s=(call_res.get("eval_tokens", 0) / total) if total else 0.0,
-        gpu_mem_before_mib=0, gpu_mem_peak_mib=mem_peak,
-        output=output, output_chars=len(output),
+        gpu_mem_before_mib=0,
+        gpu_mem_peak_mib=mem_peak,
+        output=output,
+        output_chars=len(output),
     )
 
 
@@ -217,8 +245,11 @@ def cmd_multi_domain(args) -> int:
 
 def add_parser(sub, parent):
     """Attach multi-domain subcommand."""
-    p = sub.add_parser("multi-domain", parents=[parent],
-                       help="Legacy 4-domain bench (improve/compact/code/reason).")
+    p = sub.add_parser(
+        "multi-domain",
+        parents=[parent],
+        help="Legacy 4-domain bench (improve/compact/code/reason).",
+    )
     p.add_argument("-m", "--model", help="Single model to bench (default: all installed).")
     p.add_argument("-o", "--output", help="Output JSONL path.")
     p.set_defaults(cmd=cmd_multi_domain)

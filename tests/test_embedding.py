@@ -1,4 +1,5 @@
 """Unit tests for embedding slice — cosine + get_embedding (mocked)."""
+
 from __future__ import annotations
 
 import json

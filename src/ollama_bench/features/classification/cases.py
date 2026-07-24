@@ -65,14 +65,18 @@ CASES: tuple[ClassificationCase, ...] = (
     _case("route-trivial-06", "route", "trivial", "List the vowels in the word model."),
     _case("route-security-01", "route", "security", "Audit this OAuth callback for CSRF."),
     _case("route-security-02", "route", "security", "Check this query for SQL injection."),
-    _case("route-security-03", "route", "security", "¿Es seguro guardar este token en localStorage?"),
+    _case(
+        "route-security-03", "route", "security", "¿Es seguro guardar este token en localStorage?"
+    ),
     _case("route-security-04", "route", "security", "Review the patch for an auth bypass."),
     _case("route-security-05", "route", "security", "Rotate the leaked API credential safely."),
     _case("route-security-06", "route", "security", "Threat-model the password reset flow."),
     # Caveman taxonomy mirrors the live deterministic classifier's three outcomes.
     _case("caveman-critical-01", "caveman", "critical", "Debug this production crash."),
     _case("caveman-critical-02", "caveman", "critical", "Review the authentication architecture."),
-    _case("caveman-critical-03", "caveman", "critical", "Demuestra que este invariante es correcto."),
+    _case(
+        "caveman-critical-03", "caveman", "critical", "Demuestra que este invariante es correcto."
+    ),
     _case("caveman-critical-04", "caveman", "critical", "Plan a zero-downtime database migration."),
     _case("caveman-critical-05", "caveman", "critical", "Find the root cause of this deadlock."),
     _case("caveman-critical-06", "caveman", "critical", "Diseña un eval para el model router."),

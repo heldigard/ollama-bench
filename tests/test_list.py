@@ -1,4 +1,5 @@
 """Unit tests for list slice — warnings for incompat/leaky models."""
+
 from __future__ import annotations
 
 import json
@@ -9,10 +10,12 @@ from ollama_bench.features.list.command import _warnings_for, cmd_list
 
 def _fake_tags_response():
     return [
-        {"name": "qwen3.5:4b", "size": 3.4 * 1024**3,
-         "details": {"quantization_level": "Q4_K_M"}},
-        {"name": "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest",
-         "size": 7.2 * 1024**3, "details": {"quantization_level": "Q4_0"}},
+        {"name": "qwen3.5:4b", "size": 3.4 * 1024**3, "details": {"quantization_level": "Q4_K_M"}},
+        {
+            "name": "MobiusDevelopment/gemma-4-12B-it-qat-q4_0-gguf:latest",
+            "size": 7.2 * 1024**3,
+            "details": {"quantization_level": "Q4_0"},
+        },
     ]
 
 

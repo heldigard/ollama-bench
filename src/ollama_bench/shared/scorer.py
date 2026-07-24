@@ -104,7 +104,7 @@ def strip_reasoning(text: str) -> str:
     out = OUTPUT_WRAP_RE.sub(r"\1", out)
     visible = VISIBLE_REASONING_RE.search(out)
     if visible:
-        out = out[visible.end():]
+        out = out[visible.end() :]
     else:
         low = out.lstrip().lower()
         if low.startswith(("thinking process:", "let me think:")):

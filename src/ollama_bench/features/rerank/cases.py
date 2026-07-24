@@ -97,7 +97,10 @@ CASES: tuple[RerankCase, ...] = (
         "en",
         "medium",
         "How should an OAuth callback defend against CSRF?",
-        ("Generate a high-entropy state value, bind it to the user session, and verify it on callback.", 3),
+        (
+            "Generate a high-entropy state value, bind it to the user session, and verify it on callback.",
+            3,
+        ),
         ("Use PKCE with a verifier and challenge for public OAuth clients.", 2),
         ("Store access tokens permanently in URLs for easier debugging.", 0),
         ("Validate redirect URIs against an allowlist rather than accepting arbitrary URLs.", 2),
@@ -113,7 +116,10 @@ CASES: tuple[RerankCase, ...] = (
         "en",
         "medium",
         "Why does an n8n Dynamics PATCH request fail with error 0x80072530?",
-        ("The PATCH request was sent without an entity body; include the payload fields to update.", 3),
+        (
+            "The PATCH request was sent without an entity body; include the payload fields to update.",
+            3,
+        ),
         ("A 401 usually means the configured service connection credentials expired.", 0),
         ("An inactive workflow will not run on its schedule trigger.", 0),
         ("Confirm the entity identifier and send a JSON body with the PATCH request.", 2),
@@ -129,13 +135,19 @@ CASES: tuple[RerankCase, ...] = (
         "es",
         "medium",
         "Como convierto un prompt vago en una especificacion util para implementar codigo?",
-        ("El prompt-improver transforma una peticion vaga en objetivo, restricciones, entradas, salida y criterios de aceptacion.", 3),
+        (
+            "El prompt-improver transforma una peticion vaga en objetivo, restricciones, entradas, salida y criterios de aceptacion.",
+            3,
+        ),
         ("Pide archivos afectados, comportamiento esperado y casos limite verificables.", 2),
         ("Un saludo corto no necesita una especificacion de ingenieria.", 0),
         ("Las pruebas de aceptacion convierten requisitos ambiguos en resultados comprobables.", 2),
         ("smart-trim comprime una conversacion larga en un handoff.", 1),
         ("Una migracion de base de datos exige revisar compatibilidad y rollback.", 0),
-        ("No inventes requisitos que el usuario no haya dado; formula supuestos explicitamente.", 2),
+        (
+            "No inventes requisitos que el usuario no haya dado; formula supuestos explicitamente.",
+            2,
+        ),
         ("El comando ruff revisa estilo de Python.", 0),
         ("La salida debe separar alcance, decisiones y criterios de exito.", 2),
         ("Un modelo de embeddings no reescribe especificaciones.", 0),
@@ -145,10 +157,16 @@ CASES: tuple[RerankCase, ...] = (
         "es",
         "hard",
         "Extrae solo la causa de terminacion de un contrato; no quiero la fecha ni la clausula de renovacion.",
-        ("Causa de terminacion: incumplimiento material no subsanado dentro de treinta dias tras aviso escrito.", 3),
+        (
+            "Causa de terminacion: incumplimiento material no subsanado dentro de treinta dias tras aviso escrito.",
+            3,
+        ),
         ("Fecha de vigencia: el contrato inicia el 1 de enero de 2026.", 0),
         ("Renovacion: se renueva automaticamente por periodos anuales salvo aviso previo.", 0),
-        ("La terminacion inmediata procede por fraude, insolvencia o violacion de confidencialidad.", 3),
+        (
+            "La terminacion inmediata procede por fraude, insolvencia o violacion de confidencialidad.",
+            3,
+        ),
         ("El aviso de terminacion debe enviarse a las direcciones designadas.", 1),
         ("Las facturas vencen a treinta dias de su emision.", 0),
         ("La clausula de fuerza mayor suspende obligaciones durante el evento.", 0),
@@ -161,7 +179,10 @@ CASES: tuple[RerankCase, ...] = (
         "es",
         "medium",
         "Que pasos permiten hacer clic de forma segura en el boton Guardar de una pagina con snapshot de accesibilidad?",
-        ("Busca el elemento por su ref accesible actual, verifica nombre y estado, y ejecuta el click usando ese ref.", 3),
+        (
+            "Busca el elemento por su ref accesible actual, verifica nombre y estado, y ejecuta el click usando ese ref.",
+            3,
+        ),
         ("Toma un snapshot accesible antes de actuar para obtener referencias estables.", 2),
         ("Haz clic por coordenadas aproximadas sin inspeccionar la pagina.", 0),
         ("Confirma que el boton esta habilitado y que su etiqueta es Guardar antes del click.", 2),
@@ -177,9 +198,7 @@ CASES: tuple[RerankCase, ...] = (
 
 def build_prompt(case: RerankCase) -> str:
     """Build the fixed, auditable ranking prompt without exposing gold labels."""
-    documents = "\n".join(
-        f"{document['id']}: {document['text']}" for document in case["documents"]
-    )
+    documents = "\n".join(f"{document['id']}: {document['text']}" for document in case["documents"])
     return (
         "Rank the documents by how directly they answer the QUERY. "
         "Return exactly one JSON object and nothing else: "

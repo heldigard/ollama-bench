@@ -1,4 +1,5 @@
 """Unit tests for bug_finding slice."""
+
 from __future__ import annotations
 
 from ollama_bench.features.bug_finding.command import (
@@ -40,8 +41,12 @@ def test_count_hits_grouped_synonyms_count_one_bug_once():
 
 
 def test_score_clean_with_hits():
-    res = {"out": "BUG: mutable default BUG: off-by-one COUNT: 2",
-           "tps": 30.0, "etoks": 20, "done": "stop"}
+    res = {
+        "out": "BUG: mutable default BUG: off-by-one COUNT: 2",
+        "tps": 30.0,
+        "etoks": 20,
+        "done": "stop",
+    }
     sc = _score(res, n_bugs=2, expected=("mutable default", "off-by-one"))
     assert sc > 2.0
 
@@ -51,8 +56,12 @@ def test_score_err():
 
 
 def test_score_recovers_strippable_leak():
-    res = {"out": "<think>thinking</think>BUG: mutable default COUNT: 1",
-           "tps": 30.0, "etoks": 20, "done": "stop"}
+    res = {
+        "out": "<think>thinking</think>BUG: mutable default COUNT: 1",
+        "tps": 30.0,
+        "etoks": 20,
+        "done": "stop",
+    }
     sc = _score(res, 1, (("mutable default",),))
     assert sc > 10
 

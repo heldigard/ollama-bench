@@ -29,13 +29,9 @@ def evaluate_model(model: str, cases: tuple[dict, ...], opts: CallOpts) -> list[
     for case in cases:
         raw = call(model, build_prompt(case), opts=opts)
         scored, leak = prepare_scored_response(raw)
-        relevance = {
-            document["id"]: document["relevance"] for document in case["documents"]
-        }
+        relevance = {document["id"]: document["relevance"] for document in case["documents"]}
         ranking = (
-            None
-            if "err" in scored
-            else parse_ranking(str(scored.get("out", "")), set(relevance))
+            None if "err" in scored else parse_ranking(str(scored.get("out", "")), set(relevance))
         )
         rows.append(
             {
@@ -45,9 +41,7 @@ def evaluate_model(model: str, cases: tuple[dict, ...], opts: CallOpts) -> list[
                 "ranking": ranking,
                 "ndcg_at_3": ndcg_at_k(ranking, relevance),
                 "mrr_at_3": mrr_at_k(ranking, relevance),
-                "top1_correct": bool(
-                    ranking and relevance[ranking[0]] == max(relevance.values())
-                ),
+                "top1_correct": bool(ranking and relevance[ranking[0]] == max(relevance.values())),
                 "leak_policy": leak["policy"],
                 "error": scored.get("err", ""),
             }
@@ -110,9 +104,7 @@ def _report(
             ]
         )
         for row in rows_by_model[name]:
-            issue = row["error"] or (
-                row["leak_policy"] if row["leak_policy"] != "clean" else ""
-            )
+            issue = row["error"] or (row["leak_policy"] if row["leak_policy"] != "clean" else "")
             ranking = ", ".join(row["ranking"]) if row["ranking"] else "INVALID"
             lines.append(
                 f"| {row['id']} | {row['language']} | {row['difficulty']} | {ranking} | "
@@ -137,9 +129,7 @@ def cmd_rerank(args: argparse.Namespace) -> int:
         temp_limit=args.temp_limit,
     )
     summaries = {
-        model: summarize(rows)
-        for model, rows in rows_by_model.items()
-        if isinstance(rows, list)
+        model: summarize(rows) for model, rows in rows_by_model.items() if isinstance(rows, list)
     }
     if not summaries:
         print("ERROR: no model produced benchmark rows", file=sys.stderr)

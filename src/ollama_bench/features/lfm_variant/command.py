@@ -7,6 +7,7 @@ quality of the actual summary output.
 
 # vs-soft-allow  — end-to-end pipeline (variants → strip → score → rank → MD).
 """
+
 from __future__ import annotations
 
 import argparse
@@ -31,55 +32,68 @@ LFM_VARIANTS: tuple[str, ...] = (
 )
 
 PROMPTS: tuple[tuple[str, str], ...] = (
-    ("sum_async",
-     "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
-     "async function uploadWithRetry(file, retries=3) {\n"
-     "  for (let i = 0; i < retries; i++) {\n"
-     "    try {\n"
-     "      const res = await fetch('/upload', { method: 'POST', body: file });\n"
-     "      if (!res.ok) throw new Error(`HTTP ${res.status}`);\n"
-     "      return res.json();\n"
-     "    } catch (e) {\n"
-     "      if (i === retries - 1) throw e;\n"
-     "      await sleep(2 ** i * 100);\n"
-     "    }\n"
-     "  }\n"
-     "}"),
-    ("sum_state",
-     "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
-     "function getVisibleItems(items, filter) {\n"
-     "  const result = [];\n"
-     "  for (const item of items) {\n"
-     "    if (filter.search) {\n"
-     "      if (!item.name.toLowerCase().includes(filter.search.toLowerCase())) continue;\n"
-     "    }\n"
-     "    if (filter.minPrice !== undefined && item.price < filter.minPrice) continue;\n"
-     "    if (filter.maxPrice !== undefined && item.price > filter.maxPrice) continue;\n"
-     "    if (filter.tags?.length && !filter.tags.some(t => item.tags.includes(t))) continue;\n"
-     "    result.push(item);\n"
-     "  }\n"
-     "  return result;\n"
-     "}"),
-    ("sum_lifecycle",
-     "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
-     "class Session {\n"
-     "  constructor(token, ttl=3600) {\n"
-     "    this.token = token;\n"
-     "    this.expiresAt = Date.now() + ttl * 1000;\n"
-     "    this.observers = new Set();\n"
-     "  }\n"
-     "  isValid() { return Date.now() < this.expiresAt; }\n"
-     "  refresh(newTtl) {\n"
-     "    this.expiresAt = Date.now() + newTtl * 1000;\n"
-     "    for (const cb of this.observers) cb(this);\n"
-     "  }\n"
-     "  onExpire(cb) { this.observers.add(cb); return () => this.observers.delete(cb); }\n"
-     "}"),
+    (
+        "sum_async",
+        "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
+        "async function uploadWithRetry(file, retries=3) {\n"
+        "  for (let i = 0; i < retries; i++) {\n"
+        "    try {\n"
+        "      const res = await fetch('/upload', { method: 'POST', body: file });\n"
+        "      if (!res.ok) throw new Error(`HTTP ${res.status}`);\n"
+        "      return res.json();\n"
+        "    } catch (e) {\n"
+        "      if (i === retries - 1) throw e;\n"
+        "      await sleep(2 ** i * 100);\n"
+        "    }\n"
+        "  }\n"
+        "}",
+    ),
+    (
+        "sum_state",
+        "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
+        "function getVisibleItems(items, filter) {\n"
+        "  const result = [];\n"
+        "  for (const item of items) {\n"
+        "    if (filter.search) {\n"
+        "      if (!item.name.toLowerCase().includes(filter.search.toLowerCase())) continue;\n"
+        "    }\n"
+        "    if (filter.minPrice !== undefined && item.price < filter.minPrice) continue;\n"
+        "    if (filter.maxPrice !== undefined && item.price > filter.maxPrice) continue;\n"
+        "    if (filter.tags?.length && !filter.tags.some(t => item.tags.includes(t))) continue;\n"
+        "    result.push(item);\n"
+        "  }\n"
+        "  return result;\n"
+        "}",
+    ),
+    (
+        "sum_lifecycle",
+        "Summarize in ONE sentence, max 30 words. NO preamble.\n\n"
+        "class Session {\n"
+        "  constructor(token, ttl=3600) {\n"
+        "    this.token = token;\n"
+        "    this.expiresAt = Date.now() + ttl * 1000;\n"
+        "    this.observers = new Set();\n"
+        "  }\n"
+        "  isValid() { return Date.now() < this.expiresAt; }\n"
+        "  refresh(newTtl) {\n"
+        "    this.expiresAt = Date.now() + newTtl * 1000;\n"
+        "    for (const cb of this.observers) cb(this);\n"
+        "  }\n"
+        "  onExpire(cb) { this.observers.add(cb); return () => this.observers.delete(cb); }\n"
+        "}",
+    ),
 )
 
 SUMMARY_KEYWORDS: tuple[str, ...] = (
-    "function", "method", "class", "asynchronously", "expir",
-    "filter", "retri", "session", "upload",
+    "function",
+    "method",
+    "class",
+    "asynchronously",
+    "expir",
+    "filter",
+    "retri",
+    "session",
+    "upload",
 )
 
 
@@ -153,7 +167,9 @@ def cmd_lfm_variant(args: argparse.Namespace) -> int:
     out_path = Path(args.output) if args.output else result_path("lfm_ranking", ext="md")
     with out_path.open("w") as f:
         f.write("# LFM2.5-8B-A1B Variant Tie-Break\n\n")
-        f.write("Task: codeq summary (3 prompts). All variants leak thinking; `<think>` stripped before scoring.\n\n")
+        f.write(
+            "Task: codeq summary (3 prompts). All variants leak thinking; `<think>` stripped before scoring.\n\n"
+        )
         f.write("| # | Score | Avg TPS | sum_async | sum_state | sum_lifecycle | Model |\n")
         f.write("|---|---|---|---|---|---|---|\n")
         for i, (m, avg, tps, scores) in enumerate(ranked, 1):
@@ -166,9 +182,12 @@ def cmd_lfm_variant(args: argparse.Namespace) -> int:
 def add_parser(sub, parent: argparse.ArgumentParser) -> None:
     """Attach lfm-variant subcommand to root CLI."""
     p = sub.add_parser(
-        "lfm-variant", parents=[parent],
+        "lfm-variant",
+        parents=[parent],
         help="codeq summary tie-break for LFM family (think-strip).",
     )
-    p.add_argument("-v", "--variants", nargs="*", help="LFM variants to test (default: built-in 9).")
+    p.add_argument(
+        "-v", "--variants", nargs="*", help="LFM variants to test (default: built-in 9)."
+    )
     p.add_argument("-o", "--output", help="Output MD path (default: cache dir).")
     p.set_defaults(cmd=cmd_lfm_variant)

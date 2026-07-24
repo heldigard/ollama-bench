@@ -38,7 +38,9 @@ def test_cases_have_expected_ref_in_snapshot_or_none():
     """Each expected_ref must actually exist in that case's snapshot (or be None)."""
     for c in CASES:
         if c["expected_ref"] is not None:
-            assert c["expected_ref"] in refs_in_snapshot(c["snapshot"]), f"{c['id']} expected_ref not in snapshot"
+            assert c["expected_ref"] in refs_in_snapshot(c["snapshot"]), (
+                f"{c['id']} expected_ref not in snapshot"
+            )
         assert c["expected_action"] in KNOWN_ACTIONS, f"{c['id']} expected_action not known"
 
 

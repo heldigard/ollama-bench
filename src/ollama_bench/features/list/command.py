@@ -1,4 +1,5 @@
 """list - enumerate installed Ollama models + flag incompat / warnings."""
+
 from __future__ import annotations
 
 import sys
@@ -31,7 +32,7 @@ def cmd_list(args) -> int:
         print("# Installed Ollama models", file=sink)
         for m in get_models():
             name = m.get("name", "?")
-            size_mb = round(m.get("size", 0) / (1024 ** 2))
+            size_mb = round(m.get("size", 0) / (1024**2))
             quant = m.get("details", {}).get("quantization_level", "?")
             warnings = _warnings_for(name)
             n_warn += len(warnings) > 0
@@ -46,6 +47,8 @@ def cmd_list(args) -> int:
 
 
 def add_parser(sub, parent):
-    p = sub.add_parser("list", parents=[parent], help="Enumerate installed models (TSV + warnings).")
+    p = sub.add_parser(
+        "list", parents=[parent], help="Enumerate installed models (TSV + warnings)."
+    )
     p.add_argument("-o", "--output", help="Output TSV path (default: stdout).")
     p.set_defaults(cmd=cmd_list)

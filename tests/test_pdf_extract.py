@@ -36,7 +36,9 @@ def test_score_full_marks_on_correct_extraction():
     res = {
         "out": '{"vendor": "Acme Corp", "total": "1,250.00", "currency": "USD", '
         '"due_date": "2026-08-01", "invoice_number": "INV-4827"}',
-        "tps": 40.0, "etoks": 50, "done": "stop",
+        "tps": 40.0,
+        "etoks": 50,
+        "done": "stop",
     }
     sc = _score(res, case)
     # +3 JSON, +1.5 x 5 hits = 7.5, +2 tps(cap) = 12.5
@@ -48,7 +50,9 @@ def test_score_rewards_abstention_on_absent_field():
     res = {
         "out": '{"name": "Sam Rivera", "email": "sam@acme.io", "phone": null, '
         '"vat_id": null, "account_number": "ACC-9912"}',
-        "tps": 40.0, "etoks": 40, "done": "stop",
+        "tps": 40.0,
+        "etoks": 40,
+        "done": "stop",
     }
     sc = _score(res, case)
     # +3 JSON, +1.5 x 3 present hits = 4.5, +2 x 2 abstentions = 4, +2 tps = 13.5
@@ -61,7 +65,9 @@ def test_score_penalizes_hallucination_on_absent_field():
     res = {
         "out": '{"name": "Sam Rivera", "email": "sam@acme.io", "phone": "555-0000", '
         '"vat_id": "DE123", "account_number": "ACC-9912"}',
-        "tps": 40.0, "etoks": 40, "done": "stop",
+        "tps": 40.0,
+        "etoks": 40,
+        "done": "stop",
     }
     sc = _score(res, case)
     # +3 JSON, +1.5 x 3 present = 4.5, -2 x 2 hallucinations = -4, +2 tps = 5.5

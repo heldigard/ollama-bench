@@ -1,4 +1,5 @@
 """Unit tests for multi_domain slice."""
+
 from __future__ import annotations
 
 from ollama_bench.features.multi_domain.command import (
@@ -34,8 +35,12 @@ def test_all_tests_tuples_have_3_elements():
 
 def test_result_from_call_error():
     r = _result_from_call(
-        model="m", test_id="t", domain="d", prompt="p",
-        call_res={"error": "boom"}, mem_peak=100,
+        model="m",
+        test_id="t",
+        domain="d",
+        prompt="p",
+        call_res={"error": "boom"},
+        mem_peak=100,
     )
     assert r.status == "error"
     assert "boom" in r.error
@@ -43,9 +48,17 @@ def test_result_from_call_error():
 
 def test_result_from_call_ok():
     r = _result_from_call(
-        model="m", test_id="t", domain="d", prompt="p",
-        call_res={"output": "hello", "total_s": 1.0, "eval_tokens": 5,
-                  "prompt_tokens": 2, "ttft_s": 0.1},
+        model="m",
+        test_id="t",
+        domain="d",
+        prompt="p",
+        call_res={
+            "output": "hello",
+            "total_s": 1.0,
+            "eval_tokens": 5,
+            "prompt_tokens": 2,
+            "ttft_s": 0.1,
+        },
         mem_peak=200,
     )
     assert r.status == "ok"

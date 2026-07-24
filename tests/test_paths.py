@@ -1,4 +1,5 @@
 """Unit tests for shared.paths — output dir + unsafe-name guard."""
+
 from __future__ import annotations
 
 import tempfile

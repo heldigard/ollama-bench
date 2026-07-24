@@ -1,4 +1,5 @@
 """Unit tests for lfm_variant slice — exercises _rank, _score."""
+
 from __future__ import annotations
 
 from ollama_bench.features.lfm_variant.command import LFM_VARIANTS, _score
